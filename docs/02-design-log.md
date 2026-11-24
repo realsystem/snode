@@ -519,7 +519,7 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 
 ## Open questions (round 23)
 1. Bus: O2 powered bus (recommended) or O1 1-Wire?
-2. Bench parts list is in `05-poc-plan.md` (cited subtotal $69.19 + £25.80 + €28.67). OK to order, or change anything (for example, a US source for the RTC breakout)?
+2. Bench parts list is in `05-poc-plan.md` (cited subtotal $68.48 + £25.80 + €28.67). OK to order, or change anything (for example, a US source for the RTC breakout)?
 3. ESP32-CAM type and USB adapter (open since round 21).
 
 Closed in round 22: bench parts list written; next step = probe design (D34).

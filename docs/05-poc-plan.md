@@ -78,4 +78,4 @@ Parts already on hand (NodeMCU, ESP32-CAM, multimeter, breadboard) are not liste
 | Only with bus O2: comparator (LMV331 class), shunt resistors | 2 | not priced yet | — | — |
 | 16/2 landscape wire (bench runs, 2 x 10.5 m) | from the field spool | — | 04-spec BOM | — |
 
-Cited subtotal (Phase 1 + 2, without O1/O2 lines): $69.19 + £25.80 + €28.67.
+Cited subtotal (Phase 1 + 2, without O1/O2 lines): $68.48 + £25.80 + €28.67.

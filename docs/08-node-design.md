@@ -122,7 +122,7 @@ Receiver → HA: event `esphome.snode_report` with node ID (e.g. `snode_f_01`), 
 ## 8. Operating limits (node electronics, draft)
 | Limit | Value | Set by |
 |---|---|---|
-| Temperature | -40 to 85 °C (rated parts); design point -27 °C | XIAO, DS2482, RV-3028 ratings; L91 -40 to 60 °C |
+| Temperature | -40 to 85 °C (rated parts); design point -27 °C | XIAO, RV-3028, TLV7031 ratings; L91 -40 to 60 °C |
 | Pack voltage | 3.6–5.4 V | Low end: XIAO 3.3 V rail through the diode; high end: TPS22917 5.5 V max |
 | Probes per node | 20 (10 per bus) + 1 DS18B20 | Packet format; bus tests |
 | Awake time | ≤ 25 s per wake (≤ 3 min install mode) | Watchdog |

@@ -342,8 +342,22 @@ Answers:
 
 Result: node design v0.1 (`docs/08-node-design.md`, D33); node firmware, RV-3028 component and POC receiver in `firmware/`. Not compiled yet.
 
-## Round 22 — open (asked 2026-11-24)
+## Round 22 — 2026-11-24
 
+Questions:
 1. Write the bench POC parts list now (with cited prices)?
 2. Next design step: probe PCB + PY32 firmware, or final receiver?
 3. ESP32-CAM type and USB adapter (from round 21).
+
+Answers:
+1. "yes"
+2. "probe"
+3. (no answer)
+
+Result: bench parts list in `05-poc-plan.md`. Probe design v0.1 (`09-probe-design.md`, D34). New finding: the 1-Wire pull-up can't power 10 awake probes; powered-bus option O2 proposed (D35). Portable probe firmware written and host-tested.
+
+## Round 23 — open (asked 2026-11-24)
+
+1. Bus: O2 powered bus (recommended) or O1 1-Wire?
+2. Bench parts list OK to order, or changes?
+3. ESP32-CAM type and USB adapter.

@@ -52,3 +52,30 @@ All thresholds are PROPOSED until the owner accepts them.
 - Clamp and housing design frozen for molding quotes (D21).
 - Radio margin and receiver antenna choice.
 - Updated operating limits for the spec (`04-spec.md`).
+
+## Bench POC parts list (prices checked 2026-11-24; sources in 03-research-notes.md)
+Parts already on hand (NodeMCU, ESP32-CAM, multimeter, breadboard) are not listed. Quantities cover 2 bench nodes and 1 receiver.
+
+### Phase 1 — node power, clock and radio (needed for any bus choice)
+| Item | Qty | Unit price | Source | Line total |
+|---|---|---|---|---|
+| Seeed XIAO ESP32C3 (2 nodes + 1 receiver) | 3 | $4.99 (10+ price) | S83 | $14.97 |
+| RV-3028-C7 breakout (Pimoroni PIM449) | 2 | £12.90 incl. VAT | S84 | £25.80 |
+| TI TPS22917LDBVR load switch | 5 | $0.257 (5+) | S85 | $1.29 |
+| TI TPS7A0233PDBVR LDO | 5 | not found (LCSC C2887324 listed, no price) | S85 | — |
+| Energizer L91 AA | 6 | $2.29 | BOM (04-spec) | $13.74 |
+| SOT-23-6 / SOT-23-5 adapter boards, MOSFETs, Schottky diodes, resistors, capacitors | — | not priced (generic stock) | — | — |
+
+### Phase 2 — bus and probes
+| Item | Qty | Unit price | Source | Line total |
+|---|---|---|---|---|
+| PY32F003 Startkit (official dev board; same core as the PY32F002A) | 1 | $16.94 | S86 | $16.94 |
+| PY32F002AF15P6TU (TSSOP20) for hand-built probe prototypes | 10 | $0.1638 (5+) | S86 | $1.64 |
+| DAPLink programmer (Universal-Solder 26730) | 1 | €4.73 (DigiKey) | S87 | €4.73 |
+| DS18B20, TO-92 (probe stand-ins for the first bus test) | 21 | €1.14 (10–49) | S88 | €23.94 |
+| DS18B20 waterproof (node soil sensor) | 2 | $9.95 | S88 | $19.90 |
+| Only with bus O1: DS2482S-100 (SOIC-8) + SOIC-8 adapters | 4 | $3.05 (1 pc) | S80 | $12.20 |
+| Only with bus O2: comparator (LMV331 class), shunt resistors | 2 | not priced yet | — | — |
+| 16/2 landscape wire (bench runs, 2 x 10.5 m) | from the field spool | — | 04-spec BOM | — |
+
+Cited subtotal (Phase 1 + 2, without O1/O2 lines): $69.19 + £25.80 + €28.67.

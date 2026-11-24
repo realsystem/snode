@@ -505,11 +505,23 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 - Firmware: `firmware/node/`, `firmware/components/rv3028/`, POC receiver `firmware/receiver/`. Not compiled yet.
 - Energy estimate: about 26 µAh per wake, so about 0.11 mAh/day with margin (inside the 0.24 budget). UNVERIFIED (T2).
 
-## Open questions (round 22)
-1. Bench POC parts: may I write the bench parts list now (XIAO, RV-3028 breakout, 2x DS2482-100 breakouts, about 20 DS18B20 as probe stand-ins, MOSFETs, L91 pack)? This needs cited prices (BOM rule).
-2. Next design step: (b) probe PCB + PY32 bus firmware (recommended next: it is the largest unknown), or (c) the final receiver?
-3. ESP32-CAM type and USB adapter: still open from round 21.
+### D34 Probe design v0.1 (owner chose this step, round 22)
+- Full design: `docs/09-probe-design.md` (netlist, measurement, PCB, energy, tests).
+- Measurement: RC charge time of a solder-masked electrode through 1 MΩ, ratiometric comparator threshold (0.5 VDD), 64 samples with a trimmed mean; chip temperature from the MCU (D20 option T2).
+- One PCB supports both bus options (only R_SINK and firmware differ).
+- Firmware: portable core written and host-tested (`firmware/probe/`); hardware layer and protocol layer to do.
 
-Closed in round 21: next step = node design (D33).
+### D35 Bus electrical choice (new finding; owner to choose)
+- Finding: with the 1-Wire plan, 10 awake probe MCUs per bus need 5–10 mA while the node talks, but the DS2482's weak pull-up is 1000–1675 Ω, and its low threshold at 3.3 V is 0.9 V, which the probe's polarity bridge eats into (S78). D22's "low-value pull-up" can't fix both at once.
+- O1: keep 1-Wire (workarounds: RC-filtered wake, early drop-out on address mismatch, larger reservoirs). High risk at T4.
+- **O2 (recommended): M-Bus-style powered bus.** Node → probes by voltage steps on a line that never drops to 0 V; probes → node by a current step the node senses (S79). Probes are always powered; the bridge drops don't matter. Node: DS2482s replaced by 2 MOSFETs, 2 diodes, a shunt and a comparator per bus, plus a custom ESPHome component.
+- If O2 is chosen, `08-node-design.md` changes: bus section, pin map (UART TX/RX per bus, node DS18B20 on its own GPIO), packet unchanged.
+
+## Open questions (round 23)
+1. Bus: O2 powered bus (recommended) or O1 1-Wire?
+2. Bench parts list is in `05-poc-plan.md` (cited subtotal $69.19 + £25.80 + €28.67). OK to order, or change anything (for example, a US source for the RTC breakout)?
+3. ESP32-CAM type and USB adapter (open since round 21).
+
+Closed in round 22: bench parts list written; next step = probe design (D34).
 
 HA side: see `docs/06-ha-note.md`. Spec: `docs/04-spec.md`. POC: `docs/05-poc-plan.md`.

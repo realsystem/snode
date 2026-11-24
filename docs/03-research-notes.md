@@ -136,6 +136,18 @@ be re-checked before purchase. S-numbers are referenced from `02-design-log.md`.
 | S76 | ESP32-CAM (AI-Thinker): PCB antenna plus u.FL/IPEX socket, chosen by a 0 Ω jumper. | https://randomnerdtutorials.com/esp32-cam-connect-external-antenna/ ; https://lastminuteengineers.com/getting-started-with-esp32-cam/ |
 | S77 | ESPHome on Windows: Python with "Add to PATH", then `pip install esphome`; CLI `esphome config/compile/run/logs`, `--device COMx`. | https://new.esphome.io/guides/installing_esphome ; https://esphome.io/guides/cli/ |
 
+| S78 | DS2482-100: 1-Wire input low VIL1 0.9 V max at 3.3 V (1.2 V at 5 V); input high 1.9 V at 3.3 V; weak pull-up RWPU 1000–1675 Ω; strong pull-up via internal low-impedance path; PCTLZ for an external MOSFET; pins -0.5 to +6 V absolute. | https://www-cce.cldnet.analog.com/media/en/technical-documentation/data-sheets/ds2482-100.pdf ; https://www.piekarz.pl/pdf/17461 |
+| S79 | M-Bus (EN 13757-2): remotely powered slaves; master → slave by voltage level shifts; slave → master by current modulation (mark ≤ 1.5 mA, space +11–20 mA); half duplex. | https://m-bus.com/documentation-wired/04-physical-layer ; https://en.wikipedia.org/wiki/Meter-Bus |
+| S80 | DS2482S-100+ price: DigiKey $3.05 (1 pc), $2.29 (10), $2.09 (25), checked 2026-11-24 via oemstrade listing. | https://www.oemstrade.com/search/ds2482s-100 |
+| S81 | PY32F002A: Cortex-M0+ up to 24 MHz, 20 KB flash, 3 KB SRAM, 1.7–5.5 V, -40 to 85 °C, 2 comparators, unique UID, SWD, HSI 8/24 MHz, LPTIM wakes from stop. TSSOP20 version $0.1638 at 5+ (LCSC). | https://www.lcsc.com/product-detail/Microcontroller-Units-MCUs-MPUs-SOCs_PUYA-PY32F002AL15S6TU_C5292060.html ; https://www.lcsc.com/datasheet/lcsc_datasheet_2303271200_PUYA--PY32F002AF15P6TU_C5292059.pdf |
+| S82 | PY32F0 toolchain: IOsetting/py32f0-template (GNU Arm GCC, LL drivers, J-Link or DAPLink/pyOCD; ST-Link not supported). 1-Wire slave timing: reset ≥ 480 µs, presence within 60 µs for ≥ 60 µs, sample 15 µs after a falling edge (Microchip AN, ADI AN126). | https://github.com/IOsetting/py32f0-template ; https://www.analog.com/en/resources/technical-articles/1wire-communication-through-software.html ; https://onlinedocs.microchip.com/oxy/GUID-1618003F-992B-4E48-9411-5E5D5D952C06-en-US-3/GUID-4CFC8F39-DF43-48D0-9AA4-0E8D25E0B40A.html |
+| S83 | Seeed XIAO ESP32C3: $4.99 (10+), Hackster/Seeed store, checked 2026-11-24. | https://hackster.io/products/buy/116992 |
+| S84 | Pimoroni RV3028 RTC breakout (PIM449): £12.90 incl. VAT, The Pi Hut, checked 2026-11-24. | https://thepihut.com/collections/raspberry-pi-hats/products/rv3028-real-time-clock-rtc-breakout |
+| S85 | TI TPS22917LDBVR: $0.257 at 5+ (LCSC), checked 2026-11-24. TPS7A0233PDBVR listed at LCSC (C2887324), price not shown. | https://lcsc.com/datasheet/lcsc_datasheet_2302220130_Texas-Instruments-TPS22917LDBVR_C3235537.pdf ; https://www.lcsc.com/product-image/C2887324.html |
+| S86 | PUYA PY32F003 Startkit: $16.94 (1 pc), LCSC, checked 2026-11-24. | https://www.lcsc.com/product-detail/C5161947.html |
+| S87 | DAPLink programmer, Universal-Solder 26730: €4.73 (1 pc), DigiKey, checked 2026-11-24. | https://www.digikey.gr/en/products/detail/universal-solder-electronics-ltd/26730/26606366 |
+| S88 | DS18B20 TO-92: €1.14 at 10–49 (Olimex SNS-TMP-DS18B20). Waterproof DS18B20 (genuine Maxim, tested): $9.95 (Adafruit 381). Checked 2026-11-24. | https://www.olimex.com/Products/Components/Sensors/Temperature/SNS-TMP-DS18B20/ ; https://www.adafruit.com/products/381 |
+
 ## Radio path
 
 | # | Finding | Source |

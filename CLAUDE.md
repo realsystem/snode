@@ -45,7 +45,7 @@ is the only reliable memory.
 | **UNODE** | General monitoring node (ESP32-class, own battery and solar), designed in a separate project. | VERIFIED |
 | **cluster** | The set of trees wired to one SNODE. Default: 2 adjacent rows x 10 trees = 20 trees. | PROPOSED |
 | **receiver** | Always-powered ESP32 in the trailer that receives SNODE radio packets and passes them to HA. | PROPOSED |
-| **zone** | An irrigation valve zone (OpenSprinkler). HA maps trees to zones. | PROPOSED |
+| **zone** | An irrigation valve zone (OpenSprinkler: 8 zones now, +16 with an expander later). HA maps trees to zones. | VERIFIED (controller) |
 
 ## 3. IDs and naming
 
@@ -125,5 +125,6 @@ All calibration values (dry/wet raw counts per probe) live in one file:
 | `docs/03-research-notes.md` | Findings with source links |
 | `docs/04-spec.md` | Spec-ready summary: requirements, decisions, open items, tests, BOM |
 | `docs/05-poc-plan.md` | POC phases, pass/fail criteria |
+| `docs/06-ha-note.md` | Hand-off note for the separate HA automation threads |
 | `config/calibration.yaml` | Per-probe calibration values (empty until POC) |
 | UNODE | Separate project. Link here when available. |

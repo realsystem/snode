@@ -217,9 +217,25 @@ Answers:
 
 Result: D20 temperature compensation explained (T1/T2/T3; T2 recommended), D21 housing path (ASA 3D print now; Protolabs/RapidDirect molding later), HA alerts and irrigation interlock, `docs/04-spec.md` and `docs/05-poc-plan.md` written.
 
-## Round 14 — open (asked 2026-11-24)
+## Round 14 — 2026-11-24
 
+Questions:
 1. Temperature compensation: T2 (recommended), T1 or T3?
 2. Irrigation zones: count, and which trees/rows per zone?
 3. Alert delivery (app push, email) and quiet hours?
 4. Accuracy target ±5% after site calibration, judged on trends?
+
+Answers:
+1. "T1 and let's report temperature with soil moisture to HA"
+2. "let's assume standard opensprinkler without extension for start and with one for later."
+3. "we have separate threads about HA automation for the farm, let's leave a note here about it and move to hardware."
+4. "yes"
+
+Result: T1 recorded; `docs/06-ha-note.md` written for the HA threads; hardware drafted: bus electrical design with DS18B20 emulation (D22), node power tree (D23), probe hardware (D24).
+
+## Round 15 — open (asked 2026-11-24)
+
+1. Probe polarity: bridge rectifier or keyed clamp?
+2. Probe sensing depth (center of the sensing zone)?
+3. Node enclosure: 3D-printed ASA or bought box?
+4. POC tools on hand (µA meter, enclosed 3D printer, soldering station, chest freezer)?

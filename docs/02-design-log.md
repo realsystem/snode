@@ -41,6 +41,10 @@ Terms and IDs: see `CLAUDE.md`. Sources: see `docs/03-research-notes.md` (S-numb
 - Cable: 16/2 landscape wire is standard; 18/2 irrigation wire is a user option (backup).
 - Housings: 3D-printed in house for the POC and small batches; molded housings later (sources noted in D21).
 - Order of work: finish the design first, then the POC. No shopping list yet.
+- Temperature compensation: **T1** (one DS18B20 per SNODE). Soil temperature is reported to HA together with soil moisture.
+- Irrigation controller: standard OpenSprinkler (8 zones) at first; with a zone expander later.
+- HA automation is handled in separate threads; this repo keeps a hand-off note (`docs/06-ha-note.md`). Focus here: hardware.
+- Accuracy target: ±5% after site calibration, judged mainly on trends.
 - HA decides irrigation (probably OpenSprinkler). SNODEs only report.
 - Must work through winter (owner: "winter is most important").
 - Lowest cost. Custom PCB allowed after the POC. Existing ESP8266 boards and "Arduino" moisture sensors are for the POC only.
@@ -293,7 +297,7 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 - The MCU and assembly are cited; the PCB, passives, potting and housing need real quotes. The housing method depends on volume (round 13).
 - Risks to test: capacitance drift with temperature (compensate with the MCU or the node's DS18B20), the accuracy of RC timing compared with the v1.2 board, and bus power during measurement.
 
-### D20 Temperature compensation (explained; owner to choose)
+### D20 Temperature compensation (owner chose T1)
 - **Why it matters:** a capacitive probe reads permittivity, not water directly, and permittivity changes with temperature even when water content doesn't.
   - Free water: about 88 at 0 °C, about 80 at 20 °C (Campbell Scientific).
   - Bound water: the opposite effect; warming releases water bound to soil particles, which raises permittivity. The net effect depends on the soil.
@@ -302,8 +306,8 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 - **Effect here:** the 05:00 reading (cold) and the 17:00 reading (warm) at 15 cm see different soil temperatures, so uncorrected data shows a fake daily swing.
 | Option | How | Extra cost | Accuracy | Notes |
 |---|---|---|---|---|
-| T1 | One DS18B20 per SNODE (already in the design for the frozen flag) corrects all 20 probes | $0 | Assumes the same soil temperature across the 18 x 2 m cluster | Sun, shade and wet spots near emitters may differ (UNVERIFIED) |
-| **T2 (recommended)** | The probe MCU's **internal temperature sensor** (the PY32F002A has one on an ADC channel) corrects each probe; the node's DS18B20 is the reference used to remove each chip's offset | $0 | Per probe; the uncalibrated offset varies chip to chip, so calibrate against the DS18B20 | Also gives a per-probe frozen flag. The electronics end sits in the soil, so chip temperature ≈ soil temperature (UNVERIFIED) |
+| **T1 (chosen)** | One DS18B20 per SNODE (already in the design for the frozen flag) corrects all 20 probes | $0 | Assumes the same soil temperature across the 18 x 2 m cluster | Sun, shade and wet spots near emitters may differ (UNVERIFIED) |
+| T2 | The probe MCU's **internal temperature sensor** (the PY32F002A has one on an ADC channel) corrects each probe; the node's DS18B20 is the reference used to remove each chip's offset | $0 | Per probe; the uncalibrated offset varies chip to chip, so calibrate against the DS18B20 | Also gives a per-probe frozen flag. The electronics end sits in the soil, so chip temperature ≈ soil temperature (UNVERIFIED) |
 | T3 | An NTC thermistor on each probe PCB | a few cents + 1 pin | Better than T2 | Only if the POC shows T2 is not good enough |
 - Correction coefficients are soil-specific and are measured in the POC (pot test at 2 temperatures). They are stored in `config/calibration.yaml`, never in firmware.
 
@@ -313,6 +317,40 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
   - Protolabs: aluminum molds, mold cost from $1,495; runs from about 10 to 10,000+ parts; no minimum order.
   - RapidDirect: low-volume injection molding, 100–10,000 parts; aluminum molds suit 100–5,000 parts, soft steel 5,000–25,000.
   - Get quotes once the housing design is frozen after the POC.
+
+### D22 Bus electrical design (draft, UNVERIFIED until bench test T4)
+- **Protocol: probes emulate DS18B20 thermometers** (1-Wire family 0x28). Each probe answers with its own 64-bit address and puts its raw moisture count in the temperature register.
+  - Gain: ESPHome reads them with its standard `one_wire` + `dallas_temp` components, by address. No custom ESPHome component for the probes.
+  - Emulation is proven on other MCUs: the OneWireHub library emulates DS18B20 devices, up to 32 per hub. Porting to the PY32F002A is not yet confirmed.
+  - Scaling: the DS18B20 register is 16 bits in 1/16 °C steps. The raw count is scaled to fit, and HA converts it with `config/calibration.yaml`.
+  - The probe's 64-bit address is printed on its label and mapped to a tree ID at install (`config/probes.yaml`, planned).
+- **Physical layer (2 wires: DATA and GND):**
+  - The node pulls the line up through a low-value resistor (about 100–220 Ω instead of 1-Wire's usual 4.7 kΩ), so the line can also supply the 20 probes while they measure.
+  - Each probe has a diode + reservoir capacitor (rides through the short low pulses of the protocol) and pulls the line low with a small MOSFET, not with an MCU pin.
+  - Sequence each wake: (1) power phase, about 200 ms: line held high, all probes measure at once and store the result; (2) read phase: the node reads each probe's register by address.
+  - Master options: ESP32 GPIO + MOSFET driver, or a DS248x 1-Wire master chip, which ESPHome supports, including its active pull-up option. ESPHome's GPIO bit-bang 1-Wire has reported reliability problems, which favours the DS248x (UNVERIFIED).
+- **Protection:** a TVS diode and series resistor on each bus at the node (long buried cable).
+- **Polarity:** proposed bridge rectifier at each probe so the clamp can go on either way (round 15).
+
+### D23 Node hardware (draft)
+- **Variant B power tree:**
+  - 3x L91 pack (4.5 V nominal).
+  - Always-on rail: TI TPS7A02 LDO (25 nA quiescent, 1.5–6.0 V in) → 3.0 V for the RTC only.
+  - Switched rail: TI TPS22917**L** load switch (1–5.5 V, active-low enable, 10 nA typical / 100 nA max shutdown current at -40 to 85 °C), enabled by the RTC's open-drain INT output.
+  - From the switched rail through a Schottky diode into the XIAO's 5V pin (Seeed requires a diode when feeding external power there) → XIAO onboard LDO → 3.3 V.
+- **Off-state budget:** RTC 45 nA + TPS7A02 25 nA + TPS22917 ≤ 100 nA ≈ 0.17 µA max, within the 1 µA POC target.
+- **Margins:**
+  - A fresh pack is close to the TPS22917's 5.5 V maximum (absolute max 6 V). Check fresh-pack voltage in the POC.
+  - At end of life the pack, minus the diode drop, falls below the 3.0 V the ESP32-C3 needs. The node stops before the cells are fully used; the energy margin covers this.
+- **Variant A:** supercapacitor → RTC directly (1.1–5.5 V). Switched side: a boost converter from ≥ 1.0 V up to the XIAO supply. Part to be selected.
+- **Node I/O (XIAO ESP32C3):** I2C to the RTC; 2 bus channels (row A, row B); 1-Wire pin for the node DS18B20; battery-voltage divider on the switched rail (no drain when off); RTC INT readback.
+
+### D24 Probe hardware (draft)
+- **Blade:** 2-layer FR4 PCB, about 100 x 20 mm. Electrode traces under solder mask (insulated, no electrode corrosion), with a ground guard.
+- **Measurement:** RC charge time. A GPIO charges the electrode through a resistor; one of the PY32F002A's 2 comparators detects the threshold; a timer captures the time. Charge time rises with soil permittivity.
+- **Bus interface:** diode + reservoir capacitor, a pull-down MOSFET, and a sense divider. Optional bridge rectifier for polarity.
+- **Electronics end:** potted. Two piercing pins in the clamp head contact the 16/2 conductors. A grease-filled cavity; a 3D-printed ASA head for the POC.
+- **Depth:** the sensing zone must sit within 15 cm. Where it is centered is an owner question (round 15).
 
 ### D18 Firmware
 - ESPHome on both the nodes and the receiver (owner accepted).
@@ -335,10 +373,10 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 ## Receiver
 - The trailer is fiberglass, which passes 2.4 GHz with little loss (UNVERIFIED; check in the walk test). The receiver ESP32 can stay inside, with a short coax to the roof antenna.
 
-## Open questions (round 14)
-1. Temperature compensation: T2 (the probe chip's built-in sensor, zero cost) as recommended, or T1/T3?
-2. Irrigation zones: how many OpenSprinkler valve zones, and which trees or rows does each one water? HA's dry/wet logic works per zone.
-3. Alerts: how should they reach you (HA mobile app push, email, both)? Any quiet hours?
-4. Accuracy target: OK to aim for ±5% moisture after site calibration (the WH51's rated accuracy), judged mainly on trends?
+## Open questions (round 15)
+1. Probe polarity: add a bridge rectifier so the clamp can go on either way (a few cents, about 0.3–0.6 V lost), or a keyed clamp that only fits one way on the ribbed conductor?
+2. Probe sensing depth: where should the sensing zone be centered for new trees (for example 5–15 cm, centered at 10 cm)?
+3. Node enclosure: 3D-print it in ASA too (cheapest, in house), or buy a box (Hammond reference £40.42)?
+4. POC tools on hand: a µA-capable current meter (for example a power profiler), an enclosed 3D printer for ASA, a soldering station, a chest freezer?
 
-See also `docs/04-spec.md` (spec summary) and `docs/05-poc-plan.md` (POC plan).
+HA side: see `docs/06-ha-note.md`. Spec: `docs/04-spec.md`. POC: `docs/05-poc-plan.md`.

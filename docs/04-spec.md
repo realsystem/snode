@@ -20,7 +20,8 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 | R11 | Function | Monitoring only; HA controls irrigation (OpenSprinkler) | VERIFIED |
 | R12 | Firmware | ESPHome | VERIFIED |
 | R13 | Frozen soil | Readings marked invalid and irrigation blocked at ≤ 0.5 °C soil temperature | PROPOSED |
-| R14 | Accuracy | ±5% moisture after site calibration, judged mainly on trends | PROPOSED (round 14) |
+| R14 | Accuracy | ±5% moisture after site calibration, judged mainly on trends | VERIFIED |
+| R16 | Irrigation controller | OpenSprinkler, 8 zones now; expander (+16 zones) later | VERIFIED |
 | R15 | Commercial readiness | Operating limits stated for every variant | VERIFIED |
 
 ## 2. Decisions
@@ -35,7 +36,9 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 | D5 | Node MCU | Seeed XIAO ESP32C3 | Small, includes an antenna, ESPHome support | S26, S39 |
 | D6 | Power | Variant B recommended: 3x L91 AA, plan 5-year swap. Variant A: 10 F supercap + small panel, about 6 days without sun | Load about 0.24 mAh/day with margin | S15, S28 |
 | D11 | Power gating | RV-3028-C7 RTC alarm drives a load switch; node is unpowered between readings | Removes sleep current; exact report times | S25 |
-| D7/D20 | Temperature | DS18B20 per node (frozen flag, reference) + MCU internal sensor per probe (T2, proposed) | Corrects daily temperature swing per probe at zero cost | S13, S47, S48 |
+| D7/D20 | Temperature | T1: one DS18B20 per node corrects all its probes; soil temperature is reported to HA with the moisture values | Owner choice; $0 extra | S13, S47 |
+| D22 | Bus protocol | Probes emulate DS18B20 (1-Wire); low-value pull-up powers the probes; ESPHome `one_wire` + `dallas_temp` read them | No custom ESPHome code for probes | S51, S52 |
+| D23 | Node power | TPS7A02 always-on LDO for the RTC; TPS22917L load switch driven by the RTC; diode into the XIAO 5V pin | Off-state ≈ 0.17 µA max | S53, S54, S55 |
 | D12 | Enclosure | UV-stabilized polycarbonate, IP68 class, on a wooden stake, box bottom 0.3 m above grade | Owner: wood and plastic are rabbit-safe | S29 |
 | D13 | Riser | 1/2 in Schedule 40 PVC, 2 cables (35% fill), duct seal at the top | Rabbits | S35, S38 |
 | D18 | Firmware/HA | ESPHome + ESP-NOW Packet Transport; raw values sent, calibration in HA from `config/calibration.yaml` | Calibration in one place | S39 |
@@ -58,10 +61,11 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 
 ## 4. Open items
 
-1. Temperature compensation choice (T2 recommended) — round 14.
-2. Irrigation zone map (count, trees per zone) — round 14.
-3. Alert delivery and quiet hours — round 14.
-4. Accuracy target — round 14.
+1. Probe polarity (bridge rectifier or keyed clamp) — round 15.
+2. Probe sensing depth — round 15.
+3. Node enclosure: 3D-printed or bought — round 15.
+4. POC tools on hand — round 15.
+- HA automation (zones, alerts, delivery): handled in the HA threads; see `06-ha-note.md`.
 5. Bus protocol and electrical design (power phase, timing, drops per run).
 6. Probe PCB, passives, potting and housing quotes.
 7. Cheaper enclosure than the Hammond 1554 reference part.

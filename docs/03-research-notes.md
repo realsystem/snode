@@ -98,6 +98,18 @@ be re-checked before purchase. S-numbers are referenced from `02-design-log.md`.
 | S49 | Molding: Protolabs aluminum molds from $1,495, 10 to 10,000+ parts, no MOQ. RapidDirect low-volume molding 100–10,000 parts (aluminum 100–5,000; soft steel 5,000–25,000). | https://protolabs.com/injection-molding ; https://www.protolabs.com/en-gb/services/injection-moulding/on-demand-manufacturing/ ; https://www.rapiddirect.com/services/low-volume-injection-molding-service/ |
 | S50 | 3D-print materials outdoors: ASA has better UV resistance; PETG yellows and turns brittle in sun (vendor test write-ups). | https://qidi3d.com/blogs/print-lab/asa-vs-petg-filament-direct-sunlight ; https://qidi3d.com/ko/blogs/print-lab/asa-petg-sprinkler-brackets-outdoor |
 
+## Hardware (round 14)
+
+| # | Finding | Source |
+|---|---|---|
+| S51 | OneWireHub library emulates 1-Wire slaves including the DS18B20 (family 0x28), up to 32 per hub; a "DS18B20 as interface" example returns arbitrary values as emulated thermometers. | https://github.com/vytautassurvila/OneWireHub/blob/master/README.md ; https://instructables.com/Arduino-1-wire-Generic-ClientSlave-Device-Sensor |
+| S52 | ESPHome 1-Wire: `one_wire` bus (GPIO, or DS248x master chips with an active pull-up option) + `dallas_temp` sensors by 64-bit address. Users report reliability problems with the GPIO bit-bang implementation. | https://esphome.io/components/one_wire/index.html ; https://esphome.io/components/one_wire/ds248x/ ; https://esp32.co.uk/esphome-ds18b20-multiple-sensors-long-wires-reliable-wiring/ ; https://community.home-assistant.io/t/mipi-display-glitching-with-gpio-one-wire/967055 |
+| S53 | TI TPS7A02 LDO: 25 nA typical quiescent current (also in dropout), 3 nA shutdown, 1.5–6.0 V input, 200 mA, -40 to 125 °C. | https://www.ti.com/product/TPS7A02 |
+| S54 | TI TPS22917 load switch: 1–5.5 V input (6 V absolute max), 2 A, 80 mΩ; shutdown current 10 nA typical, 100 nA max at -40 to 85 °C; TPS22917L = active-low enable. | https://www.ti.com/product/TPS22917 ; https://ti.com/document-viewer/TPS22917/datasheet/GUID-XXXXXXXX-SF0T-XXXX-XXXX-000000062506 ; https://www.ti.com/lit/gpn/tps22917 |
+| S55 | XIAO ESP32C3: the 5V pin can be used as an input, but Seeed requires a diode between the external source and the pin (anode to source). | https://wiki.seeedstudio.com/XIAO_ESP32C3_Getting_Started/ |
+| S56 | OpenSprinkler: the main controller has 8 zones; each zone expander adds 16 (8 + 16 = 24 with one expander); OS 3.x supports up to 72 zones. Expander $49–50. | https://opensprinkler.com/?p=16087 ; https://opensprinklershop.github.io/faq/ ; https://opensprinkler.com/product/zone-expander/ |
+| S57 | PY32F002A has 2 comparators (datasheet feature list). | https://hestore.hu/prod_getfile.php?id=16039 |
+
 ## Radio path
 
 | # | Finding | Source |

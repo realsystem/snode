@@ -370,8 +370,21 @@ Answers:
 
 Result: O2 decided (D35). Ready M-Bus chips and masters reviewed and not used (D36). US-only bench list, $125.06 cited (05-poc-plan). Probe MCU US availability question raised (D37).
 
-## Round 24 — open (asked 2026-11-24)
+## Round 24 — 2026-11-24
 
+Questions:
 1. Production probe MCU: ATtiny202/402 (US) or PY32F002A (LCSC)?
 2. O2 bus at about 5 V: OK?
 3. ESP32-CAM type and USB adapter.
+
+Answers:
+1. "let's note it"
+2. "ok if no change for our initial power estimation"
+3. (no answer)
+
+Result: both MCUs noted, decision after bench tests (D37). O2 bus parameters set; energy check shows no change (25 µAh/wake worst case vs 26 µAh; budget 0.24 mAh/day unchanged) (D38).
+
+## Round 25 — open (asked 2026-11-24)
+
+1. Next step: node revision for O2 (recommended), probe hardware layer + protocol, or final receiver?
+2. ESP32-CAM type and USB adapter.

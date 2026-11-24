@@ -535,13 +535,19 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
   - STM32C011 ($0.83, DigiKey) needs ≤ 3.6 V and has no comparator, so it doesn't fit.
 - Cost effect: about +$0.37 per probe, about +$220 for 600 probes.
 - The portable probe code (`firmware/probe/src`) is plain C and works on both; only `hal_*.c` changes.
-- Bench list uses the ATtiny202 (US). Production MCU: owner to choose (round 24).
+- **Noted (owner, round 24):** both options stay in the design. Bench uses the ATtiny202 (US). Production choice deferred until after the bench tests; the PCB footprint and HAL are kept for both.
 
-## Open questions (round 24)
-1. Production probe MCU: ATtiny202/402 (US-stocked, about +$220 for 600 probes, recommended for a US commercial product) or PY32F002A (cheapest, LCSC only)?
-2. Bus voltage for O2: about 5 V from the pack (mark ≈ pack voltage, space ≈ 1.2 V lower). OK? It keeps the bus far below 30 V.
-3. ESP32-CAM type and USB adapter (open since round 21).
+### D38 Powered bus (O2) electrical parameters and energy check (owner: OK if the power estimate doesn't change)
+- Bus "mark" = pack voltage (3.6–5.4 V) through a P-FET; "space" = one diode drop lower (about 0.7 V), made by switching the P-FET off so the line feeds through the diode. Probe → node: +10 mA current step (R_SINK ≈ 330 Ω), sensed on a shunt by a TLV7031. 9600 baud, half duplex.
+- Probe supply: VDD = line − bridge (about 0.6 V) − D1 (about 0.3 V), held by C1 through space bits. At end of pack life (3.6 V) VDD ≈ 2.7 V, inside the ATtiny202 0–8 MHz grade at 2.7–5.5 V (S94) and the PY32 1.7–5.5 V range. Probe clock: ≤ 8 MHz.
+- Bus voltage stays ≤ 5.5 V: far below the 30 V class (D25).
+- **Energy check (UNVERIFIED arithmetic):** worst case with all 20 probes awake for a 1 s bus session = 25 µAh per wake, against 26 µAh for node v0.1 (no 1.2 s conversion wait, no 40 mA power phase). Daily load with 2x margin ≈ 0.11 mAh/day. **The 0.24 mAh/day budget and the battery plan are unchanged.**
+- Probes sleep between frames (stop mode, wake on the LINE edge), so the real figure should be lower (T4b measures it).
 
-Closed in round 23: bus = O2 (D35); ready M-Bus parts reviewed and not used (D36); US-only bench list (05-poc-plan).
+## Open questions (round 25)
+1. Next design step: (a) node revision for O2: bus driver schematic + ESPHome bus component (recommended: the bench node needs it before probes can be read); (b) probe hardware layer + O2 protocol for the ATtiny202; (c) final receiver?
+2. ESP32-CAM type and USB adapter (open since round 21).
+
+Closed in round 24: probe MCU noted, both kept (D37); O2 bus parameters accepted, power estimate unchanged (D38).
 
 HA side: see `docs/06-ha-note.md`. Spec: `docs/04-spec.md`. POC: `docs/05-poc-plan.md`.

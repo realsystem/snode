@@ -76,6 +76,7 @@ The 1-Wire plan (D22) has a power problem found in this round:
 | Panel | JLCPCB-style panel with V-cut or tabs; assembly as in D19 |
 
 ## 6. Energy (per probe, per wake)
+- O2 bus: mark = pack voltage, space = about 0.7 V lower, 9600 baud, +10 mA reply current; probe VDD ≥ 2.7 V at end of pack life; clock ≤ 8 MHz (design log D38).
 - Boot + 64 samples: about 20 ms at about 1 mA. Talking: about 50 ms at about 1 mA. Otherwise stop mode.
 - About 0.07 mA·s per probe per wake; 20 probes ≈ 0.4 µAh per wake. Small next to the node's 26 µAh (08-node-design.md).
 

@@ -82,6 +82,7 @@ Off-state draw: U3 45 nA + U1 25 nA + U2 ≤ 100 nA ≈ 0.17 µA max (unchanged 
 | Send + wait for reply (radio on) | 0.4 s | 80 mA | 8.9 µAh |
 | **Per wake** | **2.4 s** | | **≈ 26 µAh** |
 - 2 wakes/day ≈ 0.05 mAh/day + off-state 0.004 mAh/day; with 2x margin about **0.11 mAh/day**, inside the 0.24 mAh/day budget. Measure in T2.
+- With the O2 powered bus (design log D38): worst case 25 µAh per wake (all probes awake for a 1 s session), so the budget is unchanged.
 
 ## 6. Packet format v1 (node → receiver), little-endian
 | Byte | Field |

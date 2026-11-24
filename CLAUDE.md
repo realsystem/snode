@@ -11,7 +11,7 @@ is the only reliable memory.
 
 - At the start of a session, read in order: this file, `docs/00-brief.md`,
   `docs/01-interview-log.md`, `docs/02-design-log.md`, `docs/03-research-notes.md`,
-  `docs/04-spec.md`, `docs/05-poc-plan.md`, `docs/07-poc-tests.md`.
+  `docs/04-spec.md`, `docs/05-poc-plan.md`, `docs/07-poc-tests.md`, `docs/08-node-design.md`.
 - After every interview round or decision, update `docs/01-interview-log.md`
   (questions and answers) and `docs/02-design-log.md` (decisions, numbers,
   open questions). Add new sources to `docs/03-research-notes.md`. Keep
@@ -129,7 +129,9 @@ All calibration values (dry/wet raw counts per probe) live in one file:
 | `docs/04-spec.md` | Spec-ready summary: requirements, decisions, open items, tests, BOM |
 | `docs/05-poc-plan.md` | POC phases, pass/fail criteria |
 | `docs/07-poc-tests.md` | Short POC checklist per visit, incl. the next-visit site survey |
+| `docs/08-node-design.md` | Node design: block diagram, netlist, pin map, energy, packet format |
 | `docs/06-ha-note.md` | Hand-off note for the separate HA automation threads |
-| `firmware/` | ESPHome configs (POC walk test now; node and receiver later). Never commit `secrets.yaml`. |
+| `firmware/` | ESPHome configs: POC tests, `node/`, `receiver/`, `components/rv3028/`. Never commit `secrets.yaml`. |
+| `config/probes.yaml` | Slot → tree ID and probe address per node |
 | `config/calibration.yaml` | Per-probe calibration values (empty until POC) |
 | UNODE | Separate project. Link here when available. |

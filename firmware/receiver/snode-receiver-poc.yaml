@@ -1,0 +1,139 @@
+# SNODE receiver, POC version (ESPHome). Design: docs/08-node-design.md, design log D30/D31.
+# Joins the site Wi-Fi (ESP-NOW then uses the router's channel; nodes find it by channel follow).
+# For each report packet: sends an HA event "esphome.snode_report" and replies with the time and the next wake.
+# Board: ESP32-CAM for the POC (board: esp32cam) or XIAO ESP32C3 (board: seeed_xiao_esp32c3).
+# HA: enable "Allow the device to perform Home Assistant actions" for this device if events don't arrive.
+# Status: written without compiling. UNVERIFIED until the first compile and bench test T3.
+
+substitutions:
+  name: snode-receiver
+  board: esp32cam
+  wake1_h: "5"      # local report times (owner: 05:00 and 17:00)
+  wake2_h: "17"
+
+esphome:
+  name: ${name}
+  friendly_name: SNODE receiver
+
+esp32:
+  board: ${board}
+
+logger:
+  level: INFO
+
+api:
+  encryption:
+    key: !secret receiver_api_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  power_save_mode: none
+
+time:
+  - platform: homeassistant   # local time and time zone come from HA, not from this repo
+    id: ha_time
+
+globals:
+  - id: rx_total
+    type: uint32_t
+    initial_value: '0'
+  - id: ev_node
+    type: std::string
+  - id: ev_seq
+    type: std::string
+  - id: ev_flags
+    type: std::string
+  - id: ev_channel
+    type: std::string
+  - id: ev_battery
+    type: std::string
+  - id: ev_soil
+    type: std::string
+  - id: ev_raw
+    type: std::string
+  - id: ev_rssi
+    type: std::string
+  - id: reply
+    type: std::vector<uint8_t>
+  - id: have_reply
+    type: bool
+    initial_value: 'false'
+
+espnow:
+  auto_add_peer: true
+  on_receive:
+    - lambda: |-
+        id(have_reply) = false;
+        if (size < 17 || data[0] != 0x01 || data[1] != 1) return;
+        uint8_t n = data[16];
+        if (size < 17 + 2 * n) return;
+        id(rx_total) += 1;
+        char grove = (char) tolower(data[2]);
+        char buf[24];
+        snprintf(buf, sizeof(buf), "snode_%c_%02u", grove, data[3]);
+        id(ev_node) = buf;
+        id(ev_seq) = to_string((unsigned) (data[4] | (data[5] << 8)));
+        id(ev_flags) = to_string((unsigned) data[10]);
+        id(ev_channel) = to_string((unsigned) data[11]);
+        id(ev_battery) = to_string((unsigned) (data[12] | (data[13] << 8)));
+        int16_t st = (int16_t) (data[14] | (data[15] << 8));
+        if (st == 0x7FFF) id(ev_soil) = "na"; else { snprintf(buf, sizeof(buf), "%.2f", st / 100.0f); id(ev_soil) = buf; }
+        std::string raw;
+        for (int i = 0; i < n; i++) {
+          int16_t r = (int16_t) (data[17 + 2 * i] | (data[18 + 2 * i] << 8));
+          if (i) raw += ",";
+          raw += (r == 0x7FFF) ? std::string("na") : to_string((int) r);
+        }
+        id(ev_raw) = raw;
+        id(ev_rssi) = to_string((int) info.rx_ctrl->rssi);
+        // Reply: [0x81, grove, node_num, UTC now (4), next wake UTC (4)]
+        auto now = id(ha_time).now();
+        if (!now.is_valid()) return;     // no time from HA yet: the node keeps its own schedule
+        uint32_t ts = (uint32_t) now.timestamp;
+        uint32_t midnight = ts - (now.hour * 3600 + now.minute * 60 + now.second);
+        uint32_t c[3] = {midnight + ${wake1_h} * 3600u, midnight + ${wake2_h} * 3600u, midnight + 86400u + ${wake1_h} * 3600u};
+        uint32_t next = c[2];
+        for (int i = 0; i < 3; i++) if (c[i] > ts + 120) { next = c[i]; break; }
+        // (a DST change in the next 24 h can shift one wake by 1 h; the next reply corrects it)
+        id(reply) = {0x81, data[2], data[3],
+                     (uint8_t) (ts & 0xFF), (uint8_t) ((ts >> 8) & 0xFF), (uint8_t) ((ts >> 16) & 0xFF), (uint8_t) (ts >> 24),
+                     (uint8_t) (next & 0xFF), (uint8_t) ((next >> 8) & 0xFF), (uint8_t) ((next >> 16) & 0xFF), (uint8_t) (next >> 24)};
+        id(have_reply) = true;
+    - if:
+        condition:
+          lambda: 'return id(have_reply);'
+        then:
+          - espnow.broadcast:
+              data: !lambda 'return id(reply);'
+              continue_on_error: true
+    - homeassistant.event:
+        event: esphome.snode_report
+        data:
+          node: !lambda 'return id(ev_node);'
+          seq: !lambda 'return id(ev_seq);'
+          flags: !lambda 'return id(ev_flags);'
+          channel: !lambda 'return id(ev_channel);'
+          battery_mv: !lambda 'return id(ev_battery);'
+          soil_temp: !lambda 'return id(ev_soil);'
+          raw: !lambda 'return id(ev_raw);'
+          rssi: !lambda 'return id(ev_rssi);'
+
+sensor:
+  - platform: template
+    name: Reports received
+    accuracy_decimals: 0
+    lambda: 'return id(rx_total);'
+    update_interval: 60s
+  - platform: wifi_signal
+    name: Receiver Wi-Fi RSSI
+    update_interval: 60s
+
+text_sensor:
+  - platform: wifi_info
+    mac_address:
+      name: Receiver MAC

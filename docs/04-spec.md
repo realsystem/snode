@@ -52,6 +52,7 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 | D30 | Receiver uplink | One firmware: Wi-Fi with channel follow (default), Ethernet, or fixed channel; examples E1–E7; UNODE optional | Owner: any ISP/router/LAN; owner site has no spare port | S62, S67–S69, S73 |
 | D25b | Probe position | P1: 10 cm from the emitter, on the cable side; K2: cable 20–25 cm off the tree line; lead 40 cm (draft) | Owner choice | S71, S72 |
 | D32 | POC spare boards | NodeMCU: walk test, drift logger, ESP-NOW sender; ESP32-CAM: ESP-NOW receiver | ESP8266 can't measure ESP-NOW RSSI | S75, S76 |
+| D33 | Node design v0.1 | `08-node-design.md`: RTC-gated power with HOLD and watchdog, node-switched power phase, receiver-set schedule, packet v1 | Owner chose this step | S25, S52–S55, S58, S75 |
 | D31 | Channel follow | Node saves the last good channel; on a missed acknowledgement it scans channels 1–11 | Works with routers that change channel | S74 |
 | D29 | RTC in ESPHome | Small external component for the RV-3028 | No built-in platform | S66 |
 | D12 | Enclosure | UV-stabilized polycarbonate, IP68 class, on a wooden stake, box bottom 0.3 m above grade | Owner: wood and plastic are rabbit-safe | S29 |
@@ -78,7 +79,8 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 
 1. Probe lead length final (40 cm draft; drip lateral position at next-visit check).
 2. First compile of the POC firmware on the owner's PC.
-3. Next design step: node schematic + firmware (recommended) — round 21.
+3. Bench POC parts list (needs cited prices) — round 22.
+4. Next design step: probe PCB + PY32 firmware (recommended) or final receiver — round 22.
 3. Probe lead + molded clamp price — POC.
 - HA automation (zones, alerts, delivery): handled in the HA threads; see `06-ha-note.md`.
 5. Bus protocol and electrical design (power phase, timing, drops per run).

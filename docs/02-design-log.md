@@ -494,11 +494,22 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
   - Camera: not needed for SNODE. A between-visit photo (snow on a node box, trailer roof) belongs to the UNODE project.
 - Results from these boards are indicative only. The final node is a XIAO ESP32-C3 with a u.FL antenna.
 
-## Open questions (round 21)
-1. Next design step while the POC firmware gets compiled. Choose one: (a) node schematic + XIAO node firmware with channel follow (recommended: bench Phase 1 needs it first); (b) probe PCB + PY32 bus firmware; (c) receiver firmware for the final product.
-2. ESP32-CAM: is it the AI-Thinker type, and do you have the ESP32-CAM-MB USB adapter (or a USB-serial adapter)?
-3. After the first compile on the PC, report any errors: the three files have not been compiled yet.
+### D33 Node design v0.1 (owner chose this step, round 21)
+- Full design: `docs/08-node-design.md` (block diagram, netlist, pin map, energy per wake, packet format v1, limits).
+- Changes from D22/D23:
+  - **Power phase from a node-switched P-FET (BUS_PWR)**, not from the DS2482 PCTLZ strong pull-up. ESPHome's ds248x docs don't say whether it drives the strong pull-up, so the power phase is kept outside the 1-Wire library. Probes measure during that phase and answer DS18B20 reads with the stored value.
+  - **HOLD line:** the XIAO keeps its own power on (N-FET on the load-switch ON pin), so it can clear the alarm flag and still finish. Watchdog cuts power after 25 s.
+  - **RTC rail at 3.3 V** (TPS7A0233), so the RTC and the I2C pull-ups share a level (variant B).
+  - **Receiver sets the schedule:** its reply carries UTC time and the next wake (05:00/17:00 local, from HA's time zone). Nodes work in UTC, and no time zone is stored in this repo.
+  - **Generic nodes:** the packet carries 20 slots; the slot → tree mapping lives in `config/probes.yaml`.
+- Firmware: `firmware/node/`, `firmware/components/rv3028/`, POC receiver `firmware/receiver/`. Not compiled yet.
+- Energy estimate: about 26 µAh per wake, so about 0.11 mAh/day with margin (inside the 0.24 budget). UNVERIFIED (T2).
 
-Closed in round 20: P1 + K2 (D25); NodeMCU board (`nodemcuv2`); Windows build steps (`firmware/README.md`); spare boards plan (D32, T12).
+## Open questions (round 22)
+1. Bench POC parts: may I write the bench parts list now (XIAO, RV-3028 breakout, 2x DS2482-100 breakouts, about 20 DS18B20 as probe stand-ins, MOSFETs, L91 pack)? This needs cited prices (BOM rule).
+2. Next design step: (b) probe PCB + PY32 bus firmware (recommended next: it is the largest unknown), or (c) the final receiver?
+3. ESP32-CAM type and USB adapter: still open from round 21.
+
+Closed in round 21: next step = node design (D33).
 
 HA side: see `docs/06-ha-note.md`. Spec: `docs/04-spec.md`. POC: `docs/05-poc-plan.md`.

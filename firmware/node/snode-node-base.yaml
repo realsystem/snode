@@ -1,0 +1,495 @@
+# SNODE node firmware v0.1 (ESPHome), shared by every node. Design: docs/08-node-design.md
+# Board: Seeed XIAO ESP32C3. Power is switched by the RV-3028 RTC alarm; the node is unpowered between reports.
+# Each node file sets the substitutions below and includes this file (see snode_f_01.yaml).
+#   node_name, grove_code (F/B/S), node_num, receiver_mac, addr_soil, addr_a01..addr_a10, addr_b01..addr_b10
+# Status: written without compiling. UNVERIFIED until the first compile and bench tests T2/T3/T4.
+
+esphome:
+  name: ${node_name}
+  on_boot:
+    - priority: -100
+      then:
+        - script.execute: main_cycle
+
+esp32:
+  board: seeed_xiao_esp32c3
+  framework:
+    type: esp-idf
+
+logger:
+  level: INFO          # USB serial; visible only when a laptop is connected
+
+external_components:
+  - source:
+      type: local
+      path: ../components
+    components: [rv3028]
+
+i2c:
+  sda: GPIO6           # XIAO D4
+  scl: GPIO7           # XIAO D5
+  frequency: 100kHz
+  scan: false
+
+time:
+  - platform: rv3028   # 0x52
+    id: rtc
+    timezone: UTC      # node works in UTC; the receiver turns local report times into UTC
+    update_interval: never
+
+ds248x:
+  - id: hub_a
+    type: ds2482-100
+    address: 0x18      # AD0 = 0, AD1 = 0: row A bus
+  - id: hub_b
+    type: ds2482-100
+    address: 0x19      # AD0 = 1, AD1 = 0: row B bus
+
+one_wire:
+  - platform: ds248x
+    ds248x_id: hub_a
+    id: bus_a
+  - platform: ds248x
+    ds248x_id: hub_b
+    id: bus_b
+
+switch:
+  - platform: gpio     # HOLD: keeps the load switch on after the alarm flag is cleared
+    id: hold
+    pin: GPIO4         # XIAO D2 -> N-MOSFET gate, pulls the TPS22917L ON pin low
+    restore_mode: ALWAYS_ON
+    internal: true
+
+output:
+  - platform: gpio     # BUS_PWR: power phase for the probes (P-MOSFET, on when low)
+    id: bus_pwr
+    pin:
+      number: GPIO5    # XIAO D3
+      inverted: true
+
+deep_sleep:            # fallback only: used if power was not cut after HOLD was released
+  id: ds_fallback
+  sleep_duration: 1h
+
+espnow:
+  id: en
+  auto_add_peer: false
+  peers:
+    - ${receiver_mac}
+  on_broadcast:
+    - lambda: |-
+        // Receiver reply (packet format v1, docs/08-node-design.md):
+        // [0]=0x81 [1]=grove [2]=node_num [3..6]=UTC now [7..10]=next wake (UTC)
+        if (size < 11 || data[0] != 0x81) return;
+        if (data[1] != '${grove_code}' || data[2] != ${node_num}) return;
+        id(reply_now) = (uint32_t) data[3] | ((uint32_t) data[4] << 8) | ((uint32_t) data[5] << 16) | ((uint32_t) data[6] << 24);
+        id(reply_next) = (uint32_t) data[7] | ((uint32_t) data[8] << 8) | ((uint32_t) data[9] << 16) | ((uint32_t) data[10] << 24);
+        id(reply_ms) = millis();
+        id(reply_ok) = true;
+
+globals:
+  - id: seq
+    type: uint16_t
+    restore_value: true
+    initial_value: '0'
+  - id: cur_ch            # last channel that worked (channel follow, D31)
+    type: uint8_t
+    restore_value: true
+    initial_value: '1'
+  - id: last_next         # last scheduled wake (UTC epoch)
+    type: uint32_t
+    restore_value: true
+    initial_value: '0'
+  - id: backlog           # up to 4 unsent packets x 64 bytes
+    type: std::array<uint8_t, 256>
+    restore_value: true
+    initial_value: '{}'
+  - id: backlog_n
+    type: uint8_t
+    restore_value: true
+    initial_value: '0'
+  - id: pkt
+    type: std::array<uint8_t, 64>
+    initial_value: '{}'
+  - id: pkt_len
+    type: uint8_t
+    initial_value: '0'
+  - id: wake_reason       # 0 = power-on, 1 = RTC alarm, 2 = button
+    type: uint8_t
+    initial_value: '0'
+  - id: send_ok
+    type: bool
+    initial_value: 'false'
+  - id: attempt
+    type: uint8_t
+    initial_value: '0'
+  - id: try_ch
+    type: uint8_t
+    initial_value: '1'
+  - id: reply_ok
+    type: bool
+    initial_value: 'false'
+  - id: reply_now
+    type: uint32_t
+    initial_value: '0'
+  - id: reply_next
+    type: uint32_t
+    initial_value: '0'
+  - id: reply_ms
+    type: uint32_t
+    initial_value: '0'
+  - id: bl_fail
+    type: uint8_t
+    initial_value: '0'
+
+sensor:
+  - platform: adc        # pack voltage on the switched rail: 100k / 68k divider (no drain when off)
+    id: vbat
+    pin: GPIO3           # XIAO D1 (A1), ADC1
+    attenuation: 12db
+    filters:
+      - multiply: 2.4706 # (100k + 68k) / 68k
+    update_interval: never
+  - platform: dallas_temp  # node DS18B20 at probe depth (frozen flag, temperature correction)
+    id: soil_t
+    one_wire_id: bus_a
+    address: ${addr_soil}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_a01
+    one_wire_id: bus_a
+    address: ${addr_a01}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_a02
+    one_wire_id: bus_a
+    address: ${addr_a02}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_a03
+    one_wire_id: bus_a
+    address: ${addr_a03}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_a04
+    one_wire_id: bus_a
+    address: ${addr_a04}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_a05
+    one_wire_id: bus_a
+    address: ${addr_a05}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_a06
+    one_wire_id: bus_a
+    address: ${addr_a06}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_a07
+    one_wire_id: bus_a
+    address: ${addr_a07}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_a08
+    one_wire_id: bus_a
+    address: ${addr_a08}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_a09
+    one_wire_id: bus_a
+    address: ${addr_a09}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_a10
+    one_wire_id: bus_a
+    address: ${addr_a10}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_b01
+    one_wire_id: bus_b
+    address: ${addr_b01}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_b02
+    one_wire_id: bus_b
+    address: ${addr_b02}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_b03
+    one_wire_id: bus_b
+    address: ${addr_b03}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_b04
+    one_wire_id: bus_b
+    address: ${addr_b04}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_b05
+    one_wire_id: bus_b
+    address: ${addr_b05}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_b06
+    one_wire_id: bus_b
+    address: ${addr_b06}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_b07
+    one_wire_id: bus_b
+    address: ${addr_b07}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_b08
+    one_wire_id: bus_b
+    address: ${addr_b08}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_b09
+    one_wire_id: bus_b
+    address: ${addr_b09}
+    resolution: 12
+    update_interval: never
+  - platform: dallas_temp
+    id: p_b10
+    one_wire_id: bus_b
+    address: ${addr_b10}
+    resolution: 12
+    update_interval: never
+
+script:
+  - id: main_cycle
+    mode: single
+    then:
+      - lambda: |-
+          if (id(rtc).alarm_fired_at_boot()) id(wake_reason) = 1;
+          else if (id(rtc).power_on_reset_at_boot()) id(wake_reason) = 0;
+          else id(wake_reason) = 2;   // no alarm, no reset: the button woke the node
+          if (id(cur_ch) < 1 || id(cur_ch) > 11) id(cur_ch) = 1;
+          id(en).set_channel_from_action(id(cur_ch));   // works because Wi-Fi is not used
+          ESP_LOGI("snode", "wake reason %u, channel %u, backlog %u", id(wake_reason), id(cur_ch), id(backlog_n));
+      - script.execute: watchdog
+      - script.execute: measure
+      - script.wait: measure
+      - script.execute: build_packet
+      - script.execute: send_follow
+      - script.wait: send_follow
+      - if:
+          condition:
+            lambda: 'return id(send_ok);'
+          then:
+            - wait_until:
+                condition:
+                  lambda: 'return id(reply_ok);'
+                timeout: 300ms
+            - script.execute: send_backlog
+            - script.wait: send_backlog
+          else:
+            - script.execute: store_backlog
+      - if:                       # install mode after a button wake: a report every 10 s for 2 min
+          condition:
+            lambda: 'return id(wake_reason) == 2;'
+          then:
+            - repeat:
+                count: 12
+                then:
+                  - delay: 10s
+                  - script.execute: measure
+                  - script.wait: measure
+                  - script.execute: build_packet
+                  - script.execute: send_follow
+                  - script.wait: send_follow
+      - script.execute: shutdown
+
+  - id: watchdog                # never stay awake longer than this
+    mode: single
+    then:
+      - delay: !lambda 'return id(wake_reason) == 2 ? 180000 : 25000;'
+      - logger.log: "watchdog: forcing shutdown"
+      - script.stop: main_cycle
+      - script.execute: shutdown
+
+  - id: measure
+    mode: single
+    then:
+      - output.turn_on: bus_pwr     # power phase: probes wake, measure and store (D22)
+      - delay: 300ms
+      - output.turn_off: bus_pwr
+      - component.update: soil_t
+      - component.update: p_a01
+      - component.update: p_a02
+      - component.update: p_a03
+      - component.update: p_a04
+      - component.update: p_a05
+      - component.update: p_a06
+      - component.update: p_a07
+      - component.update: p_a08
+      - component.update: p_a09
+      - component.update: p_a10
+      - component.update: p_b01
+      - component.update: p_b02
+      - component.update: p_b03
+      - component.update: p_b04
+      - component.update: p_b05
+      - component.update: p_b06
+      - component.update: p_b07
+      - component.update: p_b08
+      - component.update: p_b09
+      - component.update: p_b10
+      - component.update: vbat
+      - delay: 1200ms              # DS18B20 12-bit conversion is up to 750 ms
+
+  - id: build_packet
+    mode: single
+    then:
+      - lambda: |-
+          // Report packet v1, little-endian (docs/08-node-design.md):
+          // 0 type 0x01 | 1 version | 2 grove | 3 node_num | 4-5 seq | 6-9 RTC UTC (0 = invalid)
+          // 10 flags (b0 time invalid, b1 backlog, b2 install mode) | 11 channel | 12-13 battery mV
+          // 14-15 soil temp x100 (0x7FFF = missing) | 16 probe count | 17.. raw int16 per slot (0x7FFF = missing)
+          auto &p = id(pkt);
+          p.fill(0);
+          p[0] = 0x01; p[1] = 1; p[2] = '${grove_code}'; p[3] = ${node_num};
+          uint16_t s = ++id(seq);
+          p[4] = s & 0xFF; p[5] = s >> 8;
+          bool tv = id(rtc).time_valid();
+          uint32_t t = tv ? id(rtc).read_epoch() : 0;
+          for (int i = 0; i < 4; i++) p[6 + i] = (t >> (8 * i)) & 0xFF;
+          uint8_t flags = 0;
+          if (!tv) flags |= 0x01;
+          if (id(wake_reason) == 2) flags |= 0x04;
+          p[10] = flags;
+          p[11] = id(cur_ch);
+          float v = id(vbat).state;
+          uint16_t mv = std::isnan(v) ? 0 : (uint16_t) lroundf(v * 1000.0f);
+          p[12] = mv & 0xFF; p[13] = mv >> 8;
+          float st = id(soil_t).state;
+          int16_t sti = std::isnan(st) ? 0x7FFF : (int16_t) lroundf(st * 100.0f);
+          p[14] = sti & 0xFF; p[15] = (sti >> 8) & 0xFF;
+          sensor::Sensor *list[20] = {&id(p_a01), &id(p_a02), &id(p_a03), &id(p_a04), &id(p_a05), &id(p_a06), &id(p_a07), &id(p_a08), &id(p_a09), &id(p_a10), &id(p_b01), &id(p_b02), &id(p_b03), &id(p_b04), &id(p_b05), &id(p_b06), &id(p_b07), &id(p_b08), &id(p_b09), &id(p_b10)};
+          p[16] = 20;
+          for (int i = 0; i < 20; i++) {
+            float x = list[i]->state;
+            // probes put the raw count in the DS18B20 register (1/16 steps): undo the scaling
+            int16_t r = std::isnan(x) ? 0x7FFF : (int16_t) lroundf(x * 16.0f);
+            p[17 + 2 * i] = r & 0xFF; p[18 + 2 * i] = (r >> 8) & 0xFF;
+          }
+          id(pkt_len) = 17 + 40;
+
+  - id: send_follow             # 3 tries on the saved channel, then channels 1..11 once each (D31)
+    mode: single
+    then:
+      - lambda: 'id(send_ok) = false; id(attempt) = 0;'
+      - while:
+          condition:
+            lambda: 'return !id(send_ok) && id(attempt) < 13;'
+          then:
+            - lambda: |-
+                uint8_t ch;
+                if (id(attempt) < 3) {
+                  ch = id(cur_ch);
+                } else {
+                  ch = id(attempt) - 2;          // 1..10
+                  if (ch >= id(cur_ch)) ch++;    // skip the saved channel: 1..11
+                }
+                id(try_ch) = ch;
+                id(en).set_channel_from_action(ch);
+                id(pkt)[11] = ch;
+            - espnow.send:
+                address: ${receiver_mac}
+                data: !lambda 'return std::vector<uint8_t>(id(pkt).begin(), id(pkt).begin() + id(pkt_len));'
+                wait_for_sent: true
+                continue_on_error: true
+                on_sent:
+                  - lambda: 'id(send_ok) = true;'
+            - lambda: 'id(attempt) += 1;'
+      - lambda: |-
+          if (id(send_ok) && id(try_ch) != id(cur_ch)) {
+            ESP_LOGI("snode", "channel follow: %u -> %u", id(cur_ch), id(try_ch));
+            id(cur_ch) = id(try_ch);
+          }
+          if (!id(send_ok)) ESP_LOGW("snode", "no acknowledgement on any channel");
+
+  - id: send_backlog            # resend stored packets on the working channel, newest last
+    mode: single
+    then:
+      - lambda: 'id(bl_fail) = 0;'
+      - while:
+          condition:
+            lambda: 'return id(backlog_n) > 0 && id(bl_fail) < 3;'
+          then:
+            - lambda: |-
+                uint8_t i = id(backlog_n) - 1;
+                std::copy(id(backlog).begin() + 64 * i, id(backlog).begin() + 64 * (i + 1), id(pkt).begin());
+                id(pkt)[10] |= 0x02;  // backlog flag
+                id(pkt_len) = 57;
+                id(send_ok) = false;
+            - espnow.send:
+                address: ${receiver_mac}
+                data: !lambda 'return std::vector<uint8_t>(id(pkt).begin(), id(pkt).begin() + id(pkt_len));'
+                wait_for_sent: true
+                continue_on_error: true
+                on_sent:
+                  - lambda: 'id(send_ok) = true;'
+            - lambda: |-
+                if (id(send_ok)) id(backlog_n) -= 1; else id(bl_fail) += 1;
+
+  - id: store_backlog           # keep the newest 4 unsent packets
+    mode: single
+    then:
+      - lambda: |-
+          auto &b = id(backlog);
+          if (id(backlog_n) >= 4) {
+            std::copy(b.begin() + 64, b.end(), b.begin());   // drop the oldest
+            id(backlog_n) = 3;
+          }
+          std::copy(id(pkt).begin(), id(pkt).end(), b.begin() + 64 * id(backlog_n));
+          id(backlog_n) += 1;
+          ESP_LOGW("snode", "stored for resend (%u waiting)", id(backlog_n));
+
+  - id: shutdown
+    mode: single
+    then:
+      - lambda: |-
+          uint32_t now = id(rtc).read_epoch();
+          uint32_t next;
+          if (id(reply_ok)) {
+            uint32_t ref = id(reply_now) + (millis() - id(reply_ms)) / 1000;
+            if (!id(rtc).time_valid() || (now > ref ? now - ref : ref - now) > 2) id(rtc).write_epoch(ref);
+            now = ref;
+            next = id(reply_next);
+          } else if (!id(rtc).time_valid()) {
+            next = now + 3600;                        // no time yet: try again in 1 h
+          } else {
+            next = id(last_next);                     // keep the 12 h rhythm
+            if (next == 0 || next > now + 13 * 3600) next = now + 12 * 3600;
+            while (next < now + 120) next += 12 * 3600;
+          }
+          if (next < now + 120 || next > now + 13 * 3600) next = now + 12 * 3600;
+          id(last_next) = next;
+          id(rtc).set_alarm_epoch(next);             // also clears the alarm flag (INT released)
+          global_preferences->sync();                // save seq, channel, backlog before power is cut
+      - switch.turn_off: hold                        # power is cut here
+      - delay: 3s
+      - logger.log: "power still on: fallback deep sleep"
+      - deep_sleep.enter: ds_fallback

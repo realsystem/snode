@@ -21,3 +21,8 @@ SNODE hardware delivers data; the HA farm-automation threads own the logic. This
 
 ## Accuracy
 - Target ±5% after site calibration, judged mainly on trends (owner accepted).
+
+## Data from the receiver (node design v0.1, `08-node-design.md`)
+- The receiver sends one HA event per report: `esphome.snode_report` with `node` (e.g. `snode_f_01`), `seq`, `flags`, `channel`, `battery_mv`, `soil_temp` (°C or `na`), `raw` (20 comma-separated raw counts, slot order A01–A10, B01–B10, `na` = missing), `rssi`.
+- HA side (for the HA threads): map slots to tree IDs with `config/probes.yaml`, convert raw to % with `config/calibration.yaml`, and create the entities named in CLAUDE.md section 3.
+- Missing `seq` numbers mean lost reports. `flags` bit 1 = a late (resent) report; bit 2 = install mode.

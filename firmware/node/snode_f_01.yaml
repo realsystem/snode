@@ -1,0 +1,33 @@
+# SNODE node snode_f_01 (front grove, node 1). Per-node settings only; logic is in snode-node-base.yaml.
+# Probe addresses: from the receiver's install-mode report or a USB boot log. Slot -> tree ID mapping: config/probes.yaml.
+# Placeholder addresses read as "missing" (0x7FFF) until replaced.
+
+substitutions:
+  node_name: snode-f-01
+  grove_code: F
+  node_num: "1"
+  receiver_mac: "AA:BB:CC:DD:EE:FF"     # receiver Wi-Fi MAC
+  addr_soil: '0x0000000000000028'       # TODO: node DS18B20
+  addr_a01: '0x0000000000000028'   # TODO: probe at slot A01
+  addr_a02: '0x0000000000000028'   # TODO: probe at slot A02
+  addr_a03: '0x0000000000000028'   # TODO: probe at slot A03
+  addr_a04: '0x0000000000000028'   # TODO: probe at slot A04
+  addr_a05: '0x0000000000000028'   # TODO: probe at slot A05
+  addr_a06: '0x0000000000000028'   # TODO: probe at slot A06
+  addr_a07: '0x0000000000000028'   # TODO: probe at slot A07
+  addr_a08: '0x0000000000000028'   # TODO: probe at slot A08
+  addr_a09: '0x0000000000000028'   # TODO: probe at slot A09
+  addr_a10: '0x0000000000000028'   # TODO: probe at slot A10
+  addr_b01: '0x0000000000000028'   # TODO: probe at slot B01
+  addr_b02: '0x0000000000000028'   # TODO: probe at slot B02
+  addr_b03: '0x0000000000000028'   # TODO: probe at slot B03
+  addr_b04: '0x0000000000000028'   # TODO: probe at slot B04
+  addr_b05: '0x0000000000000028'   # TODO: probe at slot B05
+  addr_b06: '0x0000000000000028'   # TODO: probe at slot B06
+  addr_b07: '0x0000000000000028'   # TODO: probe at slot B07
+  addr_b08: '0x0000000000000028'   # TODO: probe at slot B08
+  addr_b09: '0x0000000000000028'   # TODO: probe at slot B09
+  addr_b10: '0x0000000000000028'   # TODO: probe at slot B10
+
+packages:
+  base: !include snode-node-base.yaml

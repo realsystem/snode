@@ -55,3 +55,17 @@ When a board is on the farm Wi-Fi: HA > Settings > Devices & services > ESPHome 
 
 ## T1: drift logger
 Walk-test firmware, continuous mode, old moisture sensor on A0 (NodeMCU A0 range 0–3.3 V), in a pot of site soil at constant moisture for 1 week.
+
+## Node firmware (`node/`) and POC receiver (`receiver/`)
+| File | Board | Purpose |
+|---|---|---|
+| `node/snode-node-base.yaml` | XIAO ESP32C3 | Shared node logic (docs/08-node-design.md) |
+| `node/snode_f_01.yaml` | XIAO ESP32C3 | Example node: name, grove, number, receiver MAC, probe addresses |
+| `components/rv3028/` | — | ESPHome external component for the RV-3028-C7 RTC (time, alarm) |
+| `receiver/snode-receiver-poc.yaml` | ESP32-CAM or XIAO | Receives reports, replies with time and next wake, sends HA events |
+
+Build: `esphome run node/snode_f_01.yaml --device COMx` and `esphome run receiver/snode-receiver-poc.yaml --device COMx`.
+Bench first (T2–T4): use plain DS18B20 sensors as probe stand-ins; read their addresses from the USB boot log
+(`esphome logs node/snode_f_01.yaml --device COMx`) and paste them into the node file.
+Not compiled yet. Lines most likely to need fixes on the first compile: `set_channel_from_action`, `wait_for_sent`,
+the `std::array` globals, and the RV-3028 component (ESPHome API names). Log any changes in `docs/01-interview-log.md`.

@@ -328,8 +328,22 @@ Answers:
 
 Result: P1 + K2 decided (probe 10 cm from the emitter on the cable side; lead 40 cm draft). Walk test set to `nodemcuv2`. Windows steps in `firmware/README.md`. Optional T12 ESP-NOW range test: NodeMCU sender + ESP32-CAM receiver (D32). Drip lateral position still open (next-visit check).
 
-## Round 21 — open (asked 2026-11-24)
+## Round 21 — 2026-11-24
 
+Questions:
 1. Next design step: (a) node schematic + firmware, (b) probe PCB + bus firmware, (c) receiver firmware?
 2. ESP32-CAM type and USB adapter?
 3. First-compile results.
+
+Answers:
+1. "a"
+2. "not sure, will check later"
+3. "ok"
+
+Result: node design v0.1 (`docs/08-node-design.md`, D33); node firmware, RV-3028 component and POC receiver in `firmware/`. Not compiled yet.
+
+## Round 22 — open (asked 2026-11-24)
+
+1. Write the bench POC parts list now (with cited prices)?
+2. Next design step: probe PCB + PY32 firmware, or final receiver?
+3. ESP32-CAM type and USB adapter (from round 21).

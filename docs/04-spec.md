@@ -74,7 +74,7 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 ## 4. Open items
 
 1. Probe lead length (needs emitter offset and cable side) — round 19.
-2. Starlink router generation and a free LAN port — Dec 11 site check.
+2. Starlink router generation and a free LAN port — next-visit site check.
 3. Probe lead + molded clamp price — POC.
 - HA automation (zones, alerts, delivery): handled in the HA threads; see `06-ha-note.md`.
 5. Bus protocol and electrical design (power phase, timing, drops per run).
@@ -102,7 +102,7 @@ Full plan with pass/fail criteria: `05-poc-plan.md`.
 | T8 | WH51 side-by-side | Trend agreement |
 | T9 | Field walk test from the farthest corner, direct Wi-Fi (N1) and ESP-NOW (N2) | Which radio path; RSSI margin at 0.3 m node antenna |
 | T10 | Field cluster run, at least 3 weeks | Delivery rate, alerts, battery trend |
-| T11 | Site survey (Dec 11): soil sample, trench test, early Wi-Fi RSSI, router check | Inputs for T1, T6, T9 and D30 |
+| T11 | Site survey (next visit): soil sample, trench test, early Wi-Fi RSSI, router check | Inputs for T1, T6, T9 and D30 |
 
 ## 6. BOM (cited parts only, prices seen 2026-11-24)
 

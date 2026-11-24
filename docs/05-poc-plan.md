@@ -4,7 +4,7 @@ Goal: prove every UNVERIFIED design assumption on one prototype before building 
 Order: bench first (no site visit needed), then one field cluster at the site.
 All thresholds are PROPOSED until the owner accepts them.
 
-## Phase S — site survey (Dec 11 visit)
+## Phase S — site survey (next visit)
 - T11: see `docs/07-poc-tests.md`.
 
 ## Phase 0 — sensor baseline (parts on hand)

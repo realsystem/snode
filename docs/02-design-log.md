@@ -462,15 +462,15 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 | **E4: from scratch, dedicated farm access point** | New installs; poor field coverage | Any router in access-point mode, wired to the main router, with a fixed 2.4 GHz channel, mounted high at the trailer. It also serves direct-Wi-Fi nodes (N1). Receiver as in E2. | New AP |
 | **E5: solar receiver away from the trailer (no cable)** | Large sites | Outdoor box, LiFePO4 18650 with a 0 °C charge cut-off (D27), Wi-Fi uplink, so E2 or E4 is needed. | Fix the channel |
 | **E6: UNODE as the receiver (optional)** | Sites that already have a UNODE near the trailer | The UNODE runs the receiver function as an extra feature; SNODE never depends on it. | As for its uplink |
-- This site: the Starlink router is inside, in the middle of the fiberglass trailer, so E1 is the plan. Indoor first; move to a roof box with PoE only if T9 needs the extra range. Manual channel selection on the Starlink router: not found in Starlink docs (UNVERIFIED; check in the app on Dec 11).
+- This site: the Starlink router is inside, in the middle of the fiberglass trailer, so E1 is the plan. Indoor first; move to a roof box with PoE only if T9 needs the extra range. Manual channel selection on the Starlink router: not found in Starlink docs (UNVERIFIED; check in the app on the next visit).
 
 ### Notes
 - The trailer is fiberglass, which passes 2.4 GHz with little loss (UNVERIFIED; check in the walk test). The receiver ESP32 can stay inside, with a short coax to the roof antenna.
 
 ## Open questions (round 19)
 1. Emitter-to-probe offset (cm), and which side of the row the main cable runs (emitter side or the other side)? This sets the probe lead length (draft 30 cm).
-2. Starlink router generation, and is a LAN port free? (Check on Dec 11: photo of the router's back.)
-3. Should I write the ESPHome walk-test firmware for your ESP8266 before Dec 11 (reports RSSI and connect time to HA)?
+2. Starlink router generation, and is a LAN port free? (Check on the next visit: photo of the router's back.)
+3. Should I write the ESPHome walk-test firmware for your ESP8266 before the next visit (reports RSSI and connect time to HA)?
 
 Closed in round 18: probe join = option C (D25); test direct Wi-Fi first (T9); router location (inside, middle of the trailer); network setups (D30); UNODE as receiver = optional (D30 E6).
 

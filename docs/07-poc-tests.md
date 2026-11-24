@@ -3,7 +3,7 @@
 Full plan with setups and reasoning: `05-poc-plan.md`. This page is what to do, what to record, and what counts as a pass.
 Record results in `01-interview-log.md` (dated) and update `02-design-log.md`.
 
-## Site visit — Dec 11 (T11, parts on hand)
+## Next site visit (T11, parts on hand)
 
 | # | Do | Record | Why |
 |---|---|---|---|

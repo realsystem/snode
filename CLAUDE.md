@@ -22,6 +22,7 @@ is the only reliable memory.
 
 - Location: not recorded in this repo (owner's request). Cold desert. Soil freezes in winter.
 - Never write the site's town, state or coordinates in any file or commit in this repo.
+- Never write visit dates or schedules (when someone will or won't be on site) in any file or commit in this repo. Say "next visit" instead.
 - Visits about every 3 weeks. Nobody on site otherwise.
 - Home Assistant (HA) on a Raspberry Pi 5 in the trailer. Starlink internet,
   Wi-Fi in the trailer. Victron devices report to HA over Bluetooth.
@@ -127,7 +128,7 @@ All calibration values (dry/wet raw counts per probe) live in one file:
 | `docs/03-research-notes.md` | Findings with source links |
 | `docs/04-spec.md` | Spec-ready summary: requirements, decisions, open items, tests, BOM |
 | `docs/05-poc-plan.md` | POC phases, pass/fail criteria |
-| `docs/07-poc-tests.md` | Short POC checklist per visit, incl. the Dec 11 site survey |
+| `docs/07-poc-tests.md` | Short POC checklist per visit, incl. the next-visit site survey |
 | `docs/06-ha-note.md` | Hand-off note for the separate HA automation threads |
 | `config/calibration.yaml` | Per-probe calibration values (empty until POC) |
 | UNODE | Separate project. Link here when available. |

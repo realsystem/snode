@@ -292,14 +292,14 @@ Questions:
 
 Answers:
 1. "can we just put main cable flat 6 in deep and the probe should has its own short cable to connect to the main one? simple operation with the same clamp under ground."
-2. "yes, prepare POC tests in a separate small doc and schedule task for me on dec 11"
+2. "yes, prepare POC tests in a separate small doc and schedule task for me on [visit date removed]"
 3. "inside, in the middle of the trailer. but we need to support any type of user choice. provide few examples how to do it from scratch and reuse currently installed one."
 4. "optional"
 
-Result: option C (probe lead + clamp) adopted (D25). POC checklist written (`07-poc-tests.md`), with a site survey (T11) for Dec 11; scheduled task set for Dec 11. Network setups E1–E6 (D30); Ethernet receiver is the default. UNODE as receiver: optional.
+Result: option C (probe lead + clamp) adopted (D25). POC checklist written (`07-poc-tests.md`), with a site survey (T11) for the next visit; a reminder was scheduled outside the repo. Network setups E1–E6 (D30); Ethernet receiver is the default. UNODE as receiver: optional.
 
 ## Round 19 — open (asked 2026-11-24)
 
 1. Emitter-to-probe offset (cm), and which side of the row the cable runs?
-2. Starlink router generation, and a free LAN port? (Dec 11 check)
-3. Write ESP8266 walk-test firmware before Dec 11?
+2. Starlink router generation, and a free LAN port? (next-visit check)
+3. Write ESP8266 walk-test firmware before the next visit?

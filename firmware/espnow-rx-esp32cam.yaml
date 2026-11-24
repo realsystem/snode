@@ -1,0 +1,80 @@
+# SNODE POC T12 (optional): ESP-NOW range test, receiver (ESP32-CAM, AI-Thinker type)
+# Joins the farm Wi-Fi (so its ESP-NOW channel = the router's channel, like a real receiver, D30 E1)
+# and reports every packet from the field sender to HA: counter, RSSI, sender channel.
+# Packet loss = 1 − received ÷ (last counter − first counter + 1).
+# Camera is not used. Power: 5 V USB supply (ESP32-CAM-MB adapter or 5 V pin).
+# Status: written without compiling. UNVERIFIED until the first compile.
+
+substitutions:
+  name: snode-espnow-rx
+  friendly: SNODE ESP-NOW receiver (POC)
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly}
+
+esp32:
+  board: esp32cam
+
+logger:
+  level: INFO
+
+api:
+  encryption:
+    key: !secret espnow_rx_api_key
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  power_save_mode: none      # stay listening; a real USB receiver does the same
+
+espnow:
+  auto_add_peer: true
+  on_receive:
+    - lambda: |-
+        if (size < 5) return;
+        uint32_t c = (uint32_t) data[0] | ((uint32_t) data[1] << 8) |
+                     ((uint32_t) data[2] << 16) | ((uint32_t) data[3] << 24);
+        id(rx_total) += 1;
+        id(rx_last).publish_state(c);
+        id(rx_count).publish_state(id(rx_total));
+        id(rx_rssi).publish_state(info.rx_ctrl->rssi);
+        id(tx_channel).publish_state(data[4]);
+
+globals:
+  - id: rx_total
+    type: uint32_t
+    initial_value: '0'
+
+sensor:
+  - platform: template
+    id: rx_last
+    name: Sender counter
+    accuracy_decimals: 0
+  - platform: template
+    id: rx_count
+    name: Packets received
+    accuracy_decimals: 0
+  - platform: template
+    id: rx_rssi
+    name: Sender RSSI
+    unit_of_measurement: dBm
+    accuracy_decimals: 0
+  - platform: template
+    id: tx_channel
+    name: Sender channel
+    accuracy_decimals: 0
+  - platform: wifi_signal
+    name: Receiver Wi-Fi RSSI
+    update_interval: 60s
+
+text_sensor:
+  - platform: wifi_info
+    mac_address:
+      name: Receiver MAC
+    bssid:
+      name: Receiver BSSID

@@ -386,7 +386,8 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
     - A failed probe can be replaced without touching the main cable: dig at the clamp, pull it off, fit a new probe.
   - Cost: about 40 cm of 2-core lead per probe (600 x 0.4 m = 240 m) plus fitting the clamp at the factory. Price at POC (no cited price yet). The main cable stays at 5 spools.
   - Risks (UNVERIFIED, POC): the clamp is underground and sealed in gel or potting compound, so test T5 soaks it in wet soil. The lead runs near the sensing zone, so it must leave the head away from the blade face; any fixed offset it adds is removed by calibration (T6).
-- **Probe position and cable side (draft, owner to decide in round 20):**
+- **Probe position and cable side — decided (owner, round 20): P1 + K2.** On this site the emitter sits almost at the trunk, so the probe goes 10 cm from the emitter on the cable side (perpendicular to the row). Lead 40 cm (draft until the site check of the drip lateral).
+- Background for that decision:
   - Guidance found: drip-irrigated trees: sensor at the canopy drip line, 12–18 in from an emitter (Monnit; established trees). Vineyard extension: too far from the emitter misses the wetting pattern and leads to over-watering; too close reads wetter than the root zone. There is no single number for young trees (S71, S72).
   - New trees: roots are still in the planting hole, and the wetted bulb under one emitter is small, so the probe should sit inside both.
   - Offset options:
@@ -486,12 +487,18 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 ### Notes
 - The trailer is fiberglass, which passes 2.4 GHz with little loss (UNVERIFIED; check in the walk test). The receiver ESP32 can stay inside, with a short coax to the roof antenna.
 
-## Open questions (round 20)
-1. Probe position: P1 (10 cm from the emitter, toward the trunk, recommended) or P2 (20–30 cm)? Where is the emitter now: distance from the trunk, and is the drip lateral on the surface along the tree line?
-2. Cable side: K2 (main cable 20–25 cm off the tree line, away from the emitters, recommended) or K1 (on the tree line)?
-3. ESP8266 board type (D1 mini, NodeMCU, bare module)? It sets the `board` value and the A0 voltage range.
-4. Do you have a second ESP8266/ESP32 for an ESP-NOW range test (needs two boards)?
+### D32 Spare boards in the POC (owner has several ESP8266 and ESP32-CAM)
+- NodeMCU (ESP8266): walk test and drift logger (T11, T1); ESP-NOW field sender (T12). ESPHome supports ESP-NOW on the ESP8266, but reports received RSSI as 0 there (S75), so it can't be the measuring receiver.
+- ESP32-CAM (ESP32): ESP-NOW receiver on the farm Wi-Fi for T12 (measures RSSI). Optional:
+  - External-antenna test. The board has a PCB antenna and a u.FL socket, selected by a 0 Ω jumper (S76). Moving the jumper is a small solder job, so it's the owner's choice. It would show how much a u.FL antenna inside the box adds, which is closer to the final node.
+  - Camera: not needed for SNODE. A between-visit photo (snow on a node box, trailer roof) belongs to the UNODE project.
+- Results from these boards are indicative only. The final node is a XIAO ESP32-C3 with a u.FL antenna.
 
-Closed in round 19: owner network = Starlink Mini, Wi-Fi only, so E1 with channel follow (D30/D31); walk-test firmware written (`firmware/`).
+## Open questions (round 21)
+1. Next design step while the POC firmware gets compiled. Choose one: (a) node schematic + XIAO node firmware with channel follow (recommended: bench Phase 1 needs it first); (b) probe PCB + PY32 bus firmware; (c) receiver firmware for the final product.
+2. ESP32-CAM: is it the AI-Thinker type, and do you have the ESP32-CAM-MB USB adapter (or a USB-serial adapter)?
+3. After the first compile on the PC, report any errors: the three files have not been compiled yet.
+
+Closed in round 20: P1 + K2 (D25); NodeMCU board (`nodemcuv2`); Windows build steps (`firmware/README.md`); spare boards plan (D32, T12).
 
 HA side: see `docs/06-ha-note.md`. Spec: `docs/04-spec.md`. POC: `docs/05-poc-plan.md`.

@@ -312,9 +312,24 @@ Answers:
 
 Result: probe position options P1/P2 and cable side K1/K2 (D25, draft lead 40 cm). E1 is now a Wi-Fi receiver with channel follow (D30, D31). Firmware `firmware/esp8266-walktest.yaml` written (not yet compiled).
 
-## Round 20 — open (asked 2026-11-24)
+## Round 20 — 2026-11-24
 
+Questions:
 1. Probe position P1 or P2; current emitter distance from trunk; drip lateral on surface?
 2. Cable side K2 or K1?
 3. ESP8266 board type?
 4. Second board for an ESP-NOW range test?
+
+Answers:
+1. "P1. emitter is almost near the trunk"
+2. "K2"
+3. "nodemcu. I havae setup local windows pc with claude in terminal to compile and upload. just prepare steps and code."
+4. "yes, I have few esp8266 and few esp-cam if they can also be used for something, research this as optional."
+
+Result: P1 + K2 decided (probe 10 cm from the emitter on the cable side; lead 40 cm draft). Walk test set to `nodemcuv2`. Windows steps in `firmware/README.md`. Optional T12 ESP-NOW range test: NodeMCU sender + ESP32-CAM receiver (D32). Drip lateral position still open (next-visit check).
+
+## Round 21 — open (asked 2026-11-24)
+
+1. Next design step: (a) node schematic + firmware, (b) probe PCB + bus firmware, (c) receiver firmware?
+2. ESP32-CAM type and USB adapter?
+3. First-compile results.

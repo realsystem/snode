@@ -132,6 +132,10 @@ be re-checked before purchase. S-numbers are referenced from `02-design-log.md`.
 | S73 | Starlink Mini: integrated Wi-Fi 5 router and one Ethernet port. Starlink app can split 2.4/5 GHz networks. | https://www.bestbuy.com/product/starlink-mini-kit-ac-dual-band-wi-fi-system-white/J3R8ZC259C ; https://starlink.com/support/article/acb3bee4-53d9-2f4f-ca45-c21db163543c |
 | S74 | ESP-NOW channel hopping: the node iterates through channels sending to the hub until acknowledged, because access points change channels. Fixing the router channel is simplest only if you control the router. | https://thingpulse.com/esp32-espnow-wifi-simultaneous-communication/ ; https://dev.to/gtanyware/channel-hopping-on-the-esp32-c3-with-esp-now-2led |
 
+| S75 | ESPHome espnow: ESP32 and ESP8266 supported; on ESP8266 the received RSSI is always 0 and broadcasts arrive in on_receive; send has on_sent/on_error; channel can't be set while Wi-Fi is used. | https://esphome.io/components/espnow/ |
+| S76 | ESP32-CAM (AI-Thinker): PCB antenna plus u.FL/IPEX socket, chosen by a 0 Ω jumper. | https://randomnerdtutorials.com/esp32-cam-connect-external-antenna/ ; https://lastminuteengineers.com/getting-started-with-esp32-cam/ |
+| S77 | ESPHome on Windows: Python with "Add to PATH", then `pip install esphome`; CLI `esphome config/compile/run/logs`, `--device COMx`. | https://new.esphome.io/guides/installing_esphome ; https://esphome.io/guides/cli/ |
+
 ## Radio path
 
 | # | Finding | Source |

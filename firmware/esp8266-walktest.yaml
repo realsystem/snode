@@ -17,7 +17,7 @@
 substitutions:
   name: snode-walktest
   friendly: SNODE walk test
-  board: d1_mini          # NodeMCU: nodemcuv2
+  board: nodemcuv2        # owner board: NodeMCU (D1 mini: d1_mini)
   sleep_time: 60s
 
 esphome:

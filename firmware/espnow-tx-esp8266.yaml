@@ -1,0 +1,76 @@
+# SNODE POC T12 (optional): ESP-NOW range test, field sender (NodeMCU ESP8266)
+# Sends a packet counter every 10 s to the receiver (espnow-rx-esp32cam.yaml).
+# The on-board LED flashes when the receiver acknowledges a packet: you can see the link in the field.
+# Channel follow (design log D31): after 2 packets in a row without acknowledgement, the sender
+# moves to the next channel (1..11) and keeps trying, so it finds the router's channel by itself.
+# No Wi-Fi block: this board talks ESP-NOW only, so its channel can be changed.
+# Power: USB power bank. Hold 0.3 m above the ground.
+# Status: written without compiling. UNVERIFIED until the first compile.
+
+substitutions:
+  name: snode-espnow-tx
+  board: nodemcuv2
+  receiver_mac: "AA:BB:CC:DD:EE:FF"   # from the receiver's boot log (Wi-Fi STA MAC)
+  start_channel: "6"                  # any value 1..11; channel follow corrects it
+
+esphome:
+  name: ${name}
+
+esp8266:
+  board: ${board}
+  restore_from_flash: false
+
+logger:
+  level: INFO
+
+espnow:
+  id: en
+  channel: ${start_channel}
+  peers:
+    - ${receiver_mac}
+
+globals:
+  - id: tx_count
+    type: uint32_t
+    initial_value: '0'
+  - id: fail_count
+    type: uint8_t
+    initial_value: '0'
+  - id: cur_ch
+    type: uint8_t
+    initial_value: ${start_channel}
+
+output:
+  - platform: gpio
+    id: led
+    pin:
+      number: D4        # NodeMCU on-board LED (GPIO2), on when low
+      inverted: true
+
+interval:
+  - interval: 10s
+    then:
+      - lambda: id(tx_count) += 1;
+      - espnow.send:
+          address: ${receiver_mac}
+          data: !lambda |-
+            uint32_t c = id(tx_count);
+            return {(uint8_t) (c & 0xFF), (uint8_t) ((c >> 8) & 0xFF),
+                    (uint8_t) ((c >> 16) & 0xFF), (uint8_t) ((c >> 24) & 0xFF),
+                    id(cur_ch)};
+          continue_on_error: true
+          on_sent:
+            - lambda: id(fail_count) = 0;
+            - output.turn_on: led
+            - delay: 300ms
+            - output.turn_off: led
+          on_error:
+            - lambda: |-
+                id(fail_count) += 1;
+                ESP_LOGW("tx", "no ack on channel %u (%u in a row)", id(cur_ch), id(fail_count));
+                if (id(fail_count) >= 2) {
+                  id(fail_count) = 0;
+                  id(cur_ch) = (id(cur_ch) % 11) + 1;
+                  id(en).set_channel_from_action(id(cur_ch));   // if this does not compile, see README
+                  ESP_LOGW("tx", "channel follow: now trying channel %u", id(cur_ch));
+                }

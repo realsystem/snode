@@ -122,6 +122,11 @@ be re-checked before purchase. S-numbers are referenced from `02-design-log.md`.
 | S65 | TI BQ25570: energy-harvesting boost charger; cold start from ≥ 600 mV, continuous harvesting from 100 mV, programmable MPPT, 488 nA quiescent; supports supercapacitors; reference design TIDA-00242 (solar + supercap). | https://www.ti.com/product/BQ25570 ; https://ti.com/document-viewer/BQ25570/datasheet |
 | S66 | ESPHome time platforms exist for DS1307 and RX8025T (none found for the RV-3028). An ESP-IDF RV-3028-C7 driver exists; ESPHome documents writing a time-platform component. | https://esphome.io/components/time/ds1307.html ; https://esphome.io/components/time/rx8025t/ ; https://components.espressif.com/components/javsalv/rv-3028-c7/versions/1.0.0/readme ; https://developers.esphome.io/architecture/components/time/ |
 
+| S67 | Starlink Gen 3 router: 2 LAN Ethernet ports for your own devices; bypass mode turns off its routing and Wi-Fi so a third-party router can take over. The app can split the 2.4/5 GHz networks. No manual channel setting found in Starlink docs. | https://starlink.com/support/article/63357ec4-8fbe-7f65-530f-76fd55192104 ; https://starlink.com/bb/support/article/a0fe8d51-32f7-d2b9-d74a-801e31ad9f6a ; https://support.simplisafe.com/articles/base-station/connect-your-base-station-to-starlink-wifi?lang=en-US |
+| S68 | ESPHome espnow: `channel` can't be set when the Wi-Fi component is used (it follows the Wi-Fi network's channel). Community: an ESP32 with Ethernet can run ESP-NOW on any channel. | https://new.esphome.io/components/espnow ; https://community.home-assistant.io/t/esp-now-with-esp-home/536006/14 |
+| S69 | ESPHome Ethernet component: ESP32 with LAN8720 and others; examples for Olimex ESP32-POE and WT32-ETH01; can't be used together with the Wi-Fi component. | https://esphome.io/components/ethernet.html ; https://new.esphome.io/components/ethernet |
+| S70 | Fixing a 2.4 GHz channel on a typical router: choose 1, 6 or 11 at 20 MHz width. Some routers have no manual channel setting. | https://community.netgear.com/discussions/en-home-orbi-ax/can-i-change-the-wifi-channels-on-the-orbi-meshrbk862sb/2467824 ; https://support.ring.com/hc/en-au/articles/4407014643732 |
+
 ## Radio path
 
 | # | Finding | Source |

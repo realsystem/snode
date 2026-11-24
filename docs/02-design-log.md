@@ -369,24 +369,24 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 - Sensing zone about 5–15 cm; bottom of the sensing zone at 6 in (15 cm).
 - **Bus cable depth: at least 6 in of cover** (US irrigation practice for ≤ 30 V: Paige installation spec, NEC Table 300.5, municipal codes). The bus runs at 3.3–5 V.
 - The problem: the cable lies at 6 in, the same depth as the bottom of the sensing zone. A clamp at the top of the probe is about 15 cm above the cable.
-- Two ways to join them:
+- **Decided (owner, round 18): option C, probe lead.** The main cable lies flat at 6 in cover along the row. Each probe has its own short factory lead with the piercing clamp molded on its end. In the trench, the clamp goes onto the main cable.
 
 ```
- Option A: clamp on top + rise loop          Option B: clamp at the foot (recommended)
-
- grade ──────[head]──────────────            grade ─────[cap]────────────────
-              |  ^ loop up                               |
-              |  | (same cable,                          |  sensing zone
-   sensing    |  | not cut)                  sensing     |  5–15 cm
-   zone       |  v                           zone        |
- 6 in ─ ─ ─ ─ ┘─ ─ ─ cable ─ ─ ─ ─            6 in ─ ─ ─ ─|─ ─ ─ ─ ─ ─ ─ ─ ─
-                                                          [clamp]=cable==  (~7 in)
+ grade ────[probe head, potted]──────────────────────────
+              |    \
+   sensing    |     \  probe lead (factory-fitted, ~30 cm)
+   zone       |      \
+   5–15 cm    |       \
+ 6 in ─ ─ ─ ─ ┘ ─ ─ ─ ─[clamp]═══ main cable, flat, 6 in cover ═══
 ```
-  - **A, rise loop:** the cable stays at 6 in between trees. At each tree, a short loop of the same cable (not cut) is lifted up to the probe head and clamped. About 0.3 m extra cable per tree (about 590 ft for 600 trees). NEC Table 300.5 allows lesser depths where cables rise for terminations or splices (my reading of the code, not a legal opinion).
-  - **B, clamp at the foot (recommended):** the clamp is at the bottom of the probe, below the sensing zone. The cable stays at full depth (about 7 in) the whole way: no loops, no extra cable, nothing shallow for rodents or shovels.
-    - Install: trench to about 7 in along the tree line, lay the cable on the trench floor, push the probe down beside the tree until its foot clamp presses onto the cable, backfill.
-    - Cost: a longer probe (about 20 cm), with the electronics in the foot. The clamp can't be seen once it is backfilled, so the node checks each probe right after install (it shows up on the bus or it doesn't).
-- Owner to choose (round 18). BOM cable count: A = 6 spools; B = 5 spools.
+  - Install, per tree: trench along the row to about 7 in, lay the main cable on the trench floor, push the probe in at its emitter offset, press the lead's clamp onto the main cable, backfill. Same clamp for every probe; no soldering, no cutting.
+  - Why C is better than A and B:
+    - The cable runs straight down the row, so the probe position no longer depends on where the cable is (probe at its fixed emitter offset).
+    - The probe stays short (electronics in the head, as in D24).
+    - A failed probe can be replaced without touching the main cable: dig at the clamp, pull it off, fit a new probe.
+  - Cost: about 30 cm of 2-core lead per probe (600 x 0.3 m = 180 m) plus fitting the clamp at the factory. Price at POC (no cited price yet). The main cable stays at 5 spools.
+  - Risks (UNVERIFIED, POC): the clamp is underground and sealed in gel or potting compound, so test T5 soaks it in wet soil. The lead runs near the sensing zone, so it must leave the head away from the blade face; any fixed offset it adds is removed by calibration (T6).
+- Rejected: A (rise loop: extra cable, cable near the surface at every tree); B (foot clamp: longer probe, and the probe has to sit on the cable line).
 
 ### D26 Node enclosure, POC (3D-printed ASA)
 - ASA, walls ≥ 2.5 mm, gasketed lid (printed TPU gasket or an O-ring groove). Seal the print (layer lines) and run a soak test before field use.
@@ -448,14 +448,30 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 - **Irrigation interlock:** HA must not open an OpenSprinkler zone when that zone is frozen or its data is older than 25 h.
 
 ## Receiver
+### D30 Network setups the receiver must support (owner: support any user choice)
+- The problem: an ESP32 doing ESP-NOW and Wi-Fi on one radio must use the router's channel. In ESPHome the ESP-NOW channel can't be set when Wi-Fi is enabled (S62, S68).
+- The answer: one receiver firmware with a build option for the uplink to HA.
+  - **Ethernet:** the ESP-NOW channel is free and nothing on the router needs changing. ESPHome can't run Ethernet and Wi-Fi together, so the radio is used only for ESP-NOW.
+  - **Wi-Fi:** the router's 2.4 GHz channel must be fixed.
+
+| Example | Who it suits | How | Router change |
+|---|---|---|---|
+| **E1: reuse the router, Ethernet receiver (default; recommended here)** | Any site with a free LAN port | ESP32 board with Ethernet that ESPHome supports (Olimex ESP32-POE, WT32-ETH01), plugged into the router's LAN port or a switch. Starlink Gen 3 routers have 2 LAN ports. Indoor box beside the router, or a roof box fed by one PoE cable (Olimex ESP32-POE). | None |
+| **E2: reuse the router, Wi-Fi receiver, channel fixed** | The router allows a fixed channel | Router admin → 2.4 GHz → channel 1, 6 or 11, width 20 MHz. Split the 2.4/5 GHz names if the router merges them. Receiver box anywhere in Wi-Fi range. | Fix the channel |
+| **E3: reuse the Starlink router, which can't fix the channel** | Starlink router with no channel setting | Use E1. Or: Starlink bypass mode plus your own router that can fix its channel, then E2. | Bypass (optional) |
+| **E4: from scratch, dedicated farm access point** | New installs; poor field coverage | Any router in access-point mode, wired to the main router, with a fixed 2.4 GHz channel, mounted high at the trailer. It also serves direct-Wi-Fi nodes (N1). Receiver as in E2. | New AP |
+| **E5: solar receiver away from the trailer (no cable)** | Large sites | Outdoor box, LiFePO4 18650 with a 0 °C charge cut-off (D27), Wi-Fi uplink, so E2 or E4 is needed. | Fix the channel |
+| **E6: UNODE as the receiver (optional)** | Sites that already have a UNODE near the trailer | The UNODE runs the receiver function as an extra feature; SNODE never depends on it. | As for its uplink |
+- This site: the Starlink router is inside, in the middle of the fiberglass trailer, so E1 is the plan. Indoor first; move to a roof box with PoE only if T9 needs the extra range. Manual channel selection on the Starlink router: not found in Starlink docs (UNVERIFIED; check in the app on Dec 11).
+
+### Notes
 - The trailer is fiberglass, which passes 2.4 GHz with little loss (UNVERIFIED; check in the walk test). The receiver ESP32 can stay inside, with a short coax to the roof antenna.
 
-## Open questions (round 18)
-1. Probe-to-cable: option B (clamp at the foot, cable stays at full depth, recommended) or option A (clamp on top with a rise loop)?
-2. Radio: test direct Wi-Fi first (no receiver) in the POC, with the ESP-NOW receiver as fallback? Where is the trailer router: inside or near a window, and can its 2.4 GHz channel be fixed if we need N2?
-3. UNODE: should the UNODE (other project) be allowed to act as the receiver/bridge near the trailer, or should SNODE stay fully independent of it?
+## Open questions (round 19)
+1. Emitter-to-probe offset (cm), and which side of the row the main cable runs (emitter side or the other side)? This sets the probe lead length (draft 30 cm).
+2. Starlink router generation, and is a LAN port free? (Check on Dec 11: photo of the router's back.)
+3. Should I write the ESPHome walk-test firmware for your ESP8266 before Dec 11 (reports RSSI and connect time to HA)?
 
-Closed this round: RTC driver plan (D29), variant A charger (D28), receiver need (D27, decided by test), bus read rule (D18).
-Still open, closed by the POC itself: probe PCB/housing quotes, commodity parts (holder, vent, fittings, stake) bought at POC time.
+Closed in round 18: probe join = option C (D25); test direct Wi-Fi first (T9); router location (inside, middle of the trailer); network setups (D30); UNODE as receiver = optional (D30 E6).
 
 HA side: see `docs/06-ha-note.md`. Spec: `docs/04-spec.md`. POC: `docs/05-poc-plan.md`.

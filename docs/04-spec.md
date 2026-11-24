@@ -46,9 +46,10 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 | D24 | Probe polarity | Bridge rectifier; clamp fits either way | Owner accepted | — |
 | D24/D25 | Probe depth | Sensing zone about 5–15 cm, tip at 15 cm (6 in) | Owner: 6 in | — |
 | D26 | Node enclosure (POC) | 3D-printed ASA, gasketed, riser socket, vent | Owner choice | S50 |
-| D25 | Bus burial | 16/2 landscape wire at ≥ 6 in cover (US irrigation practice, ≤ 30 V); probe joins it with a foot clamp (B, recommended) or a rise loop (A) | Owner: US irrigation standard | S61 |
+| D25 | Bus burial | 16/2 landscape wire at ≥ 6 in cover (US irrigation practice, ≤ 30 V); each probe joins it with its own factory lead and a molded clamp (option C) | Owner: US irrigation standard; owner chose C | S61 |
 | D27 | Radio path | N1 direct Wi-Fi (test first) or N2 ESP-NOW receiver (fallback; commercial default) | Energy difference small; range/setup decides | S62, S63, S64 |
 | D28 | Variant A charger | TI BQ25570 (cold start ≥ 600 mV, MPPT, 488 nA) | Supercap-friendly harvester | S65 |
+| D30 | Receiver uplink | One firmware: Ethernet (default, free channel) or Wi-Fi (fixed channel); examples E1–E6; UNODE optional | Owner: support any user choice | S62, S67, S68, S69 |
 | D29 | RTC in ESPHome | Small external component for the RV-3028 | No built-in platform | S66 |
 | D12 | Enclosure | UV-stabilized polycarbonate, IP68 class, on a wooden stake, box bottom 0.3 m above grade | Owner: wood and plastic are rabbit-safe | S29 |
 | D13 | Riser | 1/2 in Schedule 40 PVC, 2 cables (35% fill), duct seal at the top | Rabbits | S35, S38 |
@@ -72,9 +73,9 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 
 ## 4. Open items
 
-1. Probe-to-cable join: foot clamp (B) or rise loop (A) — round 18.
-2. Radio path test order; router location and channel — round 18.
-3. UNODE as receiver or independent — round 18.
+1. Probe lead length (needs emitter offset and cable side) — round 19.
+2. Starlink router generation and a free LAN port — Dec 11 site check.
+3. Probe lead + molded clamp price — POC.
 - HA automation (zones, alerts, delivery): handled in the HA threads; see `06-ha-note.md`.
 5. Bus protocol and electrical design (power phase, timing, drops per run).
 6. Probe PCB, passives, potting and housing quotes.
@@ -101,6 +102,7 @@ Full plan with pass/fail criteria: `05-poc-plan.md`.
 | T8 | WH51 side-by-side | Trend agreement |
 | T9 | Field walk test from the farthest corner, direct Wi-Fi (N1) and ESP-NOW (N2) | Which radio path; RSSI margin at 0.3 m node antenna |
 | T10 | Field cluster run, at least 3 weeks | Delivery rate, alerts, battery trend |
+| T11 | Site survey (Dec 11): soil sample, trench test, early Wi-Fi RSSI, router check | Inputs for T1, T6, T9 and D30 |
 
 ## 6. BOM (cited parts only, prices seen 2026-11-24)
 
@@ -114,7 +116,7 @@ Variant B, 600 trees, 30 SNODEs, 1 receiver. Probe line counts only the cited MC
 | Soil temperature | DS18B20 waterproof | $1.90 | S20 | 30 | $57.00 |
 | Cells | Energizer L91 AA (3 per node) | $2.29 | S21 | 90 | $206.10 |
 | Enclosure | Hammond 1554QA2GY | £40.42 | S29 | 30 | £1,212.60 |
-| Bus cable | 16/2 landscape wire, 500 ft (2,264 ft with foot clamp B; A adds 590 ft = 6 spools) | $140.00 | S41 | 5 | $700.00 |
+| Bus cable | 16/2 landscape wire, 500 ft (2,264 ft with probe leads, option C) | $140.00 | S41 | 5 | $700.00 |
 | Probe MCU | Puya PY32F002A | $0.0927 | S44 | 600 | $55.62 |
 | Probe assembly | JLCPCB setup + SMT + feeders (≈$0.09/probe) | $0.09 | S46 | 600 | $54.00 |
 | Bus master | ADI DS2482-100 (2 per node; 1k list price) | $1.18 | S58 | 60 | $70.80 |

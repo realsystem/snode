@@ -282,8 +282,24 @@ Answers:
 
 Result: loop explained with a sketch, and a foot-clamp alternative proposed (D25). Receiver need analysed (D27): energy is a minor factor; range/setup decides; test direct Wi-Fi first. Closed: variant A charger (BQ25570, D28), RTC in ESPHome (D29), bus read rule.
 
-## Round 18 — open (asked 2026-11-24)
+## Round 18 — 2026-11-24
 
+Questions:
 1. Foot clamp (B, recommended) or rise loop (A)?
-2. Test direct Wi-Fi first, receiver as fallback? Router location; can its channel be fixed?
-3. UNODE as receiver/bridge, or SNODE fully independent?
+2. Test direct Wi-Fi first, receiver as fallback?
+3. Router location; can its channel be fixed?
+4. UNODE as receiver/bridge, or SNODE fully independent?
+
+Answers:
+1. "can we just put main cable flat 6 in deep and the probe should has its own short cable to connect to the main one? simple operation with the same clamp under ground."
+2. "yes, prepare POC tests in a separate small doc and schedule task for me on dec 11"
+3. "inside, in the middle of the trailer. but we need to support any type of user choice. provide few examples how to do it from scratch and reuse currently installed one."
+4. "optional"
+
+Result: option C (probe lead + clamp) adopted (D25). POC checklist written (`07-poc-tests.md`), with a site survey (T11) for Dec 11; scheduled task set for Dec 11. Network setups E1–E6 (D30); Ethernet receiver is the default. UNODE as receiver: optional.
+
+## Round 19 — open (asked 2026-11-24)
+
+1. Emitter-to-probe offset (cm), and which side of the row the cable runs?
+2. Starlink router generation, and a free LAN port? (Dec 11 check)
+3. Write ESP8266 walk-test firmware before Dec 11?

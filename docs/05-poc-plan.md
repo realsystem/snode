@@ -4,6 +4,9 @@ Goal: prove every UNVERIFIED design assumption on one prototype before building 
 Order: bench first (no site visit needed), then one field cluster at the site.
 All thresholds are PROPOSED until the owner accepts them.
 
+## Phase S — site survey (Dec 11 visit)
+- T11: see `docs/07-poc-tests.md`.
+
 ## Phase 0 — sensor baseline (parts on hand)
 - Setup: ESP8266 + two existing "Arduino" moisture sensors in two pots of site soil (one dry, one wet). Log every 10 min.
 - Duration: 1 week.
@@ -11,6 +14,7 @@ All thresholds are PROPOSED until the owner accepts them.
 - Learn: is the v1.2 board type usable as the POC sensor front-end? (Check it for the 3 known faults first.)
 
 ## Phase 1 — node power and data path (bench)
+- Short checklist for each visit: `docs/07-poc-tests.md`.
 - Setup: two nodes, one per power variant: **B** (3x L91) and **A** (10 F supercap + TPS61099 + small panel). Both use XIAO ESP32C3 + RV-3028-C7 + load switch and ESPHome. A receiver (XIAO in the ASA box) on the fixed Wi-Fi channel, connected to HA.
 - Tests:
   - T2: off-state current of the whole node ≤ 1 µA (µA meter). Wakes at 05:00 and 17:00 ±2 s over 7 days.
@@ -21,7 +25,7 @@ All thresholds are PROPOSED until the owner accepts them.
 - Pass: off-current ≤ 1 µA; ≥ 99% of 14 scheduled reports delivered on the bench per node; variant A autonomy ≥ 5 days; cold-start recovery works.
 
 ## Phase 2 — bus and clamp (bench)
-- Setup: 2 runs of 16/2 landscape wire, 10.5 m each, laid with a rise loop at each probe as in the field (D25). 20 bus-probe stand-ins (PY32F002A dev boards or first probe PCBs) on 3D-printed ASA clamp housings, spaced 1 m apart.
+- Setup: 2 runs of 16/2 landscape wire, 10.5 m each, laid flat with one probe lead + clamp per probe as in the field (D25, option C). 20 bus-probe stand-ins (PY32F002A dev boards or first probe PCBs) on 3D-printed ASA clamp housings, spaced 1 m apart.
 - Tests:
   - T4: 1,000 read cycles of all 20 probes; check the power phase holds up during measurement.
   - T5 (starts here, runs for months): 10 clamps on cable in a bucket of wet site soil. Bus powered on the real schedule (seconds, twice a day). Measure contact resistance monthly.

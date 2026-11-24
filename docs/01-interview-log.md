@@ -119,9 +119,25 @@ Also: owner approved a force-push to remove the location from git history.
 
 Result: added an operating-limits table (design log). WH51 placement: one per grove plus a second in the front grove.
 
-## Round 8 — open (asked 2026-11-24)
+## Round 8 — 2026-11-24
 
+Questions:
 1. Machine traffic between rows (mower, ATV, tractor)? How wide?
 2. Typical and worst snow depth on the ground?
 3. Can you hand-trench to about 15–20 cm? Is the soil rocky?
 4. Are the drip lines on the surface or buried?
+
+Answers:
+1. "every few rows should be drivable by car/tractor"
+2. "almost nothing for now but the product should be designed with snow accumulation in mind"
+3. "not a problem, put it on user"
+4. "I have it on surface but for this product it should not be any matter"
+
+Result: drafted enclosure, mounting and burial (D12–D16): drive lanes only between clusters, antenna inside the box, bottom cable entry through multi-hole glands, stake heights by snow class, installer trench instructions.
+
+## Round 9 — open (asked 2026-11-24)
+
+1. Drive lanes: normal 2 m gaps or wider? Is "every 2 rows" (between clusters) enough?
+2. Stake heights 0.3 / 0.6 / 1.0 m for the product: OK?
+3. Any larger animals that could chew cables or knock boxes?
+4. Probe-to-cable: potted splice or a waterproof connector per probe?

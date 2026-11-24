@@ -62,6 +62,14 @@ be re-checked before purchase. S-numbers are referenced from `02-design-log.md`.
 |---|---|---|
 | S27 | WH51: capacitive FDR soil-moisture sensor, 1x AA, updates every 70 s, user-set 0%/100% AD calibration. The WH51/WH51L are rated for 100 m in open field. The WH51L lists -10 to 50 °C working temperature. | https://shop.ecowitt.com/collections/gardening/products/wh51 ; https://shop.ecowitt.com/products/wh51l ; https://shop.ecowitt.com/collections/soil-sensor/products/wh51l ; https://smarthomescene.com/reviews/ecowitt-wh51-vs-wh52-soil-sensor-comparison/ |
 
+## Enclosure
+
+| # | Finding | Source |
+|---|---|---|
+| S29 | Hammond 1554 polycarbonate enclosures: UV-stabilized for outdoor use, NEMA 4/4X/6/6P, up to IP68. 1554QA2GY (140 x 140 x 90 mm): £40.42 ex VAT, RS UK. | https://uk.rs-online.com/web/p/general-purpose-enclosures/2291079?gb=s ; https://uk.rs-online.com/web/p/general-purpose-enclosures/2291093 |
+| S30 | Multi-hole gland inserts: LAPP SKINTOP DIX, M25, 4 x 5 mm holes, NBR, -40 to +100 °C, about €1.35 each. IP68 only if every hole holds a cable of nominal size or a sealing plug. Jacob WADI multi-hole M25 fits 5–7 mm cables, IP68/69, -40 to 100 °C. | https://buerklin.com/en/p/lapp/cable-management-accessories/53325450/32P2660 ; https://au.element14.com/lapp/53325260/insert-gland-m25-2x6/dp/120420501 ; https://www.digikey.ca/en/products/detail/jacob-gmbh/K152-1025-00-37/24760855 |
+| S31 | Membrane vents (GORE Protective Vents) equalize enclosure pressure, keep out dust and liquids, and reduce condensation by letting water vapor out. | https://www.gore.com/node/2566 |
+
 ## Radio path
 
 | # | Finding | Source |

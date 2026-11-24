@@ -20,6 +20,10 @@ Terms and IDs: see `CLAUDE.md`. Sources: see `docs/03-research-notes.md` (S-numb
 - Receiver antenna on the trailer roof (about 5 m) is acceptable. The trailer is standard fiberglass.
 - SNODE enclosure: a box on a stake.
 - Comparison sensors: 4x WH51 on one GW3000 (16 channels max). Keep these numbers.
+- Every few rows must be drivable by car or tractor.
+- Little snow at this site now, but the product must be designed for snow accumulation.
+- Trenching and burial are the installer's job; the design gives instructions.
+- Drip lines: surface at this site, but the design must work with surface or buried lines.
 - HA decides irrigation (probably OpenSprinkler). SNODEs only report.
 - Must work through winter (owner: "winter is most important").
 - Lowest cost. Custom PCB allowed after the POC. Existing ESP8266 boards and "Arduino" moisture sensors are for the POC only.
@@ -105,6 +109,8 @@ Each limit is set by the weakest part. All UNVERIFIED until tested; "rated" valu
 | Probe depth | 15 cm max | 15 cm max | Probe board length, about 99 mm | S3 |
 | Radio link | 105 m design, node antenna 0.3 m, receiver antenna 5 m | Same | Walk test pending | S6, S22 |
 | Valid moisture | Only when soil is above 0.5 °C | Same | Capacitive measurement in frozen soil | S13 |
+| Snow depth | Stake height − 0.1 m (0.2 / 0.5 / 0.9 m for the 0.3 / 0.6 / 1.0 m stakes) | Same | Box and antenna must stay above snow | — |
+| Cable entry seal | -40 to +100 °C (multi-hole inserts) | Same | Gland insert rating | S30 |
 | SNODEs per receiver | 30 tested by design (60 packets/day); higher counts need a test | Same | Receiver load | — |
 
 ## Variant comparison
@@ -171,11 +177,45 @@ The mux breakout price is for prototyping; the bare chip is $1.05.
 9. Test plan (partly: WH51 comparison, POC steps)
 10. Open questions (below)
 
+## Enclosure, mounting and burial (draft, all UNVERIFIED)
+
+### Layout rules (drive lanes)
+- A cluster pairs two rows across a **non-drive** gap. The SNODE stake and all its cables stay inside that gap.
+- Drive lanes may only be the gaps **between** clusters (rows 2–3, 4–5, 6–7, 8–9 in a 10-row grove). So no cable ever crosses a drive lane, and no conduit is needed for vehicle loads.
+- Each probe goes on the side of its tree facing the cluster's internal gap, so wheels in a drive lane never run over probes.
+- Whether a car or tractor fits in a 2 m gap is an owner question (round 9).
+
+### D12 Enclosure
+- UV-stabilized polycarbonate box, IP68 class. Reference part: Hammond 1554QA2GY, 140 x 140 x 90 mm, £40.42 (RS UK, single unit). A cheaper equivalent is to be sourced; this is the largest per-node item found so far.
+- Antenna **inside** the box: the XIAO's flexible antenna stuck under the lid. Nothing visible outside. Polycarbonate should pass 2.4 GHz with little loss (UNVERIFIED; walk test).
+- All cables enter through the **bottom face only**, so water runs off and doesn't pool at the glands.
+- One membrane vent (e.g., GORE Protective Vent) to equalize pressure and reduce condensation in daily temperature swings.
+
+### D13 Cable entry
+- 21 cables (20 probes + 1 DS18B20) through 6 M25 glands with 4-hole inserts (LAPP SKINTOP DIX 4 x 5 mm, rated -40 to +100 °C; €1.34–1.36 per insert). Unused holes closed with sealing plugs to keep the IP68 rating.
+- Fit check needed: Cat5e is about 5.5 mm and the inserts are sized for 5 mm; the 5–7 mm range of other multi-hole glands may fit better. Test in the POC.
+- Considered and deferred: one Cat5e serving 2 adjacent trees with a splice at the first tree. That halves the entries and cuts cable by about a third, but adds 300 field splices. Revisit with the custom bus probe (A3).
+
+### D14 Stake and snow
+- Box mounting height = design snow depth + 0.1 m. **Standard stake heights: 0.3 m (little snow), 0.6 m and 1.0 m (snow kits).** This site: 0.3 m.
+- Variant A panel: mounted above the box on the same stake, tilted 60° or steeper facing the sun, so snow slides off.
+- Stake material: non-metal near the antenna (fiberglass or HDPE preferred). Part to be selected.
+
+### D15 Burial (installer instructions)
+- Trench along the center of the cluster's internal gap, 15–20 cm deep (owner can hand-trench). Short branch trenches of about 1 m to each tree.
+- Optional conduit (rodent areas) on the main trench run; the branches stay direct-burial.
+- Leave about 0.3 m of slack at each probe as a loop. This allows for frost heave and lets a probe be pulled and replaced without pulling the cable.
+- Before inserting a probe, locate the drip line (surface or buried) and keep the probe at the standard offset from the emitter, away from the line itself.
+
+### D16 Probe end
+- The v1.2 board's electronics end is spliced to the Cat5e (3 conductors) and potted, with adhesive-lined heat-shrink over the splice. The potting compound must be rated for the -40 °C design range (part to be selected).
+- Service = pull the probe, cut, re-splice. A waterproof connector per probe would make service easier but adds cost x 600. Owner to choose (round 9).
+
 ## Receiver
 - The trailer is fiberglass, which passes 2.4 GHz with little loss (UNVERIFIED; check in the walk test). The receiver ESP32 can stay inside, with a short coax to the roof antenna.
 
-## Open questions (round 8: enclosure, mounting and burial)
-1. Is there any machine traffic between rows (mower, ATV, tractor)? How wide is it?
-2. Typical and worst snow depth on the ground? (The box and antenna must stay above it.)
-3. Can you hand-trench to about 15–20 cm? Is the soil rocky?
-4. Are the drip lines on the surface or buried?
+## Open questions (round 9)
+1. Drive lanes: are they normal 2 m gaps, or wider gaps (a row left out)? Is "every 2 rows" (between clusters) enough?
+2. Stake heights 0.3 / 0.6 / 1.0 m for the product: OK, or do you want other snow classes?
+3. Any larger animals (deer, rabbits, livestock) that could chew cables or knock boxes?
+4. Probe-to-cable: potted splice (cheapest, re-splice to service) or a waterproof connector per probe (easier service, more cost)?

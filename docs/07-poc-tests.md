@@ -10,9 +10,9 @@ Record results in `01-interview-log.md` (dated) and update `02-design-log.md`.
 | 1 | Dig one 7 in trench, about 1 m long, along a tree row | Rocks or hardpan? Time taken; tool used | Is the trench install (D25 option C) practical? |
 | 2 | Take 2 soil samples from 0–15 cm: about 1 L each, in sealed bags | Grove and tree ID | Bench tests T1 and T6 need site soil |
 | 3 | Soil temperature at 6 in (any probe thermometer), morning and afternoon | °C and time | First real check of the frozen-soil threshold |
-| 4 | Early Wi-Fi check: phone Wi-Fi analyzer, or the ESP8266 walk-test firmware on a power bank, held 0.3 m above ground at the farthest corner of each grove | RSSI (dBm) per grove; ESP8266 connect time if used | Early view of direct Wi-Fi (N1) before T9 |
-| 5 | Photo of the back of the Starlink router; Starlink app → router settings | Router generation; free LAN port?; any 2.4 GHz channel setting? | Network setup (D30 E1/E3) |
-| 6 | Measure the emitter-to-probe offset you want; note the cable side of the row | cm; side | Probe lead length |
+| 4 | Early Wi-Fi check with `firmware/esp8266-walktest.yaml` on a power bank (or a phone Wi-Fi analyzer), 0.3 m above ground: continuous mode at the farthest corner of each grove, then cycle mode for 30 min at the worst spot | RSSI (dBm) and channel per spot; boot-to-HA time; cycle success rate | Early view of direct Wi-Fi (N1) before T9 |
+| 5 | Starlink app → router settings | Any 2.4 GHz channel setting? Split 2.4/5 GHz option? | Network setup (D30 E1/E3) |
+| 6 | At 3 trees: distance emitter–trunk; drip lateral on the surface or buried, and which side | cm; side | Probe lead length |
 
 Pass: items 1–6 recorded. No hardware is left on site.
 
@@ -22,7 +22,7 @@ Pass: items 1–6 recorded. No hardware is left on site.
 |---|---|---|
 | T1 | Old sensor drift in site soil, 1 week | Drift < 2% of span/week |
 | T2 | Node off-current; wake times | ≤ 1 µA; 05:00/17:00 ± 2 s for 7 days |
-| T3 | Node → (receiver) → HA data path, both variants; Ethernet receiver and Wi-Fi receiver | ≥ 99% of 14 reports; correct entity names; offline alert at 25 h |
+| T3 | Node → (receiver) → HA data path, both variants; Wi-Fi receiver with channel follow (change the router channel during the test) and Ethernet receiver | ≥ 99% of 14 reports; correct entity names; offline alert at 25 h |
 | T4 | Bus: 2 x 10.5 m runs, 20 probes on leads with clamps, 1,000 reads | ≥ 99.9% reads |
 | T5 | Clamp soak in wet soil (runs for months) | < 1 Ω change in 3 months |
 | T6 | Calibration: dry/wet at 5 °C and 25 °C | Within ±2% after correction |

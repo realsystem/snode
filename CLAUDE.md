@@ -45,7 +45,7 @@ is the only reliable memory.
 | **SNODE** | Soil node: powered only at report times by an RTC; two variants, solar only or battery only (design log D6) that reads the probes of a group of trees and reports to HA. Monitoring only. | VERIFIED |
 | **UNODE** | General monitoring node (ESP32-class, own battery and solar), designed in a separate project. | VERIFIED |
 | **cluster** | The set of trees wired to one SNODE. Default: 2 adjacent rows x 10 trees = 20 trees. | PROPOSED |
-| **receiver** | ESP32 in an ASA box (indoor or outdoor) that receives SNODE packets and passes them to HA over Wi-Fi; USB-powered, or solar with windowed listening. | VERIFIED (concept) |
+| **receiver** | ESP32 in an ASA box (indoor or outdoor) that receives SNODE packets and passes them to HA over Wi-Fi or Ethernet; USB-powered, or solar with windowed listening. | VERIFIED (concept) |
 | **zone** | An irrigation valve zone (OpenSprinkler: 8 zones now, +16 with an expander later). HA maps trees to zones. | VERIFIED (controller) |
 
 ## 3. IDs and naming
@@ -110,7 +110,7 @@ All calibration values (dry/wet raw counts per probe) live in one file:
   Connection cost per probe must be close to zero (built-in clamp); splice caps are a user option, not the design.
 - Box-to-ground riser: 1/2 in standard PVC conduit.
 - Bus cable: 16/2 landscape wire, buried with at least 6 in cover (US irrigation practice, ≤ 30 V). Each probe joins it by its own factory lead with a molded clamp, underground (design log D25, option C).
-- Radio path: direct Wi-Fi (N1) or an ESP-NOW receiver (N2), decided by the POC walk test. With N2, the receiver uplink is Ethernet (any channel) or Wi-Fi (router channel must be fixed); see design log D30.
+- Radio path: direct Wi-Fi (N1) or an ESP-NOW receiver (N2), decided by the POC walk test. With N2, the receiver uplink is Wi-Fi with channel follow (default, any router), Ethernet, or Wi-Fi on a fixed channel; see design log D30/D31. Never assume a particular ISP, router or free LAN port.
 - Firmware: ESPHome (nodes and receiver).
 - Every design must state its operating limits (temperature, days without sun,
   battery life, link distance, cable length), because the design may become a commercial product.
@@ -130,5 +130,6 @@ All calibration values (dry/wet raw counts per probe) live in one file:
 | `docs/05-poc-plan.md` | POC phases, pass/fail criteria |
 | `docs/07-poc-tests.md` | Short POC checklist per visit, incl. the next-visit site survey |
 | `docs/06-ha-note.md` | Hand-off note for the separate HA automation threads |
+| `firmware/` | ESPHome configs (POC walk test now; node and receiver later). Never commit `secrets.yaml`. |
 | `config/calibration.yaml` | Per-probe calibration values (empty until POC) |
 | UNODE | Separate project. Link here when available. |

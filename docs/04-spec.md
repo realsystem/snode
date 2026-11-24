@@ -49,7 +49,8 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 | D25 | Bus burial | 16/2 landscape wire at ≥ 6 in cover (US irrigation practice, ≤ 30 V); each probe joins it with its own factory lead and a molded clamp (option C) | Owner: US irrigation standard; owner chose C | S61 |
 | D27 | Radio path | N1 direct Wi-Fi (test first) or N2 ESP-NOW receiver (fallback; commercial default) | Energy difference small; range/setup decides | S62, S63, S64 |
 | D28 | Variant A charger | TI BQ25570 (cold start ≥ 600 mV, MPPT, 488 nA) | Supercap-friendly harvester | S65 |
-| D30 | Receiver uplink | One firmware: Ethernet (default, free channel) or Wi-Fi (fixed channel); examples E1–E6; UNODE optional | Owner: support any user choice | S62, S67, S68, S69 |
+| D30 | Receiver uplink | One firmware: Wi-Fi with channel follow (default), Ethernet, or fixed channel; examples E1–E7; UNODE optional | Owner: any ISP/router/LAN; owner site has no spare port | S62, S67–S69, S73 |
+| D31 | Channel follow | Node saves the last good channel; on a missed acknowledgement it scans channels 1–11 | Works with routers that change channel | S74 |
 | D29 | RTC in ESPHome | Small external component for the RV-3028 | No built-in platform | S66 |
 | D12 | Enclosure | UV-stabilized polycarbonate, IP68 class, on a wooden stake, box bottom 0.3 m above grade | Owner: wood and plastic are rabbit-safe | S29 |
 | D13 | Riser | 1/2 in Schedule 40 PVC, 2 cables (35% fill), duct seal at the top | Rabbits | S35, S38 |
@@ -73,8 +74,8 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 
 ## 4. Open items
 
-1. Probe lead length (needs emitter offset and cable side) — round 19.
-2. Starlink router generation and a free LAN port — next-visit site check.
+1. Probe position (P1/P2) and cable side (K1/K2), which set the lead length (draft 40 cm) — round 20.
+2. ESP8266 board type; second board for an ESP-NOW test — round 20.
 3. Probe lead + molded clamp price — POC.
 - HA automation (zones, alerts, delivery): handled in the HA threads; see `06-ha-note.md`.
 5. Bus protocol and electrical design (power phase, timing, drops per run).
@@ -94,7 +95,7 @@ Full plan with pass/fail criteria: `05-poc-plan.md`.
 |---|---|---|
 | T1 | v1.2 drift in site soil (ESP8266 logger) | Sensor stability; baseline |
 | T2 | RTC power gating, off-state current | ≤ 1 µA off; correct wake times |
-| T3 | ESPHome ESP-NOW node → receiver → HA | Data path, entity naming |
+| T3 | ESPHome ESP-NOW node → receiver → HA; channel follow after a forced router channel change | Data path, entity naming, D31 |
 | T4 | Bus bench test, 2 x 10.5 m runs, 20 drops | Bus reliability, power phase |
 | T5 | Piercing clamp soak test | Contact life in wet soil |
 | T6 | Calibration in site soil (dry/wet, 2 temperatures) | Raw→% mapping; temperature coefficients |

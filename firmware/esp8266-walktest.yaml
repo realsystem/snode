@@ -1,0 +1,138 @@
+# SNODE POC: ESP8266 walk test and sensor logger (ESPHome)
+# Purpose (docs/07-poc-tests.md, T11 and T1):
+#   - Wi-Fi signal (RSSI), AP channel and BSSID at each test spot (direct Wi-Fi, N1)
+#   - Time from boot to Wi-Fi connected and to HA connected (static IP vs DHCP)
+#   - Report success rate in cycle mode (deep sleep between reports, like a real node)
+#   - Optional: raw reading of one capacitive "Arduino" moisture sensor on A0 (T1 drift)
+# Limits: the ESP8266 PCB antenna and radio differ from the XIAO ESP32C3 + u.FL antenna,
+# so results are indicative only (UNVERIFIED for the final node).
+#
+# Wiring:
+#   - Cycle mode jumper: D5 to GND = cycle mode (sleep 60 s between reports). No jumper = continuous mode.
+#   - Deep sleep wake: wire D0 (GPIO16) to RST. Required for cycle mode. Remove it to flash over USB.
+#   - Optional moisture sensor: VCC 3V3, GND, AOUT to A0.
+#     D1 mini / NodeMCU have a divider on A0 (0–3.2 V). A bare ESP-12 module accepts 0–1 V only.
+# Power: USB power bank. Hold the board 0.3 m above the ground (same height as the node antenna).
+
+substitutions:
+  name: snode-walktest
+  friendly: SNODE walk test
+  board: d1_mini          # NodeMCU: nodemcuv2
+  sleep_time: 60s
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly}
+  on_boot:
+    - priority: 600
+      then:
+        - lambda: id(boot_count) += 1;
+    - priority: -100
+      then:
+        # Failsafe: in cycle mode, sleep anyway if HA did not connect within 20 s.
+        # That cycle then shows as a missing boot number in HA (a failed report).
+        - delay: 20s
+        - if:
+            condition:
+              binary_sensor.is_on: cycle_mode
+            then:
+              - deep_sleep.enter: ds
+
+esp8266:
+  board: ${board}
+  restore_from_flash: false   # globals live in RTC memory: they survive deep sleep, not power loss
+
+logger:
+  level: INFO
+
+api:
+  encryption:
+    key: !secret walktest_api_key
+  on_client_connected:
+    - lambda: id(api_ms).publish_state(millis());
+    - if:
+        condition:
+          binary_sensor.is_on: cycle_mode
+        then:
+          - delay: 5s     # time to send all states
+          - deep_sleep.enter: ds
+
+ota:
+  - platform: esphome
+    password: !secret ota_password
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  fast_connect: true        # skip the scan; join the known SSID directly
+  power_save_mode: none
+  # Test 2: uncomment for a static IP run, then compare connect times with the DHCP run.
+  # manual_ip:
+  #   static_ip: 192.168.1.250
+  #   gateway: 192.168.1.1
+  #   subnet: 255.255.255.0
+  #   dns1: 192.168.1.1
+  on_connect:
+    - lambda: id(wifi_ms).publish_state(millis());
+
+deep_sleep:
+  id: ds
+  sleep_duration: ${sleep_time}
+
+globals:
+  - id: boot_count
+    type: uint32_t
+    restore_value: true
+    initial_value: '0'
+
+binary_sensor:
+  - platform: gpio
+    id: cycle_mode
+    name: Cycle mode
+    pin:
+      number: D5
+      mode: INPUT_PULLUP
+      inverted: true
+
+sensor:
+  - platform: wifi_signal
+    name: Wi-Fi RSSI
+    update_interval: 10s
+  - platform: template
+    id: wifi_ms
+    name: Boot to Wi-Fi
+    unit_of_measurement: ms
+    accuracy_decimals: 0
+  - platform: template
+    id: api_ms
+    name: Boot to HA
+    unit_of_measurement: ms
+    accuracy_decimals: 0
+  - platform: template
+    name: Boot count
+    accuracy_decimals: 0
+    lambda: return id(boot_count);
+    update_interval: 10s
+  - platform: template
+    name: Wi-Fi channel
+    accuracy_decimals: 0
+    lambda: return WiFi.channel();   # if this line does not compile, delete this sensor
+    update_interval: 60s
+  - platform: uptime
+    name: Uptime
+    update_interval: 60s
+  - platform: adc
+    pin: A0
+    name: Soil raw A0
+    raw: true
+    accuracy_decimals: 0
+    update_interval: 60s
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: IP address
+    bssid:
+      name: BSSID
+    ssid:
+      name: SSID

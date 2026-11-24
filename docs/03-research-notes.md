@@ -127,6 +127,11 @@ be re-checked before purchase. S-numbers are referenced from `02-design-log.md`.
 | S69 | ESPHome Ethernet component: ESP32 with LAN8720 and others; examples for Olimex ESP32-POE and WT32-ETH01; can't be used together with the Wi-Fi component. | https://esphome.io/components/ethernet.html ; https://new.esphome.io/components/ethernet |
 | S70 | Fixing a 2.4 GHz channel on a typical router: choose 1, 6 or 11 at 20 MHz width. Some routers have no manual channel setting. | https://community.netgear.com/discussions/en-home-orbi-ax/can-i-change-the-wifi-channels-on-the-orbi-meshrbk862sb/2467824 ; https://support.ring.com/hc/en-au/articles/4407014643732 |
 
+| S71 | Drip-irrigated trees: install the soil moisture sensor at the canopy drip line, 12–18 in from an emitter (Monnit installation guide). | https://support.monnit.com/article/78-soil-moisture-sensor-installation-by-crop-type |
+| S72 | Vineyard extension: choose a distance from emitter and vine that captures uptake; too far from the emitter misses the wetting pattern and can lead to over-watering. | https://lodigrowers.com/using-soil-moisture-sensors-for-vineyard-irrigation-management-a-practical-guide-for-installing-and-interpreting-information-from-soil-moisture-monitoring-technologies-in-vineyards-part-ii/ |
+| S73 | Starlink Mini: integrated Wi-Fi 5 router and one Ethernet port. Starlink app can split 2.4/5 GHz networks. | https://www.bestbuy.com/product/starlink-mini-kit-ac-dual-band-wi-fi-system-white/J3R8ZC259C ; https://starlink.com/support/article/acb3bee4-53d9-2f4f-ca45-c21db163543c |
+| S74 | ESP-NOW channel hopping: the node iterates through channels sending to the hub until acknowledged, because access points change channels. Fixing the router channel is simplest only if you control the router. | https://thingpulse.com/esp32-espnow-wifi-simultaneous-communication/ ; https://dev.to/gtanyware/channel-hopping-on-the-esp32-c3-with-esp-now-2led |
+
 ## Radio path
 
 | # | Finding | Source |

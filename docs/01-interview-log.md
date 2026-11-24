@@ -298,8 +298,23 @@ Answers:
 
 Result: option C (probe lead + clamp) adopted (D25). POC checklist written (`07-poc-tests.md`), with a site survey (T11) for the next visit; a reminder was scheduled outside the repo. Network setups E1–E6 (D30); Ethernet receiver is the default. UNODE as receiver: optional.
 
-## Round 19 — open (asked 2026-11-24)
+## Round 19 — 2026-11-24
 
+Questions:
 1. Emitter-to-probe offset (cm), and which side of the row the cable runs?
-2. Starlink router generation, and a free LAN port? (next-visit check)
+2. Starlink router generation, and a free LAN port?
 3. Write ESP8266 walk-test firmware before the next visit?
+
+Answers:
+1. "research and let's discuss"
+2. "starlink mini right now, but don't assume all users have it, they may use different ISP, different LAN solutions. my own example E1 should be based on wifi, I don't have enough ethernet ports."
+3. "yes, prepare firmware with enough data to cover what we can by esp8266."
+
+Result: probe position options P1/P2 and cable side K1/K2 (D25, draft lead 40 cm). E1 is now a Wi-Fi receiver with channel follow (D30, D31). Firmware `firmware/esp8266-walktest.yaml` written (not yet compiled).
+
+## Round 20 — open (asked 2026-11-24)
+
+1. Probe position P1 or P2; current emitter distance from trunk; drip lateral on surface?
+2. Cable side K2 or K1?
+3. ESP8266 board type?
+4. Second board for an ESP-NOW range test?

@@ -384,8 +384,18 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
     - The cable runs straight down the row, so the probe position no longer depends on where the cable is (probe at its fixed emitter offset).
     - The probe stays short (electronics in the head, as in D24).
     - A failed probe can be replaced without touching the main cable: dig at the clamp, pull it off, fit a new probe.
-  - Cost: about 30 cm of 2-core lead per probe (600 x 0.3 m = 180 m) plus fitting the clamp at the factory. Price at POC (no cited price yet). The main cable stays at 5 spools.
+  - Cost: about 40 cm of 2-core lead per probe (600 x 0.4 m = 240 m) plus fitting the clamp at the factory. Price at POC (no cited price yet). The main cable stays at 5 spools.
   - Risks (UNVERIFIED, POC): the clamp is underground and sealed in gel or potting compound, so test T5 soaks it in wet soil. The lead runs near the sensing zone, so it must leave the head away from the blade face; any fixed offset it adds is removed by calibration (T6).
+- **Probe position and cable side (draft, owner to decide in round 20):**
+  - Guidance found: drip-irrigated trees: sensor at the canopy drip line, 12–18 in from an emitter (Monnit; established trees). Vineyard extension: too far from the emitter misses the wetting pattern and leads to over-watering; too close reads wetter than the root zone. There is no single number for young trees (S71, S72).
+  - New trees: roots are still in the planting hole, and the wetted bulb under one emitter is small, so the probe should sit inside both.
+  - Offset options:
+    - P1: 10 cm from the emitter, toward the trunk (recommended for years 1–3; inside the root ball and the wetted bulb; fast response to each irrigation).
+    - P2: 20–30 cm from the emitter (edge of the wetted bulb; fits established trees; risks missing water in coarse soil).
+  - Cable side options:
+    - K1: main cable on the tree line, under the drip lateral (shortest lead; but the trench cuts through the root ball and runs next to the drip tubing).
+    - K2: main cable 20–25 cm off the tree line, on the side away from the emitters (recommended: the trench misses roots and tubing; lead reaches across).
+  - Lead length with P1 + K2: about 20–25 cm across + about 15 cm down + slack = **40 cm** draft (was 30 cm). The slack also lets the probe move about 20 cm outward later, as the tree grows, without touching the main cable.
 - Rejected: A (rise loop: extra cable, cable near the surface at every tree); B (foot clamp: longer probe, and the probe has to sit on the cable line).
 
 ### D26 Node enclosure, POC (3D-printed ASA)
@@ -448,30 +458,40 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 - **Irrigation interlock:** HA must not open an OpenSprinkler zone when that zone is frozen or its data is older than 25 h.
 
 ## Receiver
-### D30 Network setups the receiver must support (owner: support any user choice)
-- The problem: an ESP32 doing ESP-NOW and Wi-Fi on one radio must use the router's channel. In ESPHome the ESP-NOW channel can't be set when Wi-Fi is enabled (S62, S68).
-- The answer: one receiver firmware with a build option for the uplink to HA.
-  - **Ethernet:** the ESP-NOW channel is free and nothing on the router needs changing. ESPHome can't run Ethernet and Wi-Fi together, so the radio is used only for ESP-NOW.
-  - **Wi-Fi:** the router's 2.4 GHz channel must be fixed.
+### D30 Network setups the receiver must support (owner: support any ISP, router and LAN)
+- The problem: an ESP32 doing ESP-NOW and Wi-Fi on one radio must use the router's channel. In ESPHome the ESP-NOW channel can't be set when Wi-Fi is enabled (S62, S68). Many routers pick their channel automatically and change it.
+- Owner's site: Starlink Mini (built-in Wi-Fi 5 router, one Ethernet port, S73); no spare Ethernet port. No manual channel setting found in Starlink docs (UNVERIFIED). So the owner's setup must work over Wi-Fi with a channel that can change.
+
+#### D31 Channel follow (new; makes a Wi-Fi receiver work with any router)
+- The receiver joins Wi-Fi on whatever channel the router uses. Nodes find it:
+  1. The node saves the last channel that worked (ESP32-C3 flash, written only when it changes; or the RV-3028 user EEPROM).
+  2. At each report, the node sends on the saved channel and waits for the receiver's acknowledgement (up to 3 tries).
+  3. With no acknowledgement, it tries channels 1–11 (US) once each. When one is acknowledged, it saves it.
+- This is a known method: nodes iterate through all channels, sending to the hub until one is acknowledged (ThingPulse; Espressif forum, S74).
+- Cost (UNVERIFIED, POC T3): a full scan is about 11 short sends, a fraction of a second, and happens only after the router changes channel.
+- ESPHome: a node with no Wi-Fi can change its ESP-NOW channel (`espnow.set_channel`, S68). Scan logic is a short script/lambda (bench test T3).
+- Fallback **two-chip receiver**: one ESP32 does ESP-NOW on a fixed channel and passes packets over a short UART link to a second ESP32 on Wi-Fi (community pattern, S68). Works with any router; costs one extra board.
 
 | Example | Who it suits | How | Router change |
 |---|---|---|---|
-| **E1: reuse the router, Ethernet receiver (default; recommended here)** | Any site with a free LAN port | ESP32 board with Ethernet that ESPHome supports (Olimex ESP32-POE, WT32-ETH01), plugged into the router's LAN port or a switch. Starlink Gen 3 routers have 2 LAN ports. Indoor box beside the router, or a roof box fed by one PoE cable (Olimex ESP32-POE). | None |
-| **E2: reuse the router, Wi-Fi receiver, channel fixed** | The router allows a fixed channel | Router admin → 2.4 GHz → channel 1, 6 or 11, width 20 MHz. Split the 2.4/5 GHz names if the router merges them. Receiver box anywhere in Wi-Fi range. | Fix the channel |
-| **E3: reuse the Starlink router, which can't fix the channel** | Starlink router with no channel setting | Use E1. Or: Starlink bypass mode plus your own router that can fix its channel, then E2. | Bypass (optional) |
-| **E4: from scratch, dedicated farm access point** | New installs; poor field coverage | Any router in access-point mode, wired to the main router, with a fixed 2.4 GHz channel, mounted high at the trailer. It also serves direct-Wi-Fi nodes (N1). Receiver as in E2. | New AP |
-| **E5: solar receiver away from the trailer (no cable)** | Large sites | Outdoor box, LiFePO4 18650 with a 0 °C charge cut-off (D27), Wi-Fi uplink, so E2 or E4 is needed. | Fix the channel |
-| **E6: UNODE as the receiver (optional)** | Sites that already have a UNODE near the trailer | The UNODE runs the receiver function as an extra feature; SNODE never depends on it. | As for its uplink |
-- This site: the Starlink router is inside, in the middle of the fiberglass trailer, so E1 is the plan. Indoor first; move to a roof box with PoE only if T9 needs the extra range. Manual channel selection on the Starlink router: not found in Starlink docs (UNVERIFIED; check in the app on the next visit).
+| **E1: Wi-Fi receiver + channel follow (default; owner's site)** | Any router, any ISP, no free port | Receiver box in Wi-Fi range (indoor, or on the trailer roof powered by USB). Router keeps automatic channels. | None |
+| E2: Ethernet receiver | A free LAN port or switch | Olimex ESP32-POE / WT32-ETH01 on the LAN; ESP-NOW on a fixed channel; PoE allows a roof box on one cable. | None |
+| E3: Wi-Fi receiver, fixed channel | Routers with a channel setting | Router: 2.4 GHz channel 1, 6 or 11 at 20 MHz. Channel follow still runs, so a missed setting does no harm. | Fix channel |
+| E4: dedicated farm access point | New installs; weak field coverage; direct-Wi-Fi nodes (N1) | Any router in AP mode, mounted high, wired or meshed to the main router; fixed channel. | New AP |
+| E5: solar receiver away from the trailer | Large sites | Outdoor box, LiFePO4 18650 with a 0 °C charge cut-off (D27); Wi-Fi uplink + channel follow. | None |
+| E6: UNODE as the receiver (optional) | A UNODE near the trailer | UNODE runs the receiver function as an extra feature; SNODE never depends on it. | As its uplink |
+| E7: two-chip receiver | Routers that change channel often | As above (fallback). | None |
+- Direct Wi-Fi (N1) needs no receiver and no channel handling at all; it is tested first (T9).
 
 ### Notes
 - The trailer is fiberglass, which passes 2.4 GHz with little loss (UNVERIFIED; check in the walk test). The receiver ESP32 can stay inside, with a short coax to the roof antenna.
 
-## Open questions (round 19)
-1. Emitter-to-probe offset (cm), and which side of the row the main cable runs (emitter side or the other side)? This sets the probe lead length (draft 30 cm).
-2. Starlink router generation, and is a LAN port free? (Check on the next visit: photo of the router's back.)
-3. Should I write the ESPHome walk-test firmware for your ESP8266 before the next visit (reports RSSI and connect time to HA)?
+## Open questions (round 20)
+1. Probe position: P1 (10 cm from the emitter, toward the trunk, recommended) or P2 (20–30 cm)? Where is the emitter now: distance from the trunk, and is the drip lateral on the surface along the tree line?
+2. Cable side: K2 (main cable 20–25 cm off the tree line, away from the emitters, recommended) or K1 (on the tree line)?
+3. ESP8266 board type (D1 mini, NodeMCU, bare module)? It sets the `board` value and the A0 voltage range.
+4. Do you have a second ESP8266/ESP32 for an ESP-NOW range test (needs two boards)?
 
-Closed in round 18: probe join = option C (D25); test direct Wi-Fi first (T9); router location (inside, middle of the trailer); network setups (D30); UNODE as receiver = optional (D30 E6).
+Closed in round 19: owner network = Starlink Mini, Wi-Fi only, so E1 with channel follow (D30/D31); walk-test firmware written (`firmware/`).
 
 HA side: see `docs/06-ha-note.md`. Spec: `docs/04-spec.md`. POC: `docs/05-poc-plan.md`.

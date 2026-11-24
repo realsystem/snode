@@ -36,6 +36,8 @@ Terms and IDs: see `CLAUDE.md`. Sources: see `docs/03-research-notes.md` (S-numb
 - Connection cost must be close to zero. Standard irrigation caps may be a user option, but the design must use something simpler.
 - Drive lanes: provide calculated variants; the user chooses.
 - Cable rated to -20 °C is accepted for buried runs.
+- Standard connection: piercing clamp built into the probe (accepted).
+- Drive-lane variant for this site: **V1** (one lane per grove).
 - HA decides irrigation (probably OpenSprinkler). SNODEs only report.
 - Must work through winter (owner: "winter is most important").
 - Lowest cost. Custom PCB allowed after the POC. Existing ESP8266 boards and "Arduino" moisture sensors are for the POC only.
@@ -166,7 +168,7 @@ Cable per probe = horizontal Manhattan distance + 0.65 m (0.15 m depth + 0.5 m s
 | 3x L91 AA | $6.87 | $68.70 | $206.10 |
 | 16/2 landscape wire, 500 ft at $140 | about 23 m (75 ft) per SNODE incl. 10% slack | 750 ft → 2 spools = $280.00 | 2,264 ft → 5 spools = $700.00 |
 | Probe connection (integrated clamp) | about $0 extra (UNVERIFIED) | $0 | $0 |
-| Bus probes (custom PCB) | not yet priced | — | — |
+| Bus probes (custom PCB, D19) | estimate $0.45–1.30 each (UNVERIFIED) | about $90–260 for 200 | about $270–780 for 600 |
 | **Subtotal (without probes)** | | **$405.10 + £443.50** | **$1,075.30 + £1,330.50** |
 - Compared with the analog star: cable drops from $2,125 to $700 for the forest, and the mux ($6.50 per node) is gone. The probe cost moves into the custom probe PCB.
 - Not yet priced: bus probes, bus driver at the node, load switch, LDO, battery holder, riser conduit and fittings, duct seal, vent, wooden stake, receiver and roof antenna. The enclosure is now the largest priced item; source a cheaper box.
@@ -213,6 +215,7 @@ Rows numbered 1–10; clusters are row pairs (1-2, 3-4, 5-6, 7-8, 9-10); lanes c
 | V4 | all four | 24.0 m | 456 m² | +33% | 0 m (every row is next to a lane or the edge) |
 - Node and cable count are the same in all variants (10 SNODEs per grove), because buses never cross a lane.
 - 3 lanes is not listed: it gives the same 2 m max walk as V2 with more land.
+- **This site: V1**, one lane at gap 6|7 (grove 19.5 m x 19 m). The mirror position (4|5) works the same.
 
 ### D12 Enclosure
 - UV-stabilized polycarbonate box, IP68 class. Reference part: Hammond 1554QA2GY, 140 x 140 x 90 mm, £40.42 (RS UK, single unit). A cheaper equivalent is to be sourced; it is the largest per-node item found so far.
@@ -243,6 +246,16 @@ Rows numbered 1–10; clusters are row pairs (1-2, 3-4, 5-6, 7-8, 9-10); lanes c
 - Locate the drip line (surface or buried) before inserting a probe; keep the standard offset from the emitter.
 
 ### D16 Bus cable and probe connection
+- **Cable comparison (owner request):**
+| | 16/2 landscape lighting wire | 18/2 irrigation (sprinkler) wire |
+|---|---|---|
+| Shape | Flat, 0.155 x 0.296 in | Round jacket, about 0.190 in OD |
+| Price | $140 / 500 ft = $0.28/ft (Home Depot) | $186.27 / 1,000 ft = $0.19/ft (Home Depot); $46.77 / 250 ft = $0.19/ft |
+| Forest (2,264 ft) | 5 x 500 ft = **$700** | 3 x 1,000 ft = **$559** |
+| Riser fill (2 cables, 1/2 in) | 35% | 22% |
+| Built-in piercing clamp | Works: made for flat cable, no prep | The outer jacket must be slit or stripped first, which breaks the "no prep" rule (UNVERIFIED for clamp designs that pierce through the jacket) |
+| Temperature | 60 °C max; low limit not published | -20 to 75 °C (Southwire family) |
+- **Decision: 16/2 landscape wire is the standard** (the clamp needs no prep). 18/2 irrigation wire saves about $141 (20%) for this forest; it is a user option with caps or a jacket-stripping step.
 - **Bus cable: 16/2 low-voltage landscape lighting wire.** Flat 2-conductor, direct-burial rated, sold at home-improvement stores: 500 ft for $140 ($0.28/ft, Home Depot). Flat profile 0.155 x 0.296 in, 60 °C max (Carol 02309 data). Minimum temperature not published (UNVERIFIED; the owner accepts a -20 °C class rating for buried cable).
 - **Probe connection: piercing clamp built into the probe housing.** This is the method landscape-light fixtures use: pins pierce the insulation of the flat cable without cutting, stripping or splicing, so a branch can be made at any point on the run.
   - Install: lay the cable along the row, press each probe's clamp onto it at its tree, insert the probe. No separate connector is bought, so the connection cost is the two pins inside the probe (cents; UNVERIFIED until the housing is designed).
@@ -259,6 +272,24 @@ Rows numbered 1–10; clusters are row pairs (1-2, 3-4, 5-6, 7-8, 9-10); lanes c
 - Probe power: the probe needs a few mA for about a second to measure. Draw from the line during a "power phase", then talk. Protocol and electrical design to be researched next (UNVERIFIED).
 - POC: v1.2 analog probes with soldered wiring, to learn sensor behavior.
 
+### D19 Minimum bus probe (cost estimate, UNVERIFIED until quoted)
+Concept: the probe blade is the PCB. Copper electrode traces on the blade are the capacitive sensor, measured by the MCU with an RC charge-time method. A diode + capacitor take power from the bus. The MCU talks a 1-Wire style protocol. The electronics end is potted. A plastic housing holds two piercing pins for the 16/2 cable.
+| Item | Basis | Per probe (600 qty) |
+|---|---|---|
+| MCU: Puya PY32F002A (Cortex-M0+, 1.7–5.5 V, -40 to 85 °C) | LCSC, ESSOP-10, $0.0927 at 500+ | $0.09 |
+| Alternative MCU: WCH CH32V003J4M6 (SOP-8) | LCSC, $0.1238 at 500+ | ($0.12) |
+| SMT assembly | JLCPCB $0.0016 per joint x about 24 joints | $0.04 |
+| Assembly setup, one side | JLCPCB $25 per order / 600 | $0.04 |
+| Extended-part feeder fees | JLCPCB $1.50 per part type x about 3 types / 600 | $0.01 |
+| Passives (diode, capacitors, resistors, transistor) | not yet quoted | estimate $0.02–0.05 |
+| PCB blade, about 100 x 20 mm, 2-layer | not yet quoted (JLCPCB from $2 for 5 prototype boards) | estimate $0.10–0.30 |
+| Potting of the electronics end | not yet quoted | estimate $0.05–0.15 |
+| Housing with 2 piercing pins | 3D-printed (no tooling) or injection-molded (tooling cost, cents per part) | estimate $0.10–0.60 |
+| **Total** | | **estimate about $0.45–1.30; target ≤ $1.50** |
+- For comparison, the v1.2 analog board is $1.70 and still needs a cable to the node.
+- The MCU and assembly are cited; the PCB, passives, potting and housing need real quotes. The housing method depends on volume (round 13).
+- Risks to test: capacitance drift with temperature (compensate with the MCU or the node's DS18B20), the accuracy of RC timing compared with the v1.2 board, and bus power during measurement.
+
 ### D18 Firmware
 - ESPHome on both the nodes and the receiver (owner accepted).
 - ESPHome has an ESP-NOW component and an ESP-NOW platform for its Packet Transport component, which sends sensor states from one node to another without a server. Nodes send their readings to the receiver; the receiver exposes them to HA through the native API.
@@ -268,8 +299,8 @@ Rows numbered 1–10; clusters are row pairs (1-2, 3-4, 5-6, 7-8, 9-10); lanes c
 ## Receiver
 - The trailer is fiberglass, which passes 2.4 GHz with little loss (UNVERIFIED; check in the walk test). The receiver ESP32 can stay inside, with a short coax to the roof antenna.
 
-## Open questions (round 12)
-1. Standard connection = piercing clamp built into the probe (like landscape lights), with caps or retail connectors as user options. OK, given the corrosion risk to be proven in a soak test?
-2. Bus cable = 16/2 flat landscape lighting wire ($0.28/ft) instead of 18/x irrigation wire. OK?
-3. Which drive-lane variant for your site (V0, V1, V2, V4)?
-4. Target cost per bus probe (finished, with housing)? This sets the MCU and housing choice.
+## Open questions (round 13)
+1. Cable: confirm 16/2 landscape wire as standard (18/2 irrigation wire is about 20% cheaper but its jacket must be stripped for the clamp)?
+2. Expected commercial volume (hundreds, thousands, tens of thousands of probes)? This decides a 3D-printed vs injection-molded housing.
+3. Next step: should I (a) write the POC shopping list and test plan now, or (b) finish the remaining design sections first (requirements, firmware/HA detail, final spec section)?
+4. Probe temperature compensation: use the node's one DS18B20 for the whole cluster (cheapest), or add a temperature sensor in every probe (more accurate)?

@@ -185,9 +185,25 @@ Answers:
 
 Result: piercing clamp built into the probe (landscape-light style) on flat 16/2 landscape wire (D16); 1-Wire style bus as the candidate protocol (D17); drive-lane variants V0/V1/V2/V4 calculated; cable cost for the forest drops from $2,125 to $700.
 
-## Round 12 — open (asked 2026-11-24)
+## Round 12 — 2026-11-24
 
+Questions:
 1. Piercing clamp built into the probe as the standard connection (caps and retail connectors as options)?
 2. 16/2 flat landscape lighting wire as the bus cable?
 3. Which drive-lane variant for this site?
 4. Target cost per finished bus probe?
+
+Answers:
+1. "yes"
+2. "compare cost for 16/2 landscape lighting and standard irrigation valve wire"
+3. "v1"
+4. "I don't know, you tell me the minimal we can get"
+
+Result: cable comparison (16/2 $700 vs 18/2 $559 for the forest; 16/2 kept as standard because the clamp needs no prep). V1 recorded. Minimum bus probe estimated at about $0.45–1.30 (D19).
+
+## Round 13 — open (asked 2026-11-24)
+
+1. Confirm 16/2 landscape wire as standard?
+2. Expected commercial volume (decides housing method)?
+3. Next: POC shopping list and test plan, or finish the remaining design sections first?
+4. Probe temperature compensation: one DS18B20 per node, or a sensor in every probe?

@@ -79,6 +79,11 @@ be re-checked before purchase. S-numbers are referenced from `02-design-log.md`.
 | S34 | 2026 Toyota Tundra: overall width without mirrors 80.2 in. | https://www.edmunds.com/toyota/tundra/2026/st-402077541/features-specs |
 | S35 | 1-1/2 in Schedule 40 PVC conduit: inside diameter 1.56 in (Cantex, Zoro listing). Conduit fill: 40% of internal area for 3 or more conductors (NEC Chapter 9 Table 1, as tabulated). | https://zoro.com/cantex-schedule-40-conduit-1-12-in-10-ft-l-a52be12/i/G2766391 ; https://www.pdhonline.com/courses/e276/Conduit_Fill_Tables.pdf |
 
+| S36 | Southwire underground irrigation cable (18/xx, low-energy circuit, 30 VAC): rated -20 to 75 °C. 18/4: 0.2 in OD. 18/7: 0.235–0.268 in OD. McMaster sprinkler wire: 18/2 0.2 in, 18/3 0.21 in, 18/4 0.23 in. | https://cabletechsupport.southwire.com/en/tile/49/cable/60324/?country=CA ; https://kscdirect.com/item/CAB%2B547040508 ; https://www.zoro.com/southwire-cci-barogation-547070408-sprinkler-cable-18-awg-547070408/i/G604258330/ ; https://www.mcmaster.com/products/sprinkler-wire/ |
+| S37 | 3M DBR/Y-6 prices: $2.88 each in a 100-pack (Zoro); $3.25 each (TestEquity); $10.49 per retail 2-pack (Walmart). | https://zoro.com/3m-d-bury-splice-kit-pk100-dbry-6-bulk/i/G2042744 ; https://testequity.com/product/10020447-DBR-Y-6-BULK ; https://www.walmart.com/ip/38474094 |
+| S38 | 1/2 in Schedule 40 PVC (Atkore spec): OD 0.840 in, minimum average ID 0.578 in. | https://www.elliottelectric.com/Media/PVC6-PVC |
+| S39 | ESPHome ESP-NOW component (ESP32; ESP8266 in the next release) and the ESP-NOW Packet Transport platform, which shares sensor states between nodes without a server. | https://esphome.io/components/espnow/ ; https://esphome.io/components/packet_transport/espnow/ ; https://esphome.io/components/packet_transport/ |
+
 ## Radio path
 
 | # | Finding | Source |

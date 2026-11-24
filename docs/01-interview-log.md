@@ -153,9 +153,25 @@ Interpretation recorded: "minimal" = one standard box height (0.3 m), longer sta
 Conflict found: a Tundra is 80.2 in (2.04 m) wide without mirrors, wider than the 2 m row spacing, so lanes need a wider gap (asked in round 10).
 Result: required 1-1/2 in PVC riser from the box to the ground (D13); cable changed to 18/3 irrigation wire so standard direct-bury irrigation splices fit (D16).
 
-## Round 10 — open (asked 2026-11-24)
+## Round 10 — 2026-11-24
 
+Questions:
 1. Accept about 3.5 m drive lanes (measure mirror to mirror)? How many lanes per grove?
 2. Accept 18/3 irrigation wire with bench-built potted probe assemblies?
 3. Riser: 1-1/2 in Schedule 40 PVC, rigid, strapped to the wooden stake. OK?
 4. ESPHome acceptable for receiver and nodes, or custom firmware?
+
+Answers:
+1. "yes"
+2. "yes, no soldering, usual caps for connecting wires, no prep work for user, no bench stuff, just go to the field with spool and bag of connectors(bought from nearest home depot or similar store) and install it."
+3. "1/2 standard pvc conduit"
+4. "esphome is ok"
+
+Conflict found: a 1/2 in riser can't hold 20 home-run cables (about 213% fill). Only a bus architecture fits. Splice caps cost about $2.88 each, so the cap count per tree drives cost. Proposed a 2-wire digital bus probe for the product (D17).
+
+## Round 11 — open (asked 2026-11-24)
+
+1. Accept the 2-wire digital bus probe for the product (analog for POC only)?
+2. Caps at about $2.88 each: acceptable, or look for cheaper?
+3. How many drive lanes per grove?
+4. Irrigation cable rated to -20 °C vs -27 °C design point: accept or look for colder-rated cable?

@@ -101,7 +101,10 @@ All calibration values (dry/wet raw counts per probe) live in one file:
 - LiFePO4 cells must not be charged below 0 °C. Chargers must have a cold cut-off.
 - Burrowing rodents are present. Field cables must allow optional conduit.
 - Rabbits are present: cables between the box and the ground must always be in a conduit riser.
-- Drive lanes must fit a full-size pickup (Toyota Tundra); no cable may cross a drive lane.
+- Drive lanes must fit a full-size pickup (Toyota Tundra), about 3.5 m between tree rows; no cable may cross a drive lane.
+- Field installation needs no soldering and no bench prep: a spool of wire and direct-bury splice caps from a home-improvement store only.
+- Box-to-ground riser: 1/2 in standard PVC conduit.
+- Firmware: ESPHome (nodes and receiver).
 - Every design must state its operating limits (temperature, days without sun,
   battery life, link distance, cable length), because the design may become a commercial product.
 - No masts in the field. Node antennas must be short and nearly invisible.

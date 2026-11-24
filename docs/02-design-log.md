@@ -28,6 +28,10 @@ Terms and IDs: see `CLAUDE.md`. Sources: see `docs/03-research-notes.md` (S-numb
 - Snow provision: minimal.
 - Rabbits present. Wooden stake and plastic box are fine; a conduit from the box to the ground is required.
 - Splices: sealed direct-bury caps like those used for 24 VAC irrigation wiring.
+- Drive lanes about 3.5 m wide: accepted.
+- Installation: **no soldering, no bench prep.** The installer goes to the field with a spool and a bag of connectors bought at a home-improvement store.
+- Riser: 1/2 in standard PVC conduit.
+- Firmware: ESPHome is acceptable.
 - HA decides irrigation (probably OpenSprinkler). SNODEs only report.
 - Must work through winter (owner: "winter is most important").
 - Lowest cost. Custom PCB allowed after the POC. Existing ESP8266 boards and "Arduino" moisture sensors are for the POC only.
@@ -115,6 +119,7 @@ Each limit is set by the weakest part. All UNVERIFIED until tested; "rated" valu
 | Valid moisture | Only when soil is above 0.5 °C | Same | Capacitive measurement in frozen soil | S13 |
 | Snow depth | Box height − 0.1 m (0.2 m at the standard 0.3 m height; longer stake for snowy sites) | Same | Box and antenna must stay above snow | — |
 | Field splices | -40 to +105 °C operating; 18–10 AWG | Same | 3M DBR/Y-6 rating | S33 |
+| Field cable temperature | -20 to +75 °C | Same | Irrigation cable rating (below the -27 °C design point) | S36 |
 | Vehicle lanes | Wider gap needed (about 3.5 m for a full-size pickup); never in a cluster gap | Same | Vehicle width | S34 |
 | SNODEs per receiver | 30 tested by design (60 packets/day); higher counts need a test | Same | Receiver load | — |
 
@@ -199,11 +204,15 @@ The mux breakout price is for prototyping; the bare chip is $1.05. The enclosure
 - One membrane vent (e.g., GORE Protective Vent) to equalize pressure and reduce condensation.
 
 ### D13 Cable riser (required)
-- Owner: rabbits make the cable run between the box and the ground the critical part. **A conduit riser from the box down into the ground is required.**
-- 1-1/2 in Schedule 40 PVC conduit (ID 1.56 in), from a terminal adapter and locknut in the box bottom down to trench depth, ending in a sweep elbow in the trench. The riser is strapped to the wooden stake.
-- Fill: 21 cables (20 probes of 18/3 irrigation wire at 0.184 in OD, plus the DS18B20 lead) ≈ 0.56 in², which is 29% of the riser's 1.91 in². That is under the 40% rule for 3+ cables. (With Cat5e it would have been at the 40% limit.)
-- Seal: duct-seal compound packed around the cables inside the adapter, at the top of the riser. The open buried end lets condensation drain into the soil.
-- This replaces the 6 multi-hole glands in the previous draft: one hole in the box instead of six.
+- Owner: a conduit riser from the box into the ground is required (rabbits), size **1/2 in standard PVC**.
+- 1/2 in Schedule 40 PVC: average ID 0.578 in → 0.262 in² → 40% fill = 0.105 in².
+- Fill check by architecture:
+| Architecture | Cables in the riser | Area | Fill | Fits? |
+|---|---|---|---|---|
+| Analog star (20 x 18/3 at 0.184 in + DS18B20) | 21 | ≈ 0.56 in² | ≈ 213% | **No** |
+| Digital bus, 2 row cables of 18/4 at 0.2 in | 2 | ≈ 0.063 in² | ≈ 24% | Yes |
+- **So a 1/2 in riser only works with a bus architecture (D17).** The analog star would need 1-1/2 in.
+- Seal: duct-seal compound inside the terminal adapter at the top. The buried bottom end stays open for drainage.
 
 ### D14 Stake and snow
 - Owner: keep it minimal. **One standard box height: bottom of box 0.3 m above grade.** For snowy sites the installer cuts a longer stake and riser. Limit: snow depth ≤ box height − 0.1 m.
@@ -216,17 +225,35 @@ The mux breakout price is for prototyping; the bare chip is $1.05. The enclosure
 - Locate the drip line (surface or buried) before inserting a probe; keep the standard offset from the emitter.
 
 ### D16 Probe cable and splices
-- **Cable changed from Cat5e to 18/3 irrigation (sprinkler) wire.** It is UL listed for direct burial, 0.184 in OD, and about the same price per foot ($0.25/ft vs $0.24/ft for Cat5e).
-- Reason: the owner wants the same sealed splices used for 24 VAC irrigation wiring. Those (3M DBR/Y-6, direct bury, gel-filled, -40 to 105 °C) take 18–10 AWG only. Cat5e's 24 AWG is below their range, so it would have needed telecom gel connectors (UY2, 26–19 AWG), which are moisture-resistant but not direct-burial kits.
-- **Probe assembly:** the v1.2 board's connector is removed and the 18/3 wire is soldered straight to the board. The joint and the electronics end are potted, with adhesive-lined heat-shrink over the cable exit. Probe assemblies are built on the bench in standard cable lengths. So there are no splices at the tree in a new install.
-- **Field repair:** cut out the bad probe assembly and splice a new one in with 3x DBR/Y-6 (18 AWG to 18 AWG, within range).
-- Potting compound must be rated to -40 °C (part to be selected).
+- Cable: 18 AWG direct-burial irrigation wire (Southwire Barogation family). It is rated -20 to 75 °C, which is above the -27 °C design minimum. Buried cable is unlikely to see air temperature (UNVERIFIED), but this is a stated limit.
+- Splices: 3M DBR/Y-6 direct-bury caps (18–10 AWG, -40 to 105 °C), about $2.88 each in packs of 100 (Zoro). Sold at retail as 2-packs.
+- **Owner rule: no soldering, no bench prep.** The probe must ship from the factory with an 18 AWG pigtail. The installer lays the spool and joins wires with caps. The node has tool-free terminals (lever or screw) for bare 18 AWG.
+- Cap count drives cost:
+| Architecture | Caps per tree | Caps for 600 trees | Cost at $2.88 |
+|---|---|---|---|
+| Analog star, pigtail spliced to a home run | 3 | 1,800 | $5,184 |
+| Digital bus, 4 wires (power, ground, 2 data), tap at each tree | 4 | 2,400 | $6,912 |
+| **Digital bus, 2 wires (power and data on one pair)** | **2** | **1,200** | **$3,456** |
+| Probe with a factory cable long enough to reach the node (cut to length at the node) | 0 | 0 | $0, but 20 cables in the riser (doesn't fit 1/2 in) |
+- Cheaper direct-bury caps should be priced; the caps cost more than the probe board.
+
+### D17 Probe architecture for the product (proposed, owner to decide)
+- **Recommended for the product: a 2-wire digital bus.** Each probe has a small microcontroller that measures locally and talks on a shared pair that also carries power, like two-wire decoder irrigation systems. One 18/2 cable runs along each row; each probe's 2-wire pigtail is tapped on with 2 caps.
+- Fits the 1/2 in riser (2 cables). Needs about 1 m of cable per tree instead of about 4 m. Fewest caps of any field-wired option. The analog 6 m cable limit no longer applies. Works for any planting pattern, because the bus follows the rows.
+- Cost: a custom probe PCB (owner allows it after the POC). Bus electrical design (protocol, length, number of drops) is not yet researched: UNVERIFIED.
+- POC: keep the v1.2 analog probes with soldered wiring to learn about the sensor; the bus probe is the product step.
+
+### D18 Firmware
+- ESPHome on both the nodes and the receiver (owner accepted).
+- ESPHome has an ESP-NOW component and an ESP-NOW platform for its Packet Transport component, which sends sensor states from one node to another without a server. Nodes send their readings to the receiver; the receiver exposes them to HA through the native API.
+- Boot flow under RTC power gating: power on → read sensors → send → wait for the acknowledgement → set the next RTC alarm → clear the alarm (cuts power). RTC driver support in ESPHome for the RV-3028 is not confirmed; may need a custom component (UNVERIFIED).
+- Scale check needed: 30 nodes x 22 values = 660 entities through one receiver (UNVERIFIED).
 
 ## Receiver
 - The trailer is fiberglass, which passes 2.4 GHz with little loss (UNVERIFIED; check in the walk test). The receiver ESP32 can stay inside, with a short coax to the roof antenna.
 
-## Open questions (round 10)
-1. Drive lanes: a Tundra (80.2 in without mirrors) doesn't fit a 2 m gap. Accept about 3.5 m lanes (please measure the truck mirror to mirror)? How many lanes per grove?
-2. Accept 18/3 irrigation wire with bench-built, potted probe assemblies (no splices at the tree, DBR splices only for repairs)?
-3. Riser: 1-1/2 in Schedule 40 PVC, rigid, strapped to the wooden stake. OK?
-4. Next section is firmware and HA: is ESPHome acceptable for the receiver and nodes, or do you prefer custom firmware?
+## Open questions (round 11)
+1. Product architecture: accept the 2-wire digital bus probe (custom PCB) for the product, with analog v1.2 probes for the POC only? It is the only option that fits the 1/2 in riser with field-only wiring.
+2. Splice caps cost about $2.88 each, which is more than the probe board. Is that acceptable, or should I look for cheaper direct-bury caps?
+3. How many drive lanes per grove (each 3.5 m lane adds 1.5 m to the grove width)?
+4. The irrigation cable is rated down to -20 °C versus the -27 °C design point. Accept that for buried cable, or look for colder-rated cable?

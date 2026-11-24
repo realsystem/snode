@@ -9,7 +9,7 @@ At each node wake the bus powers up. The probe boots, measures the soil (RC char
 electrode) and its chip temperature, stores the result, and returns it when the node asks.
 It has no battery and no clock; it is powered only through the bus, a few seconds twice a day.
 
-## 2. The bus question (design log D35, owner to choose)
+## 2. The bus question (design log D35) — decided: O2 powered bus
 The 1-Wire plan (D22) has a power problem found in this round:
 - The DS2482's weak pull-up is 1000–1675 Ω, and at 3.3 V it reads a "low" only below 0.9 V (S78).
 - While the node talks, every probe MCU on that bus is awake for at least part of each transaction
@@ -31,6 +31,8 @@ The 1-Wire plan (D22) has a power problem found in this round:
 - **Recommendation: O2.** Winter reliability comes first, and O2 removes the power and threshold problems instead of
   working around them. Cost is about the same (DS2482s removed, a few cents of discretes added).
 - The probe PCB below supports both: only one resistor value (R_SINK) and the firmware differ.
+- Owner chose O2 (round 23). Ready-made M-Bus chips were reviewed and not used (36 V bus, cost, -25 °C limit; D36).
+- Probe MCU: PY32F002A or the US-stocked ATtiny202/402 (D37). The netlist below shows the PY32; the ATtiny202 uses the same parts (AINP0/AINN0 for the comparator, USART for LINE/SINK, UPDI for programming).
 
 ## 3. Schematic (netlist form)
 
@@ -88,7 +90,7 @@ Unchanged from D19 (estimate about $0.45–1.30 per probe; MCU $0.0927 at 500+) 
 - T6: calibration in site soil at 5 °C and 25 °C; chip temperature against the node DS18B20.
 
 ## 9. Open items
-- Bus choice O1/O2 (round 23).
+- Probe MCU for production (D37, round 24).
 - ESSOP10 pin assignment; internal temperature sensor calibration data (datasheet).
 - Electrode geometry and R_CHG tuned with T4a data.
 - Conformal coating / potting compound choice (T5).

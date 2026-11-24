@@ -356,8 +356,22 @@ Answers:
 
 Result: bench parts list in `05-poc-plan.md`. Probe design v0.1 (`09-probe-design.md`, D34). New finding: the 1-Wire pull-up can't power 10 awake probes; powered-bus option O2 proposed (D35). Portable probe firmware written and host-tested.
 
-## Round 23 — open (asked 2026-11-24)
+## Round 23 — 2026-11-24
 
+Questions:
 1. Bus: O2 powered bus (recommended) or O1 1-Wire?
 2. Bench parts list OK to order, or changes?
+3. ESP32-CAM type and USB adapter.
+
+Answers:
+1. "O2, but are there ready to use devices for this purpose?"
+2. "make sure all parts available in US, do not order, just prepare list with pricing."
+3. (no answer)
+
+Result: O2 decided (D35). Ready M-Bus chips and masters reviewed and not used (D36). US-only bench list, $125.06 cited (05-poc-plan). Probe MCU US availability question raised (D37).
+
+## Round 24 — open (asked 2026-11-24)
+
+1. Production probe MCU: ATtiny202/402 (US) or PY32F002A (LCSC)?
+2. O2 bus at about 5 V: OK?
 3. ESP32-CAM type and USB adapter.

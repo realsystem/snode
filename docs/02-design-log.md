@@ -511,17 +511,37 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 - One PCB supports both bus options (only R_SINK and firmware differ).
 - Firmware: portable core written and host-tested (`firmware/probe/`); hardware layer and protocol layer to do.
 
-### D35 Bus electrical choice (new finding; owner to choose)
+### D35 Bus electrical choice — decided (owner, round 23): O2 powered bus
 - Finding: with the 1-Wire plan, 10 awake probe MCUs per bus need 5–10 mA while the node talks, but the DS2482's weak pull-up is 1000–1675 Ω, and its low threshold at 3.3 V is 0.9 V, which the probe's polarity bridge eats into (S78). D22's "low-value pull-up" can't fix both at once.
 - O1: keep 1-Wire (workarounds: RC-filtered wake, early drop-out on address mismatch, larger reservoirs). High risk at T4.
 - **O2 (recommended): M-Bus-style powered bus.** Node → probes by voltage steps on a line that never drops to 0 V; probes → node by a current step the node senses (S79). Probes are always powered; the bridge drops don't matter. Node: DS2482s replaced by 2 MOSFETs, 2 diodes, a shunt and a comparator per bus, plus a custom ESPHome component.
 - If O2 is chosen, `08-node-design.md` changes: bus section, pin map (UART TX/RX per bus, node DS18B20 on its own GPIO), packet unchanged.
 
-## Open questions (round 23)
-1. Bus: O2 powered bus (recommended) or O1 1-Wire?
-2. Bench parts list is in `05-poc-plan.md` (cited subtotal $68.48 + £25.80 + €28.67). OK to order, or change anything (for example, a US source for the RTC breakout)?
+### D36 Ready-made M-Bus parts (owner asked: are there ready devices?)
+- Yes, for standard M-Bus:
+  - Slave chips: TI TSS721A (polarity independent, powers the slave from the bus; -25 to 85 °C; $1.74 at LCSC, 1 pc) and onsemi NCN5150 (3.3 V LDO for the slave, up to 38,400 baud, -40 to 85 °C; about £1.82 at DigiKey UK, 1 pc).
+  - Masters: TTL/USB-to-M-Bus master modules (about $25 on eBay) up to industrial converters ($370 and up) (S96, S97).
+- **They don't fit this product:**
+  1. Standard M-Bus runs at 24–36 V on the bus (mark 36 V at the repeater). That is above the ≤ 30 V low-voltage class that the 6 in burial rule (D25) relies on.
+  2. A slave chip per probe adds about $1.7–2.5 x 600 = $1,000–1,500, against a probe target of ≤ $1.50.
+  3. The TSS721A is rated only to -25 °C; the design point is -27 °C.
+  4. The node would need a 36 V supply from 3 AA cells.
+- **Decision (proposed): use the M-Bus principle at about 5 V with discrete parts** (node: 2 MOSFETs, 2 diodes, a shunt and a TLV7031 comparator per bus; probe: one current-sink MOSFET + resistor). A $25 master module and 1–2 NCN5150s could be a learning bench experiment only; not needed.
+
+### D37 Probe MCU and US availability (owner: all parts available in the US)
+- PY32F002A: $0.09–0.18, sold by LCSC only (ships to the US from China; no US distributor stock found).
+- US-stocked options with 1.8–5.5 V supply and an analog comparator:
+  - Microchip ATtiny202 ($0.46; DigiKey/Mouser; 8-pin; 2 KB flash; 1 comparator; UPDI programming). It fits the probe pin count exactly: CHG, comparator +/−, LINE, SINK + UPDI. ATtiny402 = 4 KB (more room for code).
+  - STM32C011 ($0.83, DigiKey) needs ≤ 3.6 V and has no comparator, so it doesn't fit.
+- Cost effect: about +$0.37 per probe, about +$220 for 600 probes.
+- The portable probe code (`firmware/probe/src`) is plain C and works on both; only `hal_*.c` changes.
+- Bench list uses the ATtiny202 (US). Production MCU: owner to choose (round 24).
+
+## Open questions (round 24)
+1. Production probe MCU: ATtiny202/402 (US-stocked, about +$220 for 600 probes, recommended for a US commercial product) or PY32F002A (cheapest, LCSC only)?
+2. Bus voltage for O2: about 5 V from the pack (mark ≈ pack voltage, space ≈ 1.2 V lower). OK? It keeps the bus far below 30 V.
 3. ESP32-CAM type and USB adapter (open since round 21).
 
-Closed in round 22: bench parts list written; next step = probe design (D34).
+Closed in round 23: bus = O2 (D35); ready M-Bus parts reviewed and not used (D36); US-only bench list (05-poc-plan).
 
 HA side: see `docs/06-ha-note.md`. Spec: `docs/04-spec.md`. POC: `docs/05-poc-plan.md`.

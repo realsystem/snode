@@ -122,6 +122,7 @@ Receiver → HA: event `esphome.snode_report` with node ID (e.g. `snode_f_01`), 
 - T4: power phase and bus reads with plain DS18B20s as probe stand-ins first (same protocol), then PY32 probes.
 
 ## 10. Open items
+- **Bus changed to O2 (design log D35):** replace U4/U5 (DS2482) with a powered-bus driver per row (2 MOSFETs, 2 diodes, shunt, TLV7031 comparator, UART TX/RX), and move the node DS18B20 to its own GPIO. Netlist, pin map and firmware to update in the next node revision.
 - Part numbers for Q1, Q3, D1–D3 and C1 (generic specs above); pick at bench-build time with cited datasheets.
 - ESPHome support used but not yet compiled: `ds248x` with two hubs, `espnow` `wait_for_sent` and `set_channel_from_action`, globals with `std::array` restore.
 - Install-mode report of the found probe addresses (currently: read them from a USB boot log).

@@ -53,29 +53,33 @@ All thresholds are PROPOSED until the owner accepts them.
 - Radio margin and receiver antenna choice.
 - Updated operating limits for the spec (`04-spec.md`).
 
-## Bench POC parts list (prices checked 2026-11-24; sources in 03-research-notes.md)
-Parts already on hand (NodeMCU, ESP32-CAM, multimeter, breadboard) are not listed. Quantities cover 2 bench nodes and 1 receiver.
+## Bench POC parts list — US sources only (prices checked 2026-11-24; do not order yet)
+Owner: all parts must be available in the US; list only, no order. Sources in 03-research-notes.md.
+Bus option O2 (powered bus) is chosen, so no DS2482 and no DS18B20 probe stand-ins are needed.
+Not listed: parts on hand (NodeMCU, ESP32-CAM, multimeter, breadboard), generic resistors, capacitors,
+small MOSFETs and diodes, perfboard, and 16/2 wire from the field spool.
 
-### Phase 1 — node power, clock and radio (needed for any bus choice)
-| Item | Qty | Unit price | Source | Line total |
-|---|---|---|---|---|
-| Seeed XIAO ESP32C3 (2 nodes + 1 receiver) | 3 | $4.99 (10+ price) | S83 | $14.97 |
-| RV-3028-C7 breakout (Pimoroni PIM449) | 2 | £12.90 incl. VAT | S84 | £25.80 |
-| TI TPS22917LDBVR load switch | 5 | $0.257 (5+) | S85 | $1.29 |
-| TI TPS7A0233PDBVR LDO | 5 | not found (LCSC C2887324 listed, no price) | S85 | — |
-| Energizer L91 AA | 6 | $2.29 | BOM (04-spec) | $13.74 |
-| SOT-23-6 / SOT-23-5 adapter boards, MOSFETs, Schottky diodes, resistors, capacitors | — | not priced (generic stock) | — | — |
+### Phase 1 — node power, clock and radio
+| Item | Qty | Unit price (USD) | US source | Source | Line total |
+|---|---|---|---|---|---|
+| Seeed XIAO ESP32C3 (2 nodes + 1 receiver) | 3 | $4.99 | Seeed store / DigiKey | S83 | $14.97 |
+| RV-3028-C7 board: Mikroe RTC 8 Click (MIKROE-3456) | 2 | $22.00 | DigiKey (also Mouser) | S89 | $44.00 |
+| TI TPS22917LDBVR load switch | 5 | $0.34 | TI.com (Mouser $0.41) | S90 | $1.70 |
+| TI TPS7A0233PDBVR LDO | 5 | $1.00 | DigiKey | S91 | $5.00 |
+| Energizer L91 AA | 6 | $2.29 | see 04-spec BOM | BOM | $13.74 |
+| Adafruit 1230 SMT breakout set (SOT-23-5/6 adapters) | 1 | $4.95 | Adafruit | S92 | $4.95 |
+| **Phase 1 subtotal** | | | | | **$84.36** |
 
-### Phase 2 — bus and probes
-| Item | Qty | Unit price | Source | Line total |
-|---|---|---|---|---|
-| PY32F003 Startkit (official dev board; same core as the PY32F002A) | 1 | $16.94 | S86 | $16.94 |
-| PY32F002AF15P6TU (TSSOP20) for hand-built probe prototypes | 10 | $0.1638 (5+) | S86 | $1.64 |
-| DAPLink programmer (Universal-Solder 26730) | 1 | €4.73 (DigiKey) | S87 | €4.73 |
-| DS18B20, TO-92 (probe stand-ins for the first bus test) | 21 | €1.14 (10–49) | S88 | €23.94 |
-| DS18B20 waterproof (node soil sensor) | 2 | $9.95 | S88 | $19.90 |
-| Only with bus O1: DS2482S-100 (SOIC-8) + SOIC-8 adapters | 4 | $3.05 (1 pc) | S80 | $12.20 |
-| Only with bus O2: comparator (LMV331 class), shunt resistors | 2 | not priced yet | — | — |
-| 16/2 landscape wire (bench runs, 2 x 10.5 m) | from the field spool | — | 04-spec BOM | — |
+### Phase 2 — powered bus (O2) and probes
+| Item | Qty | Unit price (USD) | US source | Source | Line total |
+|---|---|---|---|---|---|
+| TI TLV7031DBVR comparator (node bus receiver; spares) | 4 | $0.75 | DigiKey | S93 | $3.00 |
+| Microchip ATtiny202-SSN (US-stocked probe MCU for bench probes, see D37) | 10 | $0.46 | DigiKey / Mouser | S94 | $4.60 |
+| Raspberry Pi Debug Probe (CMSIS-DAP + UART) | 1 | $13.20 | SparkFun (also Adafruit, DigiKey) | S95 | $13.20 |
+| DS18B20 waterproof, genuine Maxim (node soil sensor) | 2 | $9.95 | Adafruit 381 | S88 | $19.90 |
+| SOIC-8 adapter boards | 10 | not priced | Adafruit / DigiKey | — | — |
+| **Phase 2 subtotal** | | | | | **$40.70** |
 
-Cited subtotal (Phase 1 + 2, without O1/O2 lines): $68.48 + £25.80 + €28.67.
+**Total (cited lines): $125.06.**
+
+Alternative if the probe MCU stays PY32F002A (D37): PY32F003 Startkit $16.94 and PY32F002A chips $0.16 at 5+ are sold by LCSC (ships to the US from China; no US distributor stock found) (S86, S81).

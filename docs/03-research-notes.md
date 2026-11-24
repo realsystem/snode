@@ -148,6 +148,16 @@ be re-checked before purchase. S-numbers are referenced from `02-design-log.md`.
 | S87 | DAPLink programmer, Universal-Solder 26730: €4.73 (1 pc), DigiKey, checked 2026-11-24. | https://www.digikey.gr/en/products/detail/universal-solder-electronics-ltd/26730/26606366 |
 | S88 | DS18B20 TO-92: €1.14 at 10–49 (Olimex SNS-TMP-DS18B20). Waterproof DS18B20 (genuine Maxim, tested): $9.95 (Adafruit 381). Checked 2026-11-24. | https://www.olimex.com/Products/Components/Sensors/Temperature/SNS-TMP-DS18B20/ ; https://www.adafruit.com/products/381 |
 
+| S89 | Mikroe RTC 8 Click (MIKROE-3456), RV-3028-C7: $22.00 (1 pc, USD), DigiKey; also stocked by Mouser. Checked 2026-11-24. | https://punchouttest.digikey.com.mx/en/products/detail/mikroelektronika/MIKROE-3456/10236322 ; https://www.mouser.in/new/mikroe/mikroe-rtc-8-click/ |
+| S90 | TI TPS22917LDBVR: TI.com $0.34 (1 pc), Mouser $0.41 (1 pc). Checked 2026-11-24. | https://www.edinventory.com/parts/tps22917ldbvr_texas-instruments |
+| S91 | TI TPS7A0233PDBVR: $1.00 (1 pc, USD), DigiKey; 60 nA Iq listed, 6 V max input, -40 to 125 °C. Checked 2026-11-24. | https://www.digikey.com.br/en/products/detail/texas-instruments/TPS7A0233PDBVR/12165099 |
+| S92 | Adafruit 1230 SMT breakout set (SOT-23-5/6, SOT-89, SOT-223, TO-252): $4.95. Checked 2026-11-24. | https://www.adafruit.com/products/1230 |
+| S93 | TI TLV7031DBVR comparator: $0.75 (1 pc, USD), DigiKey; 1.6–6.5 V, 315 nA, 3 µs, push-pull, -40 to 125 °C. Checked 2026-11-24. | https://www.digikey.com.br/en/products/detail/texas-instruments/TLV7031DBVR/10434768 ; https://www.ti.com/product/TLV7031/part-details/TLV7031DCKR |
+| S94 | Microchip ATtiny202-SSN: $0.46 (Octopart reference); 1.8–5.5 V, -40 to 85 °C, 1 analog comparator, 2 KB flash, 6 I/O, UPDI; DigiKey stock 12,601. Checked 2026-11-24. STM32C011F4: 2.0–3.6 V supply, $0.83 (1 pc). | https://octopart.com/part/microchip/ATTINY202-SSN ; https://www.digikey.co.uk/en/products/detail/microchip-technology/ATTINY202-SSN/9947534 ; https://www.digikey.com.br/en/products/detail/stmicroelectronics/STM32C011F4P6TR/18085255 |
+| S95 | Raspberry Pi Debug Probe (CMSIS-DAP SWD + UART): $13.20, SparkFun DEV-21802. Checked 2026-11-24. | https://www.sparkfun.com/raspberry-pi-debug-probe.html |
+| S96 | M-Bus slave chips: TI TSS721A (EN1434-3, polarity independent, supply from the bus, -25 to 85 °C; $1.74 at LCSC); onsemi NCN5150 (slave transceiver, integrated 3.3 V LDO, up to 38,400 baud; -40 to 85 °C; £1.82 at DigiKey UK). | https://www.ti.com/product/TSS721A ; https://www.lcsc.com/product-detail/C34958.html ; https://www.onsemi.com/products/interfaces/wired-transceivers-modems/ncn5150 ; https://www.digikey.co.uk/en/products/detail/onsemi/NCN5150MNTWG/4499701 |
+| S97 | M-Bus masters: USB/TTL master modules about $25 (eBay); industrial level converters such as L-MBUS20 $370.11. M-Bus bus voltage: mark 36 V at the repeater, master signals by shifting 36 V to 24 V. | https://ebay.com/itm/273996943805 ; https://engenuity.com/?p=54966 ; https://m-bus.com/documentation-wired/04-physical-layer ; https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/7889471 |
+
 ## Radio path
 
 | # | Finding | Source |

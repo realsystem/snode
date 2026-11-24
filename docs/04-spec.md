@@ -54,7 +54,9 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 | D32 | POC spare boards | NodeMCU: walk test, drift logger, ESP-NOW sender; ESP32-CAM: ESP-NOW receiver | ESP8266 can't measure ESP-NOW RSSI | S75, S76 |
 | D33 | Node design v0.1 | `08-node-design.md`: RTC-gated power with HOLD and watchdog, node-switched power phase, receiver-set schedule, packet v1 | Owner chose this step | S25, S52–S55, S58, S75 |
 | D34 | Probe design v0.1 | `09-probe-design.md`: RC timing electrode, ratiometric comparator, 64-sample trimmed mean, one PCB for both bus options | Owner chose this step | S78–S82 |
-| D35 | Bus electrical (open) | O2 powered bus, M-Bus style (recommended) or O1 1-Wire | 1-Wire pull-up can't power 10 awake probes | S78, S79 |
+| D35 | Bus electrical | O2 powered bus, M-Bus principle at about 5 V, discrete parts | Owner chose O2; 1-Wire pull-up can't power 10 awake probes | S78, S79 |
+| D36 | Ready M-Bus chips | Reviewed, not used: 36 V bus, +$1,000–1,500, TSS721A -25 °C | Cost, burial voltage class, cold | S96, S97 |
+| D37 | Probe MCU (open) | ATtiny202/402 (US-stocked) or PY32F002A (LCSC) | Owner: parts available in the US | S81, S94 |
 | D31 | Channel follow | Node saves the last good channel; on a missed acknowledgement it scans channels 1–11 | Works with routers that change channel | S74 |
 | D29 | RTC in ESPHome | Small external component for the RV-3028 | No built-in platform | S66 |
 | D12 | Enclosure | UV-stabilized polycarbonate, IP68 class, on a wooden stake, box bottom 0.3 m above grade | Owner: wood and plastic are rabbit-safe | S29 |
@@ -81,8 +83,9 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 
 1. Probe lead length final (40 cm draft; drip lateral position at next-visit check).
 2. First compile of the POC firmware on the owner's PC.
-3. Bus choice O1/O2 — round 23.
-4. Bench parts order — round 23 (list in `05-poc-plan.md`).
+3. Production probe MCU (D37) — round 24.
+4. O2 bus voltage (about 5 V) — round 24.
+5. Node design revision for O2 (bus driver, pin map, firmware component).
 3. Probe lead + molded clamp price — POC.
 - HA automation (zones, alerts, delivery): handled in the HA threads; see `06-ha-note.md`.
 5. Bus protocol and electrical design (power phase, timing, drops per run).

@@ -112,3 +112,17 @@ Replace the ATtiny202 x10 ($4.60) and the Raspberry Pi Debug Probe ($13.20) with
 | PY32F002AF15P6TU, 10 pcs | 1 lot | $1.42 | S99 | $1.42 |
 | DAPLink programmer | 1 | $5.30 | S100 | $5.30 |
 **Mixed total: $125.06 − $17.80 + $12.66 = $119.92** (plus TSSOP-20 adapter boards, not priced).
+
+## Amazon check (owner request, round 27; prices seen 2026-11-24)
+| Item | Amazon finding | Compared with | Use? |
+|---|---|---|---|
+| Energizer Ultimate Lithium AA (L91), 24-pack | $41.98 one-time ($1.75/cell); $28.14 with Subscribe & Save ($1.17/cell) | BOM $2.29/cell | **Yes for production** (90 cells: about $168 vs $206). Bench needs only 6. |
+| 16/2 landscape wire, 500 ft (FIRMERST) | $129.99 ($0.26/ft) | Home Depot $140 | **Yes, if** the conductor is pure copper and the jacket is direct-burial rated. Many Amazon 16/2 listings are copper-clad aluminum (CCA): avoid CCA for buried piercing clamps (corrosion, UNVERIFIED; soak test T5). |
+| XIAO ESP32C3 | Seeed's official Amazon store sells a 3-pack; Seeed's own 3-pack is $13.49 ($4.50 each) | $4.99 each | **Yes**: buy the 3-pack (Seeed store or its Amazon store) |
+| PY32F002A dev board | Listed (LTVIEMLD, generic); price not shown; some listings unavailable | AliExpress $2.30–2.97 | No: AliExpress is the reliable source |
+| DAPLink programmer | Several listings (CANADUINO, MiiElAOD); prices not shown | AliExpress $5.30 | Either; check the price at order time |
+| RV-3028 | Bare chip only; no module found | Mikroe RTC 8 Click $22.00 | No |
+| DS18B20 waterproof packs | Many 5- and 10-packs (DROK, HiLetgo, hiBCTR) | Adafruit genuine $9.95 | Same clone risk as AliExpress: spares only |
+| TI chips (TPS22917, TPS7A0233, TLV7031) | Not checked further: Amazon sellers for TI parts are resellers | TI / DigiKey | No: buy from authorized distributors |
+
+Updated mixed bench list: XIAO 3-pack $13.49 instead of 3 x $4.99 → **$118.44** total (US distributors + Seeed + AliExpress PY32 parts and programmer).

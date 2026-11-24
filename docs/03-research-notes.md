@@ -165,6 +165,11 @@ be re-checked before purchase. S-numbers are referenced from `02-design-log.md`.
 | S102 | AliExpress: TPS22917LDBVR 20 pcs $19.29 per lot; TPS7A0233 only in mixed listings; TLV7031 not found. Seen 2026-11-24. | https://www.aliexpress.us/item/3256811908067138.html ; https://www.aliexpress.com/w/wholesale-sot23-5-chip-regulator.html |
 | S103 | AliExpress: 10 pcs waterproof DS18B20 probes $5.08 per lot. Seen 2026-11-24. | https://www.aliexpress.us/item/2251832641495548.html |
 
+| S104 | Amazon: Energizer Ultimate Lithium AA, 24-pack: $41.98 one-time ($1.75/cell); $28.14 with Subscribe & Save ($1.17/cell); 8-pack $14.89 with coupon. Seen 2026-11-24. | https://amazon.com/Energizer-Ultimate-Lithium-Batteries-Original/dp/B01C4PP8FK ; https://www.amazon.com/Energizer-Lithium-Batteries-Ultimate-Battery/dp/B01C4PP8FK ; https://www.amazon.com/Energizer-Ultimate-Lithium/s?k=Energizer+Ultimate+Lithium |
+| S105 | Amazon: FIRMERST 16/2 low-voltage landscape wire, 500 ft, $129.99 ($0.26/ft). Several other 16/2 listings are copper-clad aluminum (CCA); pure-copper listings exist (SUNVIE, haisstronica, ExtensionPro). Seen 2026-11-24. | https://www.amazon.com/FIRMERST-Voltage-Landscape-Outdoor-Lighting/dp/B07WZF8H75 ; https://www.amazon.com/16-2-low-voltage-landscape-cable/s?k=16%2F2+low+voltage+landscape+cable ; https://www.amazon.com/landscape-wire-16-2/s?k=landscape+wire+16%2F2 |
+| S106 | Seeed XIAO ESP32C3 3-pack: $13.49 ($4.50 each, Seeed); also sold by Seeed's official Amazon store. | https://www.seeedstudio.com/blog/2024/08/05/xiao-3pcs-pack-limited-time-offer/ ; https://www.amazon.com/clp/B0DGX3LSC7 |
+| S107 | Amazon: PY32F002A dev boards (LTVIEMLD; generic, some unavailable), DAPLink programmers (CANADUINO, MiiElAOD), RV-3028-C7 bare chips, DS18B20 waterproof 5/10-packs listed; prices not shown in results. Seen 2026-11-24. | https://www.amazon.com/LTVIEMLD-Py32F002A-Development-Py32F002Af15P6Tu-32-Bit/dp/B0D4R8V9YK ; https://www.amazon.com/DAPLINK-Programmer-Debugger-development-modules/dp/B0BQ7PFYMS ; https://www.amazon.com/s?k=1+pcs+real+time+clock+%28rtc%29+rv-30... ; https://www.amazon.com/ds18b20-temperature-sensor/s?k=ds18b20+temperature+sensor |
+
 ## Radio path
 
 | # | Finding | Source |

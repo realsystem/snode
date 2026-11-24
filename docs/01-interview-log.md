@@ -410,8 +410,23 @@ Answers:
 
 Result: AliExpress check (D41, table in `05-poc-plan.md`). PY32F002A dev boards and chips are deliverable to the US from AliExpress; proposed for bench probes. Mixed bench list $119.92.
 
-## Round 27 — open (asked 2026-11-24)
+## Round 27 — 2026-11-24
 
+Questions:
 1. AliExpress delivery counts as "available in the US"? (decides PY32 vs ATtiny for bench probes)
 2. Next step: probe firmware (recommended) or final receiver?
 3. ESP32-CAM type and USB adapter.
+
+Answers:
+1. "yes"
+2. "later"
+3. "later"
+Also: "did you check amazon as a supplier?"
+
+Result: bench probe MCU = PY32F002A (D42). Amazon check (D43): L91 24-packs, 16/2 wire (pure copper only) and the XIAO 3-pack are worth buying there; mixed bench list $118.44.
+
+## Round 28 — open (asked 2026-11-24)
+
+1. Next step when ready: probe firmware (PY32) or final receiver?
+2. 16/2 wire: require pure copper (no CCA)?
+3. ESP32-CAM type and USB adapter (deferred).

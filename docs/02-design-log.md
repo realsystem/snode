@@ -559,11 +559,20 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 - Effect on D37/D40: the PY32F002A (2 comparators) can be delivered to the US, so the bench probe can use it and the ATtiny202 single-comparator problem goes away. Proposed: bench probes on the PY32F002A; ATtiny202 kept only as a fallback.
 - Mixed bench list: $119.92 cited (US distributors for TI parts, RTC board, XIAO and node sensor; AliExpress for PY32 parts and the programmer).
 
-## Open questions (round 27)
-1. Does AliExpress delivery count as "available in the US" for you? If yes, bench probes use the PY32F002A (2 comparators) and the mixed list ($119.92); if no, the ATtiny202 path needs the comparator workaround or another US part.
-2. Next step after that: probe hardware layer + protocol v1 firmware (recommended), or the final receiver?
-3. ESP32-CAM type and USB adapter (open since round 21).
+### D42 Probe MCU for the bench: PY32F002A (owner, round 27)
+- Owner: AliExpress delivery counts as "available in the US". Bench probes use the PY32F002A (2 comparators), bought from AliExpress. ATtiny202 stays as a fallback only. Production MCU still decided after the bench tests (D37).
 
-Closed in round 26: AliExpress check done (D41).
+### D43 Amazon sourcing check (owner request, round 27)
+- Table in `05-poc-plan.md`.
+- Useful: Energizer L91 24-packs ($1.17–1.75 per cell vs $2.29 in the BOM; about $38 saved on 90 cells at the one-time price); 16/2 landscape wire at $129.99 per 500 ft vs $140 (about $50 saved on 5 spools), **only for pure-copper, direct-burial cable**: many Amazon listings are copper-clad aluminum (CCA), which is a corrosion risk at buried piercing clamps; XIAO 3-pack from Seeed ($13.49, $4.50 each).
+- Not useful: TI chips (resellers), RV-3028 modules (none), DS18B20 packs (clone risk, as on AliExpress). PY32 boards and DAPLink listings exist, but prices weren't shown.
+- Production BOM in `04-spec.md` keeps its cited prices; Amazon options are noted there.
+
+## Open questions (round 28)
+1. When you're ready: next step is probe firmware for the PY32 (hardware layer + protocol v1), or the final receiver.
+2. 16/2 wire: OK to require pure copper (no CCA) in the spec? It narrows the Amazon choices but protects the buried clamps.
+3. ESP32-CAM type and USB adapter (deferred by owner).
+
+Closed in round 27: AliExpress counts as US-available; bench probe MCU = PY32F002A (D42); Amazon check (D43).
 
 HA side: see `docs/06-ha-note.md`. Spec: `docs/04-spec.md`. POC: `docs/05-poc-plan.md`.

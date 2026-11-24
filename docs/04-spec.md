@@ -140,7 +140,7 @@ Variant B, 600 trees, 30 SNODEs, 1 receiver. Probe line counts only the cited MC
 | **Total (cited)** | | | | | **$1,255.72 + £1,334.43** |
 | **Per tree (cited)** | | | | | **about $2.09 + £2.22** |
 
-Amazon options (D43, seen 2026-11-24): L91 24-pack $41.98 ($1.75/cell, S104) → cells $157.50 instead of $206.10; 16/2 wire 500 ft $129.99 (S105) → $649.95 instead of $700, only if pure copper and direct-burial rated.
+Amazon options (D43, seen 2026-11-24): L91 24-pack $41.98 ($1.75/cell, S104) → 4 packs (96 cells) $167.92 instead of $206.10; 16/2 wire 500 ft $129.99 (S105) → $649.95 instead of $700, only if pure copper and direct-burial rated.
 
 Variant A swap (per node): remove 3x L91 ($6.87), add a 10 F supercap (Eaton HV1030, $1.97 at 50, S59) + TPS61099 boost (price not yet cited) + panel (not yet selected).
 The POC node enclosure is 3D-printed (D26); the Hammond box stays as the bought reference.

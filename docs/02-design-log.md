@@ -24,6 +24,10 @@ Terms and IDs: see `CLAUDE.md`. Sources: see `docs/03-research-notes.md` (S-numb
 - Little snow at this site now, but the product must be designed for snow accumulation.
 - Trenching and burial are the installer's job; the design gives instructions.
 - Drip lines: surface at this site, but the design must work with surface or buried lines.
+- Drive lanes must fit a Toyota Tundra.
+- Snow provision: minimal.
+- Rabbits present. Wooden stake and plastic box are fine; a conduit from the box to the ground is required.
+- Splices: sealed direct-bury caps like those used for 24 VAC irrigation wiring.
 - HA decides irrigation (probably OpenSprinkler). SNODEs only report.
 - Must work through winter (owner: "winter is most important").
 - Lowest cost. Custom PCB allowed after the POC. Existing ESP8266 boards and "Arduino" moisture sensors are for the POC only.
@@ -45,7 +49,7 @@ Terms and IDs: see `CLAUDE.md`. Sources: see `docs/03-research-notes.md` (S-numb
 |---|---|---|---|---|
 | D1 | Probe | Capacitive v1.2 board, checked for the 3 known faults, electronics end potted, tip at 15 cm max, top about 5 cm below grade | Cheapest; no corrosion; board is about 99 mm long, so it fits the 15 cm depth limit. Custom digital probe (A3) is the cost-down path after the POC. | S1–S4, S8 |
 | D2 | Probes per SNODE | 20 (2 rows x 10 trees). CD74HC4067 16:1 mux plus 4 spare ESP32-C3 ADC pins (pins UNVERIFIED) | Each grove tiles exactly into 10 clusters; 30 SNODEs for the forest | S9 |
-| D3 | Wiring | Star, one gel-filled direct-burial Cat5e run per probe (3 of 8 conductors used), OD about 0.215 in, fits optional conduit | Cheapest cited direct-burial cable per metre | S17, S18 |
+| D3 | Wiring | Star, one 18/3 direct-burial irrigation wire per probe (see D16; replaces Cat5e) | Same cost as Cat5e; takes standard irrigation splices; smaller OD for the riser | S32, S33 |
 | D4 | Radio | ESP-NOW star. SNODE: small antenna (u.FL rod or FPC) on the enclosure, about 0.3 m above ground. Receiver: the only tall antenna in the system, on the trailer roof, about 5 m up. Fallbacks: ESP-NOW long-range mode, then a sub-GHz radio. | Owner: no masts in the field. A high antenna at one end keeps most of the Fresnel zone clear (see radio section). | S6, S7, S11, S22, S27 |
 | D5 | MCU | Seeed XIAO ESP32C3 (ships with an external u.FL antenna). Board sleep current no longer matters because the board is unpowered between readings. | Needs a connector for a small external antenna; the SuperMini has only a PCB antenna | S12, S26 |
 | D6 | Power | Two variants, A (solar only) and B (battery only). See sections below. **Recommended: B.** | B has no dependence on sun or snow, fewer parts, and nothing visible above the enclosure | S14, S15, S21, S24–S25 |
@@ -109,8 +113,9 @@ Each limit is set by the weakest part. All UNVERIFIED until tested; "rated" valu
 | Probe depth | 15 cm max | 15 cm max | Probe board length, about 99 mm | S3 |
 | Radio link | 105 m design, node antenna 0.3 m, receiver antenna 5 m | Same | Walk test pending | S6, S22 |
 | Valid moisture | Only when soil is above 0.5 °C | Same | Capacitive measurement in frozen soil | S13 |
-| Snow depth | Stake height − 0.1 m (0.2 / 0.5 / 0.9 m for the 0.3 / 0.6 / 1.0 m stakes) | Same | Box and antenna must stay above snow | — |
-| Cable entry seal | -40 to +100 °C (multi-hole inserts) | Same | Gland insert rating | S30 |
+| Snow depth | Box height − 0.1 m (0.2 m at the standard 0.3 m height; longer stake for snowy sites) | Same | Box and antenna must stay above snow | — |
+| Field splices | -40 to +105 °C operating; 18–10 AWG | Same | 3M DBR/Y-6 rating | S33 |
+| Vehicle lanes | Wider gap needed (about 3.5 m for a full-size pickup); never in a cluster gap | Same | Vehicle width | S34 |
 | SNODEs per receiver | 30 tested by design (60 packets/day); higher counts need a test | Same | Receiver load | — |
 
 ## Variant comparison
@@ -144,15 +149,16 @@ Cable per probe = horizontal Manhattan distance + 0.65 m (0.15 m depth + 0.5 m s
 | Item | Unit | Per grove (10 SNODEs) | Forest (30 SNODEs) |
 |---|---|---|---|
 | XIAO ESP32C3 with antenna | £3.93 (Farnell UK, ex VAT) | £39.30 | £117.90 |
+| Hammond 1554QA2GY enclosure | £40.42 (RS UK, ex VAT) | £404.20 | £1,212.60 |
 | RV-3028-C7 RTC | $3.74 (DigiKey) | $37.40 | $112.20 |
 | CD74HC4067 mux breakout | $6.50 | $65.00 | $195.00 |
 | DS18B20 probe | $1.90 | $19.00 | $57.00 |
 | 3x L91 AA | $6.87 | $68.70 | $206.10 |
 | Probes | $1.70 | $340.00 | $1,020.00 |
-| Cat5e, 1000 ft boxes | $241.99 | 3 boxes = $725.97 | 9 boxes = $2,177.91 |
-| **Subtotal** | | **$1,256.07 + £39.30** | **$3,768.21 + £117.90** |
-Not yet priced: load switch, LDO, battery holder, enclosure, glands/connectors, potting, optional conduit, receiver and roof antenna. Variant A swaps the L91 cells and holder for a supercapacitor, boost converter, charge limiter and panel (none priced yet).
-The mux breakout price is for prototyping; the bare chip is $1.05.
+| 18/3 irrigation wire, 500 ft spools at $0.25/ft | — | 2,723 ft → 6 spools = $750.00 | 8,169 ft → 17 spools = $2,125.00 |
+| **Subtotal** | | **$1,280.10 + £443.50** | **$3,715.30 + £1,330.50** |
+Not yet priced: load switch, LDO, battery holder, riser conduit and fittings, duct seal, vent, wooden stake, potting, DBR/Y-6 (repairs only), receiver and roof antenna. Variant A swaps the L91 cells and holder for a supercapacitor, boost converter, charge limiter and panel.
+The mux breakout price is for prototyping; the bare chip is $1.05. The enclosure is now the biggest per-node item after cable; source a cheaper box.
 
 ## Ecowitt WH51 comparison (for the test plan)
 - WH51: capacitive FDR, 1x AA, reports every 70 s to the GW3000, rated 100 m in open field. The related WH51L is rated -10 to 50 °C, so expect no comparison data in deep cold (UNVERIFIED for the WH51).
@@ -171,7 +177,7 @@ The mux breakout price is for prototyping; the bare chip is $1.05.
 3. Node/radio options (draft done)
 4. Power (two variants drafted)
 5. Cabling layout (draft done)
-6. Enclosure and burial (not started)
+6. Enclosure and burial (draft done)
 7. Firmware and HA integration (partly: D8, D10, D11)
 8. BOM with part numbers (partial)
 9. Test plan (partly: WH51 comparison, POC steps)
@@ -180,42 +186,47 @@ The mux breakout price is for prototyping; the bare chip is $1.05.
 ## Enclosure, mounting and burial (draft, all UNVERIFIED)
 
 ### Layout rules (drive lanes)
-- A cluster pairs two rows across a **non-drive** gap. The SNODE stake and all its cables stay inside that gap.
-- Drive lanes may only be the gaps **between** clusters (rows 2–3, 4–5, 6–7, 8–9 in a 10-row grove). So no cable ever crosses a drive lane, and no conduit is needed for vehicle loads.
-- Each probe goes on the side of its tree facing the cluster's internal gap, so wheels in a drive lane never run over probes.
-- Whether a car or tractor fits in a 2 m gap is an owner question (round 9).
+- Owner: drive lanes must fit a Toyota Tundra. A Tundra is 80.2 in (2.04 m) wide **without mirrors**, which is wider than the 2 m row spacing. **So a drive lane needs a wider gap than the grid gives.** Proposed: about 3.5 m between tree rows at each lane. That allows mirrors (width not yet sourced; measure the truck mirror to mirror) plus about 0.5 m each side for young canopy.
+- A cluster pairs two rows across a 2 m **non-drive** gap. The SNODE stake and all its cables stay inside that gap.
+- Drive lanes are only ever between clusters. No cable crosses a lane, so no conduit is needed for vehicle loads.
+- Each probe goes on the side of its tree facing the cluster's internal gap, away from wheels.
+- Grove width: 18 m with no lanes; each 3.5 m lane adds 1.5 m. Tree count stays at 200. The number of lanes per grove is an owner question (round 10).
 
 ### D12 Enclosure
-- UV-stabilized polycarbonate box, IP68 class. Reference part: Hammond 1554QA2GY, 140 x 140 x 90 mm, £40.42 (RS UK, single unit). A cheaper equivalent is to be sourced; this is the largest per-node item found so far.
+- UV-stabilized polycarbonate box, IP68 class. Reference part: Hammond 1554QA2GY, 140 x 140 x 90 mm, £40.42 (RS UK, single unit). A cheaper equivalent is to be sourced; it is the largest per-node item found so far.
+- Mounted on a **wooden stake** (owner: rabbits don't damage a wooden stake or a plastic box).
 - Antenna **inside** the box: the XIAO's flexible antenna stuck under the lid. Nothing visible outside. Polycarbonate should pass 2.4 GHz with little loss (UNVERIFIED; walk test).
-- All cables enter through the **bottom face only**, so water runs off and doesn't pool at the glands.
-- One membrane vent (e.g., GORE Protective Vent) to equalize pressure and reduce condensation in daily temperature swings.
+- One membrane vent (e.g., GORE Protective Vent) to equalize pressure and reduce condensation.
 
-### D13 Cable entry
-- 21 cables (20 probes + 1 DS18B20) through 6 M25 glands with 4-hole inserts (LAPP SKINTOP DIX 4 x 5 mm, rated -40 to +100 °C; €1.34–1.36 per insert). Unused holes closed with sealing plugs to keep the IP68 rating.
-- Fit check needed: Cat5e is about 5.5 mm and the inserts are sized for 5 mm; the 5–7 mm range of other multi-hole glands may fit better. Test in the POC.
-- Considered and deferred: one Cat5e serving 2 adjacent trees with a splice at the first tree. That halves the entries and cuts cable by about a third, but adds 300 field splices. Revisit with the custom bus probe (A3).
+### D13 Cable riser (required)
+- Owner: rabbits make the cable run between the box and the ground the critical part. **A conduit riser from the box down into the ground is required.**
+- 1-1/2 in Schedule 40 PVC conduit (ID 1.56 in), from a terminal adapter and locknut in the box bottom down to trench depth, ending in a sweep elbow in the trench. The riser is strapped to the wooden stake.
+- Fill: 21 cables (20 probes of 18/3 irrigation wire at 0.184 in OD, plus the DS18B20 lead) ≈ 0.56 in², which is 29% of the riser's 1.91 in². That is under the 40% rule for 3+ cables. (With Cat5e it would have been at the 40% limit.)
+- Seal: duct-seal compound packed around the cables inside the adapter, at the top of the riser. The open buried end lets condensation drain into the soil.
+- This replaces the 6 multi-hole glands in the previous draft: one hole in the box instead of six.
 
 ### D14 Stake and snow
-- Box mounting height = design snow depth + 0.1 m. **Standard stake heights: 0.3 m (little snow), 0.6 m and 1.0 m (snow kits).** This site: 0.3 m.
-- Variant A panel: mounted above the box on the same stake, tilted 60° or steeper facing the sun, so snow slides off.
-- Stake material: non-metal near the antenna (fiberglass or HDPE preferred). Part to be selected.
+- Owner: keep it minimal. **One standard box height: bottom of box 0.3 m above grade.** For snowy sites the installer cuts a longer stake and riser. Limit: snow depth ≤ box height − 0.1 m.
+- Variant A panel: above the box on the same stake, tilted 60° or more, so snow slides off.
 
 ### D15 Burial (installer instructions)
-- Trench along the center of the cluster's internal gap, 15–20 cm deep (owner can hand-trench). Short branch trenches of about 1 m to each tree.
-- Optional conduit (rodent areas) on the main trench run; the branches stay direct-burial.
-- Leave about 0.3 m of slack at each probe as a loop. This allows for frost heave and lets a probe be pulled and replaced without pulling the cable.
-- Before inserting a probe, locate the drip line (surface or buried) and keep the probe at the standard offset from the emitter, away from the line itself.
+- Trench along the center of the cluster's internal gap, 15–20 cm deep. Short branch trenches of about 1 m to each tree.
+- Optional conduit on the main trench in rodent areas; the branches stay direct-burial.
+- Leave about 0.3 m of slack at each probe as a loop, for frost heave and to allow the probe to be pulled out for service.
+- Locate the drip line (surface or buried) before inserting a probe; keep the standard offset from the emitter.
 
-### D16 Probe end
-- The v1.2 board's electronics end is spliced to the Cat5e (3 conductors) and potted, with adhesive-lined heat-shrink over the splice. The potting compound must be rated for the -40 °C design range (part to be selected).
-- Service = pull the probe, cut, re-splice. A waterproof connector per probe would make service easier but adds cost x 600. Owner to choose (round 9).
+### D16 Probe cable and splices
+- **Cable changed from Cat5e to 18/3 irrigation (sprinkler) wire.** It is UL listed for direct burial, 0.184 in OD, and about the same price per foot ($0.25/ft vs $0.24/ft for Cat5e).
+- Reason: the owner wants the same sealed splices used for 24 VAC irrigation wiring. Those (3M DBR/Y-6, direct bury, gel-filled, -40 to 105 °C) take 18–10 AWG only. Cat5e's 24 AWG is below their range, so it would have needed telecom gel connectors (UY2, 26–19 AWG), which are moisture-resistant but not direct-burial kits.
+- **Probe assembly:** the v1.2 board's connector is removed and the 18/3 wire is soldered straight to the board. The joint and the electronics end are potted, with adhesive-lined heat-shrink over the cable exit. Probe assemblies are built on the bench in standard cable lengths. So there are no splices at the tree in a new install.
+- **Field repair:** cut out the bad probe assembly and splice a new one in with 3x DBR/Y-6 (18 AWG to 18 AWG, within range).
+- Potting compound must be rated to -40 °C (part to be selected).
 
 ## Receiver
 - The trailer is fiberglass, which passes 2.4 GHz with little loss (UNVERIFIED; check in the walk test). The receiver ESP32 can stay inside, with a short coax to the roof antenna.
 
-## Open questions (round 9)
-1. Drive lanes: are they normal 2 m gaps, or wider gaps (a row left out)? Is "every 2 rows" (between clusters) enough?
-2. Stake heights 0.3 / 0.6 / 1.0 m for the product: OK, or do you want other snow classes?
-3. Any larger animals (deer, rabbits, livestock) that could chew cables or knock boxes?
-4. Probe-to-cable: potted splice (cheapest, re-splice to service) or a waterproof connector per probe (easier service, more cost)?
+## Open questions (round 10)
+1. Drive lanes: a Tundra (80.2 in without mirrors) doesn't fit a 2 m gap. Accept about 3.5 m lanes (please measure the truck mirror to mirror)? How many lanes per grove?
+2. Accept 18/3 irrigation wire with bench-built, potted probe assemblies (no splices at the tree, DBR splices only for repairs)?
+3. Riser: 1-1/2 in Schedule 40 PVC, rigid, strapped to the wooden stake. OK?
+4. Next section is firmware and HA: is ESPHome acceptable for the receiver and nodes, or do you prefer custom firmware?

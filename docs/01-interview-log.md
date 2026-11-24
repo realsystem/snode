@@ -135,9 +135,27 @@ Answers:
 
 Result: drafted enclosure, mounting and burial (D12–D16): drive lanes only between clusters, antenna inside the box, bottom cable entry through multi-hole glands, stake heights by snow class, installer trench instructions.
 
-## Round 9 — open (asked 2026-11-24)
+## Round 9 — 2026-11-24
 
+Questions:
 1. Drive lanes: normal 2 m gaps or wider? Is "every 2 rows" (between clusters) enough?
 2. Stake heights 0.3 / 0.6 / 1.0 m for the product: OK?
 3. Any larger animals that could chew cables or knock boxes?
 4. Probe-to-cable: potted splice or a waterproof connector per probe?
+
+Answers:
+1. "the gap should be ok for toyota tundra"
+2. "minimal"
+3. "rabbits but not a problem for wooden stake and plastic box, the only critical part is conduit from the box to the ground. it's a must have thing."
+4. "sealed splice or similar cap used for regular irrigation wires for 24AC"
+
+Interpretation recorded: "minimal" = one standard box height (0.3 m), longer stake for snowy sites.
+Conflict found: a Tundra is 80.2 in (2.04 m) wide without mirrors, wider than the 2 m row spacing, so lanes need a wider gap (asked in round 10).
+Result: required 1-1/2 in PVC riser from the box to the ground (D13); cable changed to 18/3 irrigation wire so standard direct-bury irrigation splices fit (D16).
+
+## Round 10 — open (asked 2026-11-24)
+
+1. Accept about 3.5 m drive lanes (measure mirror to mirror)? How many lanes per grove?
+2. Accept 18/3 irrigation wire with bench-built potted probe assemblies?
+3. Riser: 1-1/2 in Schedule 40 PVC, rigid, strapped to the wooden stake. OK?
+4. ESPHome acceptable for receiver and nodes, or custom firmware?

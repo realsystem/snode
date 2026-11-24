@@ -70,6 +70,15 @@ be re-checked before purchase. S-numbers are referenced from `02-design-log.md`.
 | S30 | Multi-hole gland inserts: LAPP SKINTOP DIX, M25, 4 x 5 mm holes, NBR, -40 to +100 °C, about €1.35 each. IP68 only if every hole holds a cable of nominal size or a sealing plug. Jacob WADI multi-hole M25 fits 5–7 mm cables, IP68/69, -40 to 100 °C. | https://buerklin.com/en/p/lapp/cable-management-accessories/53325450/32P2660 ; https://au.element14.com/lapp/53325260/insert-gland-m25-2x6/dp/120420501 ; https://www.digikey.ca/en/products/detail/jacob-gmbh/K152-1025-00-37/24760855 |
 | S31 | Membrane vents (GORE Protective Vents) equalize enclosure pressure, keep out dust and liquids, and reduce condensation by letting water vapor out. | https://www.gore.com/node/2566 |
 
+## Cable, splices, riser, vehicle
+
+| # | Finding | Source |
+|---|---|---|
+| S32 | Southwire 547030508 18/3 irrigation and sprinkler cable: 3x 18 AWG solid copper, 0.184 in OD, direct burial, sunlight resistant, UL listed, 150 V, 75 °C; $0.25/ft in 500 ft multiples (KSCdirect). Zoro lists the same part, 500 ft for $137.99. | https://kscdirect.com/itemDetail/6061229/18-3-irrigation-bk-500-r ; https://www.zoro.com/woods-500-ft-183-solid-copper-sprinkler-wire-547030508/i/G815832909/ |
+| S33 | 3M DBR/Y-6 direct bury splice kit: twist-on connector in a grease-filled tube, UL listed for direct bury, 600 V, 18–10 AWG (minimum 18 AWG), operating -40 to 105 °C; used for irrigation controls and landscape lighting. 3M UY2 gel-filled telecom connectors take 26–19 AWG and are Cat 5 rated. | https://3m.com/3M/en_US/p/d/b00026285 ; https://www.3mcanada.ca/3M/en_CA/p/d/v000099614/ ; https://www.mouser.com/datasheet/2/1/Scotchlok_Cnctrs_Link_Video-60691.pdf |
+| S34 | 2026 Toyota Tundra: overall width without mirrors 80.2 in. | https://www.edmunds.com/toyota/tundra/2026/st-402077541/features-specs |
+| S35 | 1-1/2 in Schedule 40 PVC conduit: inside diameter 1.56 in (Cantex, Zoro listing). Conduit fill: 40% of internal area for 3 or more conductors (NEC Chapter 9 Table 1, as tabulated). | https://zoro.com/cantex-schedule-40-conduit-1-12-in-10-ft-l-a52be12/i/G2766391 ; https://www.pdhonline.com/courses/e276/Conduit_Fill_Tables.pdf |
+
 ## Radio path
 
 | # | Finding | Source |

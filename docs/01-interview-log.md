@@ -425,8 +425,11 @@ Also: "did you check amazon as a supplier?"
 
 Result: bench probe MCU = PY32F002A (D42). Amazon check (D43): L91 24-packs, 16/2 wire (pure copper only) and the XIAO 3-pack are worth buying there; mixed bench list $118.94 (corrected: the XIAO 3-pack is $13.99 from Seeed's US warehouse; owner saw $16.99 on Amazon; $13.49 is the China-warehouse price).
 
+Follow-up, 2026-11-24: owner asked whether the XIAO is needed at all. Answer: the firmware needs an ESP32-C3; the XIAO was chosen only for its external antenna, which is UNVERIFIED as a need. XIAO is not needed for the next visit (T11 uses the NodeMCU and ESP32-CAM). Owner agreed to record: bench board XIAO; field board open until the walk tests (D44). Seeed US warehouse is on backorder; Amazon 3-pack $16.99 (sale).
+
 ## Round 28 — open (asked 2026-11-24)
 
 1. Next step when ready: probe firmware (PY32) or final receiver?
 2. 16/2 wire: require pure copper (no CCA)?
 3. ESP32-CAM type and USB adapter (deferred).
+4. Field node board (D44): after T11 item 4 and T12.

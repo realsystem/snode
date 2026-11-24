@@ -36,7 +36,7 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 | D3/D16 | Bus cable | 16/2 flat landscape wire (standard); 18/2 irrigation wire as user option | Clamp works on flat cable without prep | S41, S43 |
 | D16 | Connection | Piercing clamp built into the probe housing | No separate connector | S40 |
 | D4 | Radio | ESP-NOW star to one receiver; antenna inside the node box; receiver antenna on the trailer roof ~5 m | No masts; high end clears most of the Fresnel zone | S6, S22 |
-| D5 | Node MCU | Seeed XIAO ESP32C3 | Small, includes an antenna, ESPHome support | S26, S39 |
+| D5 | Node MCU | ESP32-C3. Bench: Seeed XIAO ESP32C3. Field board: open (D44), after the walk tests | XIAO chosen for its external antenna; need UNVERIFIED | S26, S39 |
 | D6 | Power | Variant B recommended: 3x L91 AA, plan 5-year swap. Variant A: 10 F supercap + small panel, about 6 days without sun | Load about 0.24 mAh/day with margin | S15, S28 |
 | D11 | Power gating | RV-3028-C7 RTC alarm drives a load switch; node is unpowered between readings | Removes sleep current; exact report times | S25 |
 | D7/D20 | Temperature | T1: one DS18B20 per node corrects all its probes; soil temperature is reported to HA with the moisture values | Owner choice; $0 extra | S13, S47 |
@@ -91,6 +91,7 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 2. First compile of the POC firmware on the owner's PC.
 3. Production probe MCU — after bench tests (D37).
 4. 16/2 wire: pure copper only (no CCA)? — round 28.
+4b. Field node board (D44): XIAO, ESP32-C3 SuperMini or bare module — after T11 item 4 and T12; cite a SuperMini price.
 3. Probe lead + molded clamp price — POC.
 - HA automation (zones, alerts, delivery): handled in the HA threads; see `06-ha-note.md`.
 5. Bus protocol and electrical design (power phase, timing, drops per run).

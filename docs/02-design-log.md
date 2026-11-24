@@ -76,7 +76,7 @@ Terms and IDs: see `CLAUDE.md`. Sources: see `docs/03-research-notes.md` (S-numb
 | D2 | Probes per SNODE | 20 (2 rows x 10 trees). CD74HC4067 16:1 mux plus 4 spare ESP32-C3 ADC pins (pins UNVERIFIED) | Each grove tiles exactly into 10 clusters; 30 SNODEs for the forest | S9 |
 | D3 | Wiring | Star, one 18/3 direct-burial irrigation wire per probe (see D16; replaces Cat5e) | Same cost as Cat5e; takes standard irrigation splices; smaller OD for the riser | S32, S33 |
 | D4 | Radio | ESP-NOW star. SNODE: small antenna (u.FL rod or FPC) on the enclosure, about 0.3 m above ground. Receiver: the only tall antenna in the system, on the trailer roof, about 5 m up. Fallbacks: ESP-NOW long-range mode, then a sub-GHz radio. | Owner: no masts in the field. A high antenna at one end keeps most of the Fresnel zone clear (see radio section). | S6, S7, S11, S22, S27 |
-| D5 | MCU | Seeed XIAO ESP32C3 (ships with an external u.FL antenna). Board sleep current no longer matters because the board is unpowered between readings. | Needs a connector for a small external antenna; the SuperMini has only a PCB antenna | S12, S26 |
+| D5 | MCU | Chip: ESP32-C3 (firmware is written for it). **Bench board: Seeed XIAO ESP32C3** (ships with an external u.FL antenna). **Field board: open (D44)**, decided after the walk tests T11 item 4 and T12. Board sleep current doesn't matter because the board is unpowered between readings. | The external-antenna need is UNVERIFIED: a PCB antenna may be enough | S12, S26 |
 | D6 | Power | Two variants, A (solar only) and B (battery only). See sections below. **Recommended: B.** | B has no dependence on sun or snow, fewer parts, and nothing visible above the enclosure | S14, S15, S21, S24–S25 |
 | D7 | Frozen soil | One DS18B20 per SNODE at probe depth; HA marks moisture invalid and blocks irrigation when soil temperature is 0.5 °C or below | Capacitive sensors read frozen soil as dry | S13, S20 |
 | D8 | Report times | 05:00 and 17:00, set by the RTC alarm (RV-3028-C7, ±1 ppm at 25 °C) | Owner confirmed the times. In December, sunset is about 16:40, so both readings happen in the dark then. | S23b |
@@ -568,10 +568,24 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 - Not useful: TI chips (resellers), RV-3028 modules (none), DS18B20 packs (clone risk, as on AliExpress). PY32 boards and DAPLink listings exist, but prices weren't shown.
 - Production BOM in `04-spec.md` keeps its cited prices; Amazon options are noted there.
 
+## Node board choice (D44, reopened round 28)
+
+The firmware needs an ESP32-C3, not a particular board. D5 picked the XIAO only for its external u.FL antenna (the antenna sits inside the box, no masts). Whether a PCB antenna on a ground-level box reaches the trailer is UNVERIFIED. The next-visit Wi-Fi check (T11 item 4) uses a NodeMCU, which also has a PCB antenna, so it gives a first answer; T12 adds ESP-NOW figures.
+
+| Option | For | Against |
+|---|---|---|
+| Seeed XIAO ESP32C3 (bench choice) | External antenna included; Seeed documents feeding the 5V pin (S55); -40 to 85 °C per a seller listing (S26b) | Highest price: $16.99 for 3 on Amazon (S106) |
+| ESP32-C3 SuperMini | Same chip: only the pin map changes | PCB antenna only; temperature rating and LDO not checked; no cited low price yet (S10 has only Newegg, 2 for $19.99) |
+| Bare ESP32-C3 module with u.FL, on the node PCB | Lowest cost in volume; fits a commercial product | Needs our own PCB; not a bench option |
+| ESP8266 / ESP32-CAM (on hand) | Already owned | Rejected as the node: ESP8266 has only one UART with RX (two buses need two); the ESP32-CAM camera uses most pins |
+
+Rule: if the PCB antenna meets the link margin at the farthest grove corner in T11/T12, prefer the SuperMini or a bare module; otherwise keep an external-antenna board. Bench work on the XIAO carries over, since the chip is the same.
+
 ## Open questions (round 28)
 1. When you're ready: next step is probe firmware for the PY32 (hardware layer + protocol v1), or the final receiver.
 2. 16/2 wire: OK to require pure copper (no CCA) in the spec? It narrows the Amazon choices but protects the buried clamps.
 3. ESP32-CAM type and USB adapter (deferred by owner).
+4. Field node board (D44): decide after T11 item 4 and T12. Needs a cited SuperMini price first.
 
 Closed in round 27: AliExpress counts as US-available; bench probe MCU = PY32F002A (D42); Amazon check (D43).
 

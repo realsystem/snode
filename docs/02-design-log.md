@@ -49,9 +49,10 @@ Terms and IDs: see `CLAUDE.md`. Sources: see `docs/03-research-notes.md` (S-numb
 - Probe depth: bottom of the sensing zone at 6 in (15 cm) (confirmed).
 - Node enclosure: 3D-printed in house for the POC.
 - POC tools on hand: µA meter, enclosed 3D printer, soldering station, chest freezer.
-- Bus cable burial: follow US irrigation-wire practice (interpreted as burial depth; round 17 confirms).
+- Bus cable: keep 16/2 landscape wire; bury it to the US irrigation-wire standard (6 in cover for ≤ 30 V). Confirmed.
 - Both power variants (A solar, B battery) go through the POC.
-- Receiver: in a box in all cases; must support indoor and outdoor mounting, with optional solar power.
+- Receiver: in a box in all cases; must support indoor and outdoor mounting, with optional solar power. Owner asked why a receiver is needed at all (answered in D27; decided by POC test).
+- Close all remaining open items before the POC.
 - HA decides irrigation (probably OpenSprinkler). SNODEs only report.
 - Must work through winter (owner: "winter is most important").
 - Lowest cost. Custom PCB allowed after the POC. Existing ESP8266 boards and "Arduino" moisture sensors are for the POC only.
@@ -365,11 +366,27 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 - **Depth:** owner said 6 in. Design: electrode about 10 cm long, sensing zone about 5–15 cm, tip at 15 cm. To confirm in round 16.
 
 ### D25 Probe mechanics and install (draft)
-- Shape: a vertical blade with a clamp head on top. Sensing zone about 5–15 cm; tip at 15 cm (6 in). The head sits just below grade.
-- **Bus cable depth: US practice for irrigation wiring at 30 V or less is at least 6 in of cover** (Paige installation spec, NEC Table 300.5, municipal irrigation codes). The bus runs at 3.3–5 V, so the 6 in rule applies.
-- **Rise loop at each tree:** the bus cable runs along the tree line at 6 in cover. At each tree, a short loop of the same cable (not cut) is brought up to the probe head and clamped. NEC Table 300.5 allows lesser depths where cables rise for terminations or splices (applying this to the probe head is my reading, not a legal opinion; check local code).
-- Extra cable: about 0.3 m per tree (up and back down) → about 180 m (590 ft) for 600 trees.
-- Install: trench to 6 in along the tree line, lay the cable, push the probe in at the standard offset from the emitter, lift a loop to the head, press and close the head, backfill.
+- Sensing zone about 5–15 cm; bottom of the sensing zone at 6 in (15 cm).
+- **Bus cable depth: at least 6 in of cover** (US irrigation practice for ≤ 30 V: Paige installation spec, NEC Table 300.5, municipal codes). The bus runs at 3.3–5 V.
+- The problem: the cable lies at 6 in, the same depth as the bottom of the sensing zone. A clamp at the top of the probe is about 15 cm above the cable.
+- Two ways to join them:
+
+```
+ Option A: clamp on top + rise loop          Option B: clamp at the foot (recommended)
+
+ grade ──────[head]──────────────            grade ─────[cap]────────────────
+              |  ^ loop up                               |
+              |  | (same cable,                          |  sensing zone
+   sensing    |  | not cut)                  sensing     |  5–15 cm
+   zone       |  v                           zone        |
+ 6 in ─ ─ ─ ─ ┘─ ─ ─ cable ─ ─ ─ ─            6 in ─ ─ ─ ─|─ ─ ─ ─ ─ ─ ─ ─ ─
+                                                          [clamp]=cable==  (~7 in)
+```
+  - **A, rise loop:** the cable stays at 6 in between trees. At each tree, a short loop of the same cable (not cut) is lifted up to the probe head and clamped. About 0.3 m extra cable per tree (about 590 ft for 600 trees). NEC Table 300.5 allows lesser depths where cables rise for terminations or splices (my reading of the code, not a legal opinion).
+  - **B, clamp at the foot (recommended):** the clamp is at the bottom of the probe, below the sensing zone. The cable stays at full depth (about 7 in) the whole way: no loops, no extra cable, nothing shallow for rodents or shovels.
+    - Install: trench to about 7 in along the tree line, lay the cable on the trench floor, push the probe down beside the tree until its foot clamp presses onto the cable, backfill.
+    - Cost: a longer probe (about 20 cm), with the electronics in the foot. The clamp can't be seen once it is backfilled, so the node checks each probe right after install (it shows up on the bus or it doesn't).
+- Owner to choose (round 18). BOM cable count: A = 6 spools; B = 5 spools.
 
 ### D26 Node enclosure, POC (3D-printed ASA)
 - ASA, walls ≥ 2.5 mm, gasketed lid (printed TPU gasket or an O-ring groove). Seal the print (layer lines) and run a soak test before field use.
@@ -377,21 +394,46 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 - Bottom: one socket for the 1/2 in PVC riser (solvent-weld or threaded adapter); one membrane vent.
 - Back: 2 screw tabs for the wooden stake; box bottom 0.3 m above grade.
 
-### D27 Receiver (draft)
-- Same 3D-printed ASA box as the SNODE; mounts indoor or outdoor (roof pole about 5 m). The antenna is inside the box or on a short rod on the lid.
-- **Radio constraint:** one ESP32 can run ESP-NOW and Wi-Fi together only on the same channel. In ESPHome, ESP-NOW uses the Wi-Fi network's channel when Wi-Fi is used. So the trailer router's 2.4 GHz channel must be **fixed**, and all SNODEs use that channel. Fallbacks: Ethernet, or a 2-chip receiver (ESP-NOW chip + Wi-Fi chip over UART).
-- **Power modes:**
-  - R-USB (indoor or outdoor): USB power from the trailer; always listening.
-  - R-solar (outdoor, optional): RTC-gated like a SNODE, listening only in windows around 05:00 and 17:00 (proposed 5 min each). XIAO with Wi-Fi active is under 75 mA, so 75 mA x 10 min/day ≈ 12.5 mAh/day; 25 mAh/day with 2x margin.
-    - That is more than a 10 F supercapacitor holds (about 4.7 mAh), so R-solar uses 1x LiFePO4 18650 + small panel + a charger with 0 °C cut-off (CLAUDE.md rule).
-    - 1200 mAh usable / 25 mAh per day ≈ 48 days without sun (UNVERIFIED).
-- **Windowed listening and cold starts:** a variant-A node that lost its clock has no time. It wakes hourly on the RTC countdown timer and sends "hello" until a window hears it and returns the time.
+### D27 Receiver: why, and whether we need one (draft)
+- **Why it was in the design:** SNODEs send by ESP-NOW instead of joining Wi-Fi. Measured on an ESP32 (MicroPython): boot + send an ESP-NOW message = 119 ms, 7.7 mC. Boot + send MQTT over Wi-Fi with a static IP = 774 ms, 108.6 mC; with DHCP, 1,626 ms. So Wi-Fi costs about 14x more charge per report.
+- **What that means here (UNVERIFIED, arithmetic):** the extra is (108.6 − 7.7) mC x 2 reports ≈ 0.056 mAh/day.
+  - Variant B: negligible (energy lasts decades either way).
+  - Variant A: no-sun autonomy drops from about 6 to about 5.5 days.
+  - **So energy is not the main reason.**
+- **The real trade-off is range and setup:**
+| | N1: no receiver, nodes join Wi-Fi directly | N2: ESP-NOW receiver |
+|---|---|---|
+| Extra hardware | None (but the trailer Wi-Fi must reach 105 m to antennas 0.3 m above ground, through young trees) | One small box, roof-mounted |
+| Link | Association, DHCP/static IP and API connection: several packets each way, seconds awake; longer on a weak link | One short packet + acknowledgement; long-range mode available |
+| Router | 30 more clients; credentials on every node | Fixed 2.4 GHz channel required |
+| ESPHome | Native API works with sleeping devices (current community advice) | ESP-NOW Packet Transport |
+| Commercial | Depends on the customer's Wi-Fi coverage | Independent of Wi-Fi coverage |
+- **Proposal:** test N1 first in the POC walk test (T9), because it needs no extra hardware. Keep N2 as the fallback for this site and as the default for commercial sites. Both run from the same node firmware with a build option.
+- If N2 is used: the same box as a SNODE; indoor or outdoor. Modes:
+  - R-USB: always on.
+  - R-solar: windowed listening around 05:00/17:00, about 25 mAh/day with margin, which needs a LiFePO4 18650 + 0 °C cut-off charger (a supercapacitor is too small).
+- Cold start (variant A after a long dark period): the node wakes hourly and retries until it gets the time (N2 window, or N1 via HA/SNTP).
 
-### D18 Firmware
+### D28 Variant A charger (closes an open item)
+- TI BQ25570 energy-harvesting charger between the panel and the supercapacitor:
+  - Continuous harvesting from 100 mV input; cold start from ≥ 600 mV, so an empty capacitor is not a problem.
+  - Programmable MPPT; 488 nA typical quiescent current.
+  - Supports supercapacitors (TI reference design TIDA-00242: solar harvester with a supercap).
+  - Its overvoltage setting caps the capacitor at ≤ 2.6 V.
+- TPS61099 stays as the 5 V boost for the XIAO. The panel is chosen to suit the BQ25570's input range (bench step).
+
+### D29 RTC support in ESPHome (closes an open item)
+- ESPHome has built-in time platforms for RTC chips such as the DS1307 and RX8025T, but none found for the RV-3028.
+- An ESP-IDF driver for the RV-3028-C7 exists, and ESPHome documents how to write a time-platform component.
+- **Plan:** a small ESPHome external component for the RV-3028: read time, write time from HA/receiver, set the next alarm, clear the alarm flag (which cuts power). Keep the RV-3028 for its 45 nA.
+
+### D18 Firmware### D18 Firmware
 - ESPHome on both the nodes and the receiver (owner accepted).
 - ESPHome has an ESP-NOW component and an ESP-NOW platform for its Packet Transport component, which sends sensor states from one node to another without a server. Nodes send their readings to the receiver; the receiver exposes them to HA through the native API.
 - Boot flow under RTC power gating: power on → read sensors → send → wait for the acknowledgement → set the next RTC alarm → clear the alarm (cuts power). RTC driver support in ESPHome for the RV-3028 is not confirmed; may need a custom component (UNVERIFIED).
 - Scale check needed: 30 nodes x 22 values = 660 entities through one receiver (UNVERIFIED).
+- Wi-Fi mode (N1): static IP (DHCP doubled the awake time in the measurement above); ESPHome native API.
+- Bus read rule: probes idle in MCU stop mode between bus events and wake on the 1-Wire reset pulse, so the line does not have to feed 20 running MCUs during the read phase. Wake time must fit 1-Wire presence timing (bench test T4, UNVERIFIED).
 - **Nodes send raw values only** (raw counts, probe temperature, node soil temperature, battery voltage, RSSI). HA converts raw to % using `config/calibration.yaml`, so calibration lives in one place.
 - **HA alerts:**
 | Alert | Rule (proposed) |
@@ -408,10 +450,12 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 ## Receiver
 - The trailer is fiberglass, which passes 2.4 GHz with little loss (UNVERIFIED; check in the walk test). The receiver ESP32 can stay inside, with a short coax to the roof antenna.
 
-## Open questions (round 17)
-1. Bus cable: I read "irrigation wire standard for US" as burial depth: 6 in cover with a rise loop to each probe head. Correct? Or did you mean switching the cable type to 18/2 irrigation wire?
-2. Trailer Wi-Fi: can the router's 2.4 GHz channel be fixed (needed for ESP-NOW and Wi-Fi on one receiver)? If not: Ethernet or a 2-chip receiver.
-3. Receiver solar option: accept a LiFePO4 18650 + cold-cut-off charger for it (a supercapacitor is too small for its listening windows)?
-4. Freeze design v0.1 and start the POC (Phase 0–1 first)? Or anything else to design first?
+## Open questions (round 18)
+1. Probe-to-cable: option B (clamp at the foot, cable stays at full depth, recommended) or option A (clamp on top with a rise loop)?
+2. Radio: test direct Wi-Fi first (no receiver) in the POC, with the ESP-NOW receiver as fallback? Where is the trailer router: inside or near a window, and can its 2.4 GHz channel be fixed if we need N2?
+3. UNODE: should the UNODE (other project) be allowed to act as the receiver/bridge near the trailer, or should SNODE stay fully independent of it?
+
+Closed this round: RTC driver plan (D29), variant A charger (D28), receiver need (D27, decided by test), bus read rule (D18).
+Still open, closed by the POC itself: probe PCB/housing quotes, commodity parts (holder, vent, fittings, stake) bought at POC time.
 
 HA side: see `docs/06-ha-note.md`. Spec: `docs/04-spec.md`. POC: `docs/05-poc-plan.md`.

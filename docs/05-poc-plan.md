@@ -38,7 +38,7 @@ All thresholds are PROPOSED until the owner accepts them.
 ## Phase 4 — field cluster (site, at least 3 weeks)
 - Setup: two SNODEs (one variant A, one variant B) at the grove corner farthest from the trailer, each with up to 20 probes on one cluster (fewer is fine for the POC); receiver inside the trailer with the roof antenna; one WH51 about 10 cm from one probe at the same emitter offset.
 - Tests:
-  - T9: walk test before install: RSSI and packet loss from the farthest corner, node antenna at 0.3 m.
+  - T9: walk test before install, node antenna at 0.3 m, from the farthest corner: (a) N1 direct Wi-Fi to the trailer router: connect time, success rate, RSSI; (b) N2 ESP-NOW to the receiver: packet loss, RSSI. Pass for N1: ≥ 98% successful reports and median awake time < 2 s; otherwise use N2.
   - T10: run for at least 3 weeks, 2 reports a day.
 - Pass: ≥ 98% of reports delivered; all alerts fire correctly when tested by hand; readings follow each irrigation event; battery voltage trend consistent with the 5-year plan.
 

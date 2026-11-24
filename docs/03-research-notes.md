@@ -117,6 +117,11 @@ be re-checked before purchase. S-numbers are referenced from `02-design-log.md`.
 | S61 | US burial practice for irrigation wire: up to 30 V, minimum 6 in burial (Paige installation spec, citing NEC Table 300.5); municipal irrigation codes require 6 in for low-voltage wiring to zone valves. NEC Table 300.5 note: lesser depths are permitted where cables rise for terminations or splices. | https://www.paigewire.com/docs/paigewire/library/doc/AC.docx ; https://colleyville.com/home/showpublisheddocument/126/636039493188130000 ; https://broomfield.org/DocumentCenter/View/2545 |
 | S62 | ESP-NOW with Wi-Fi on one chip: both must use the same channel (Espressif forum). ESPHome `espnow`: the channel can't be set when Wi-Fi is used; ESP-NOW uses the Wi-Fi network's channel. XIAO ESP32C3 Wi-Fi active < 75 mA. | https://esp32.com/viewtopic.php?p=82304 ; https://esphome.io/components/espnow.html ; https://shop.pimoroni.com/en-eu/products/seeed-studio-xiao-esp32c3 |
 
+| S63 | ESP32 measurements (MicroPython, optimised boot): boot + ESP-NOW message 119 ms / 7.7 mC; boot + MQTT over Wi-Fi with static IP 774 ms / 108.6 mC; with DHCP 1,626 ms. | https://github.com/glenn20/upy-esp32-experiments |
+| S64 | ESPHome deep sleep: current community guidance recommends the native API (MQTT no longer required); after Wi-Fi connects, the API component sets up and HA connects. | https://community.home-assistant.io/t/native-api-vs-mqtt-when-using-deep-sleep-in-esphome/1014719/7 ; https://community.home-assistant.io/t/notes-on-esphome-deep-sleep/860987/9 |
+| S65 | TI BQ25570: energy-harvesting boost charger; cold start from ≥ 600 mV, continuous harvesting from 100 mV, programmable MPPT, 488 nA quiescent; supports supercapacitors; reference design TIDA-00242 (solar + supercap). | https://www.ti.com/product/BQ25570 ; https://ti.com/document-viewer/BQ25570/datasheet |
+| S66 | ESPHome time platforms exist for DS1307 and RX8025T (none found for the RV-3028). An ESP-IDF RV-3028-C7 driver exists; ESPHome documents writing a time-platform component. | https://esphome.io/components/time/ds1307.html ; https://esphome.io/components/time/rx8025t/ ; https://components.espressif.com/components/javsalv/rv-3028-c7/versions/1.0.0/readme ; https://developers.esphome.io/architecture/components/time/ |
+
 ## Radio path
 
 | # | Finding | Source |

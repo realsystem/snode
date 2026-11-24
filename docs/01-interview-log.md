@@ -266,9 +266,24 @@ Answers:
 Interpretation recorded: answer 2 = burial depth per US irrigation practice (6 in cover for ≤ 30 V), with a rise loop to each probe head. To confirm in round 17.
 Result: D25 updated, receiver design D27 (fixed Wi-Fi channel requirement, R-USB / R-solar), POC plan covers both variants and both receiver modes; forest cable +590 ft.
 
-## Round 17 — open (asked 2026-11-24)
+## Round 17 — 2026-11-24
 
+Questions:
 1. Burial interpretation: depth (6 in + rise loop) or cable type?
 2. Can the trailer router's 2.4 GHz channel be fixed?
 3. Receiver solar option with LiFePO4 18650 + cold-cut-off charger?
 4. Freeze design v0.1 and start the POC?
+
+Answers:
+1. "I mean keep the cable type just use same standard used for irrigation cable. in our case I don't understand loop you mention, explain."
+2. "why do we need receiver?"
+3. "depends on 2)"
+4. "let's continue cover all open items"
+
+Result: loop explained with a sketch, and a foot-clamp alternative proposed (D25). Receiver need analysed (D27): energy is a minor factor; range/setup decides; test direct Wi-Fi first. Closed: variant A charger (BQ25570, D28), RTC in ESPHome (D29), bus read rule.
+
+## Round 18 — open (asked 2026-11-24)
+
+1. Foot clamp (B, recommended) or rise loop (A)?
+2. Test direct Wi-Fi first, receiver as fallback? Router location; can its channel be fixed?
+3. UNODE as receiver/bridge, or SNODE fully independent?

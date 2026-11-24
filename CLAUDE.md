@@ -108,8 +108,8 @@ All calibration values (dry/wet raw counts per probe) live in one file:
 - Field installation needs no soldering and no bench prep: a spool of wire and the probes only.
   Connection cost per probe must be close to zero (built-in clamp); splice caps are a user option, not the design.
 - Box-to-ground riser: 1/2 in standard PVC conduit.
-- Bus cable burial: at least 6 in cover (US irrigation practice, ≤ 30 V), with a rise loop to each probe head.
-- The trailer Wi-Fi 2.4 GHz channel must be fixed; SNODEs and the receiver use that channel for ESP-NOW.
+- Bus cable: 16/2 landscape wire, buried with at least 6 in cover (US irrigation practice, ≤ 30 V). Probe joins it by a foot clamp or a rise loop (design log D25).
+- Radio path: direct Wi-Fi (N1) or an ESP-NOW receiver (N2), decided by the POC walk test. With N2, the trailer Wi-Fi 2.4 GHz channel must be fixed.
 - Firmware: ESPHome (nodes and receiver).
 - Every design must state its operating limits (temperature, days without sun,
   battery life, link distance, cable length), because the design may become a commercial product.

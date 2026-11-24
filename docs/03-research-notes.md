@@ -110,6 +110,10 @@ be re-checked before purchase. S-numbers are referenced from `02-design-log.md`.
 | S56 | OpenSprinkler: the main controller has 8 zones; each zone expander adds 16 (8 + 16 = 24 with one expander); OS 3.x supports up to 72 zones. Expander $49–50. | https://opensprinkler.com/?p=16087 ; https://opensprinklershop.github.io/faq/ ; https://opensprinkler.com/product/zone-expander/ |
 | S57 | PY32F002A has 2 comparators (datasheet feature list). | https://hestore.hu/prod_getfile.php?id=16039 |
 
+| S58 | ADI DS2482-100: I2C-to-1-Wire master, selectable active or passive pull-up, strong pull-up via an internal low-impedance path, PCTLZ output to control an external MOSFET for a stronger pull-up; 2.9–5.5 V, -40 to 85 °C; from $1.18 (1k list). DS2484: strong pull-up, 1-Wire side 1.8–5.0 V, US$1.956 at 10+ (Farnell). | https://analog.com/en/DS2482-100 ; https://www-cce.cldnet.analog.com/en/products/ds2482-100 ; https://wcm-cce.cldnet.analog.com/media/en/technical-documentation/data-sheets/ds2484.pdf ; https://il.farnell.com/analog-devices/ds2484r-t/interface-bridge-i2c-to-1wire/dp/2514570 |
+| S59 | 10 F 2.7 V supercapacitors: Eaton HV1030-2R7106-R, $3.39 each / $1.97 at 50 (DigiKey, USD), 1000 h at 65 °C; Tecate TPL-10-10X30F, -40 to 85 °C. | https://www.digikey.com/en/products/detail/eaton-electronics-division/HV1030-2R7106-R/3878071 ; https://www.digikey.ca/en/products/detail/tecate-group/TPL-10-10X30F/9930253 |
+| S60 | TI TPS61099 boost: 0.7–5.5 V input, 1.8–5.5 V output, 1 µA quiescent current, true disconnect in shutdown, up to 300 mA from 3.3 V to 5 V. TI TPS61094: 60 nA quiescent boost with supercapacitor management. | https://www.ti.com/lit/gpn/TPS61099 ; https://www.ti.com/product/TPS61099/description |
+
 ## Radio path
 
 | # | Finding | Source |

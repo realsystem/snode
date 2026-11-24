@@ -233,9 +233,25 @@ Answers:
 
 Result: T1 recorded; `docs/06-ha-note.md` written for the HA threads; hardware drafted: bus electrical design with DS18B20 emulation (D22), node power tree (D23), probe hardware (D24).
 
-## Round 15 — open (asked 2026-11-24)
+## Round 15 — 2026-11-24
 
+Questions:
 1. Probe polarity: bridge rectifier or keyed clamp?
 2. Probe sensing depth (center of the sensing zone)?
 3. Node enclosure: 3D-printed ASA or bought box?
 4. POC tools on hand (µA meter, enclosed 3D printer, soldering station, chest freezer)?
+
+Answers:
+1. "ok" (bridge rectifier)
+2. "6 inches"
+3. "3d in house for POC"
+4. "yes"
+
+Result: bus master DS2482-100 x2 (D22), variant A parts (10 F supercap, TPS61099), probe mechanics (D25), 3D-printed node enclosure (D26). Depth interpretation to be confirmed.
+
+## Round 16 — open (asked 2026-11-24)
+
+1. Sensing zone 5–15 cm (bottom at 6 in), or centered at 6 in?
+2. Bus cable in a shallow slit at about 5 cm along the tree line?
+3. POC: both power variants, or B first?
+4. Receiver in a roof box (USB power down) or inside with coax to a roof antenna?

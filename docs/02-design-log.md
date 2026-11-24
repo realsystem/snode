@@ -45,6 +45,10 @@ Terms and IDs: see `CLAUDE.md`. Sources: see `docs/03-research-notes.md` (S-numb
 - Irrigation controller: standard OpenSprinkler (8 zones) at first; with a zone expander later.
 - HA automation is handled in separate threads; this repo keeps a hand-off note (`docs/06-ha-note.md`). Focus here: hardware.
 - Accuracy target: ±5% after site calibration, judged mainly on trends.
+- Probe polarity: bridge rectifier (polarity-free clamp) accepted.
+- Probe depth: 6 in (15 cm). Recorded as: bottom of the sensing zone at 15 cm (to confirm, round 16).
+- Node enclosure: 3D-printed in house for the POC.
+- POC tools on hand: µA meter, enclosed 3D printer, soldering station, chest freezer.
 - HA decides irrigation (probably OpenSprinkler). SNODEs only report.
 - Must work through winter (owner: "winter is most important").
 - Lowest cost. Custom PCB allowed after the POC. Existing ESP8266 boards and "Arduino" moisture sensors are for the POC only.
@@ -328,9 +332,11 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
   - The node pulls the line up through a low-value resistor (about 100–220 Ω instead of 1-Wire's usual 4.7 kΩ), so the line can also supply the 20 probes while they measure.
   - Each probe has a diode + reservoir capacitor (rides through the short low pulses of the protocol) and pulls the line low with a small MOSFET, not with an MCU pin.
   - Sequence each wake: (1) power phase, about 200 ms: line held high, all probes measure at once and store the result; (2) read phase: the node reads each probe's register by address.
-  - Master options: ESP32 GPIO + MOSFET driver, or a DS248x 1-Wire master chip, which ESPHome supports, including its active pull-up option. ESPHome's GPIO bit-bang 1-Wire has reported reliability problems, which favours the DS248x (UNVERIFIED).
+  - **Master: 2x DS2482-100** (one per row bus), I2C-to-1-Wire bridges supported by ESPHome's `ds248x` component. Each has a strong pull-up through a low-impedance path, and a PCTLZ output that drives an external MOSFET for a stronger pull-up. That MOSFET is the power phase. Operating range 2.9–5.5 V, -40 to 85 °C. List price from $1.18 (1k). A DS2484 also works, but it has no address pin, so two of them can't share one I2C bus.
+  - Two separate channels (one per row) instead of one network with two branches, because 1-Wire guidance warns against star layouts.
+  - ESPHome's GPIO bit-bang 1-Wire has reported reliability problems; the DS2482 avoids it.
 - **Protection:** a TVS diode and series resistor on each bus at the node (long buried cable).
-- **Polarity:** proposed bridge rectifier at each probe so the clamp can go on either way (round 15).
+- **Polarity:** bridge rectifier at each probe (owner accepted). The probe pull-down sits on the DC side of the bridge, so the line low level is about one Schottky drop + MOSFET drop. It must stay below the 1-Wire low threshold (bench test T4).
 
 ### D23 Node hardware (draft)
 - **Variant B power tree:**
@@ -342,7 +348,10 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 - **Margins:**
   - A fresh pack is close to the TPS22917's 5.5 V maximum (absolute max 6 V). Check fresh-pack voltage in the POC.
   - At end of life the pack, minus the diode drop, falls below the 3.0 V the ESP32-C3 needs. The node stops before the cells are fully used; the energy margin covers this.
-- **Variant A:** supercapacitor → RTC directly (1.1–5.5 V). Switched side: a boost converter from ≥ 1.0 V up to the XIAO supply. Part to be selected.
+- **Variant A parts:**
+  - 10 F 2.7 V supercapacitor (e.g., Eaton HV1030-2R7106-R, $1.97 at 50; or Tecate TPL-10-10X30F, -40 to 85 °C). The RTC runs directly from it (1.1–5.5 V).
+  - Switched side: TI TPS61099 boost converter (0.7–5.5 V in, 1 µA quiescent, true disconnect in shutdown) → 5 V into the XIAO 5V pin. A bulk capacitor on its output covers the ESP32 radio peaks (sizing in the bench test). TI's TPS61094 (60 nA, built-in supercap management) is the alternative to evaluate.
+  - Panel and charge limiter: to be selected after the bench energy measurement.
 - **Node I/O (XIAO ESP32C3):** I2C to the RTC; 2 bus channels (row A, row B); 1-Wire pin for the node DS18B20; battery-voltage divider on the switched rail (no drain when off); RTC INT readback.
 
 ### D24 Probe hardware (draft)
@@ -350,7 +359,18 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 - **Measurement:** RC charge time. A GPIO charges the electrode through a resistor; one of the PY32F002A's 2 comparators detects the threshold; a timer captures the time. Charge time rises with soil permittivity.
 - **Bus interface:** diode + reservoir capacitor, a pull-down MOSFET, and a sense divider. Optional bridge rectifier for polarity.
 - **Electronics end:** potted. Two piercing pins in the clamp head contact the 16/2 conductors. A grease-filled cavity; a 3D-printed ASA head for the POC.
-- **Depth:** the sensing zone must sit within 15 cm. Where it is centered is an owner question (round 15).
+- **Depth:** owner said 6 in. Design: electrode about 10 cm long, sensing zone about 5–15 cm, tip at 15 cm. To confirm in round 16.
+
+### D25 Probe mechanics and install (draft)
+- Shape: a vertical blade with a clamp head on top. The head sits just below grade; the blade goes down to 15 cm.
+- Bus cable: laid in a shallow slit along the tree line at about 5 cm, so the head can clamp it without digging to blade depth (proposed; round 16).
+- Install: open the slit, lay the cable, push the probe in at the standard offset from the emitter, press the head onto the cable, close the head, backfill.
+
+### D26 Node enclosure, POC (3D-printed ASA)
+- ASA, walls ≥ 2.5 mm, gasketed lid (printed TPU gasket or an O-ring groove). Seal the print (layer lines) and run a soak test before field use.
+- Inside: 3x AA holder (variant B) or supercapacitor board (variant A); XIAO with its flexible antenna under the lid; DS2482 board.
+- Bottom: one socket for the 1/2 in PVC riser (solvent-weld or threaded adapter); one membrane vent.
+- Back: 2 screw tabs for the wooden stake; box bottom 0.3 m above grade.
 
 ### D18 Firmware
 - ESPHome on both the nodes and the receiver (owner accepted).
@@ -373,10 +393,10 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 ## Receiver
 - The trailer is fiberglass, which passes 2.4 GHz with little loss (UNVERIFIED; check in the walk test). The receiver ESP32 can stay inside, with a short coax to the roof antenna.
 
-## Open questions (round 15)
-1. Probe polarity: add a bridge rectifier so the clamp can go on either way (a few cents, about 0.3–0.6 V lost), or a keyed clamp that only fits one way on the ribbed conductor?
-2. Probe sensing depth: where should the sensing zone be centered for new trees (for example 5–15 cm, centered at 10 cm)?
-3. Node enclosure: 3D-print it in ASA too (cheapest, in house), or buy a box (Hammond reference £40.42)?
-4. POC tools on hand: a µA-capable current meter (for example a power profiler), an enclosed 3D printer for ASA, a soldering station, a chest freezer?
+## Open questions (round 16)
+1. Depth: should the sensing zone be 5–15 cm (bottom at 6 in, as designed), or centered at 6 in (which would go below the 15 cm maximum)?
+2. Bus cable depth: OK to lay the bus cable in a shallow slit at about 5 cm along the tree line, so the clamp head sits just below grade?
+3. POC scope: build both power variants (A solar, B battery) in the POC, or B first and A later?
+4. Receiver: put the receiver itself in a small box on the trailer roof (USB power cable down, no RF cable loss), or keep it inside with a coax cable up to a roof antenna?
 
 HA side: see `docs/06-ha-note.md`. Spec: `docs/04-spec.md`. POC: `docs/05-poc-plan.md`.

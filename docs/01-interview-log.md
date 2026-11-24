@@ -423,7 +423,7 @@ Answers:
 3. "later"
 Also: "did you check amazon as a supplier?"
 
-Result: bench probe MCU = PY32F002A (D42). Amazon check (D43): L91 24-packs, 16/2 wire (pure copper only) and the XIAO 3-pack are worth buying there; mixed bench list $118.44.
+Result: bench probe MCU = PY32F002A (D42). Amazon check (D43): L91 24-packs, 16/2 wire (pure copper only) and the XIAO 3-pack are worth buying there; mixed bench list $118.94 (corrected: the XIAO 3-pack is $13.99 from Seeed's US warehouse; owner saw $16.99 on Amazon; $13.49 is the China-warehouse price).
 
 ## Round 28 — open (asked 2026-11-24)
 

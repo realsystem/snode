@@ -557,14 +557,14 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 ### D41 AliExpress sourcing check (owner request, round 26)
 - Table in `05-poc-plan.md`. AliExpress (US site) has PY32F002A dev boards ($2.30–2.97), PY32F002A chips ($1.42 per 10) and DAPLink programmers ($5.30). It isn't cheaper for the XIAO, TI chips or the RTC board, and genuine-part risk is higher there.
 - Effect on D37/D40: the PY32F002A (2 comparators) can be delivered to the US, so the bench probe can use it and the ATtiny202 single-comparator problem goes away. Proposed: bench probes on the PY32F002A; ATtiny202 kept only as a fallback.
-- Mixed bench list: $119.92 cited (US distributors for TI parts, RTC board, XIAO and node sensor; AliExpress for PY32 parts and the programmer).
+- Mixed bench list (before the Amazon check): $119.92 cited (US distributors for TI parts, RTC board, XIAO and node sensor; AliExpress for PY32 parts and the programmer).
 
 ### D42 Probe MCU for the bench: PY32F002A (owner, round 27)
 - Owner: AliExpress delivery counts as "available in the US". Bench probes use the PY32F002A (2 comparators), bought from AliExpress. ATtiny202 stays as a fallback only. Production MCU still decided after the bench tests (D37).
 
 ### D43 Amazon sourcing check (owner request, round 27)
 - Table in `05-poc-plan.md`.
-- Useful: Energizer L91 24-packs ($1.17–1.75 per cell vs $2.29 in the BOM; about $38 saved on 90 cells at the one-time price); 16/2 landscape wire at $129.99 per 500 ft vs $140 (about $50 saved on 5 spools), **only for pure-copper, direct-burial cable**: many Amazon listings are copper-clad aluminum (CCA), which is a corrosion risk at buried piercing clamps; XIAO 3-pack from Seeed ($13.49, $4.50 each).
+- Useful: Energizer L91 24-packs ($1.17–1.75 per cell vs $2.29 in the BOM; about $38 saved on 90 cells at the one-time price); 16/2 landscape wire at $129.99 per 500 ft vs $140 (about $50 saved on 5 spools), **only for pure-copper, direct-burial cable**: many Amazon listings are copper-clad aluminum (CCA), which is a corrosion risk at buried piercing clamps; XIAO 3-pack from seeedstudio.com ($13.99 from the US warehouse; Amazon $16.99).
 - Not useful: TI chips (resellers), RV-3028 modules (none), DS18B20 packs (clone risk, as on AliExpress). PY32 boards and DAPLink listings exist, but prices weren't shown.
 - Production BOM in `04-spec.md` keeps its cited prices; Amazon options are noted there.
 

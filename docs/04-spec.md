@@ -62,7 +62,7 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 | D40 | Bus protocol v1 | `10-bus-protocol.md`: 9600 8N1, READ / DISCOVER / MEASURE, CRC-8 | Shared by node and probe | S79 |
 | D41 | AliExpress sourcing | PY32 dev boards, chips and DAPLink from AliExpress (US delivery); TI parts, RTC board, XIAO and node sensor from US distributors; mixed bench list $119.92 | Owner asked; genuine-part risk | S98–S103 |
 | D42 | Bench probe MCU | PY32F002A from AliExpress (owner: AliExpress counts as US-available); ATtiny202 fallback | 2 comparators | S98, S99 |
-| D43 | Amazon sourcing | L91 24-packs and 16/2 wire (pure copper only) cheaper on Amazon; XIAO 3-pack from Seeed | Owner asked | S104–S107 |
+| D43 | Amazon sourcing | L91 24-packs and 16/2 wire (pure copper only) cheaper on Amazon; XIAO 3-pack from seeedstudio.com ($13.99, US warehouse) | Owner asked | S104–S107 |
 | D31 | Channel follow | Node saves the last good channel; on a missed acknowledgement it scans channels 1–11 | Works with routers that change channel | S74 |
 | D29 | RTC in ESPHome | Small external component for the RV-3028 | No built-in platform | S66 |
 | D12 | Enclosure | UV-stabilized polycarbonate, IP68 class, on a wooden stake, box bottom 0.3 m above grade | Owner: wood and plastic are rabbit-safe | S29 |

@@ -586,6 +586,10 @@ Rule: if the PCB antenna meets the link margin at the farthest grove corner in T
 2. 16/2 wire: OK to require pure copper (no CCA) in the spec? It narrows the Amazon choices but protects the buried clamps.
 3. ESP32-CAM type and USB adapter (deferred by owner).
 4. Field node board (D44): decide after T11 item 4 and T12. Needs a cited SuperMini price first.
+5. Bench meter: make and model (T2 needs ≤ 1 µA resolution)?
+6. Can the owner solder SOT-23 parts onto adapters, or are ready modules needed?
+7. HA for the bench: home HA, the trailer HA over Starlink, or USB logs only until the next visit?
+8. 3xAA holder: on hand, or find and price one?
 
 Closed in round 27: AliExpress counts as US-available; bench probe MCU = PY32F002A (D42); Amazon check (D43).
 

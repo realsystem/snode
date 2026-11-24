@@ -59,6 +59,11 @@ Bus option O2 (powered bus) is chosen, so no DS2482 and no DS18B20 probe stand-i
 Not listed: parts on hand (NodeMCU, ESP32-CAM, multimeter, breadboard), generic resistors, capacitors,
 small MOSFETs and diodes, perfboard, and 16/2 wire from the field spool.
 
+### Bench stages (XIAO)
+- Stage 0, XIAO only: USB-C data cable, PC with ESPHome (`firmware/README.md`), antenna fitted. First compile and flash of node and receiver; ESP-NOW node ↔ receiver on the desk; HA events if HA is reachable. Missing probes read `0x7FFF`; missing RTC logs an error.
+- Stage 1 (T2): Phase 1 parts below, a 3xAA holder (not yet priced), headers on the XIAO (soldering; whether they ship loose is UNVERIFIED), breadboard, a meter that resolves below 1 µA.
+- Stage 2 (T4): Phase 2 parts, PY32 boards and programmer, 16/2 wire; needs the probe firmware.
+
 ### Phase 1 — node power, clock and radio
 | Item | Qty | Unit price (USD) | US source | Source | Line total |
 |---|---|---|---|---|---|

@@ -433,3 +433,7 @@ Follow-up, 2026-11-24: owner asked whether the XIAO is needed at all. Answer: th
 2. 16/2 wire: require pure copper (no CCA)?
 3. ESP32-CAM type and USB adapter (deferred).
 4. Field node board (D44): after T11 item 4 and T12.
+5. Bench meter: make and model (T2 needs ≤ 1 µA resolution)?
+6. Can the owner solder SOT-23 parts onto adapters, or are ready modules needed?
+7. HA for the bench: home HA, the trailer HA over Starlink, or USB logs only until the next visit?
+8. 3xAA holder: on hand, or find and price one?

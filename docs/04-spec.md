@@ -22,6 +22,9 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 | R13 | Frozen soil | Readings marked invalid and irrigation blocked at ≤ 0.5 °C soil temperature | PROPOSED |
 | R14 | Accuracy | ±5% moisture after site calibration, judged mainly on trends | VERIFIED |
 | R16 | Irrigation controller | OpenSprinkler, 8 zones now; expander (+16 zones) later | VERIFIED |
+| R17 | Bus burial | 6 in minimum cover (US irrigation practice) | VERIFIED (interpretation to confirm) |
+| R18 | POC scope | Both power variants | VERIFIED |
+| R19 | Receiver | Boxed; indoor or outdoor; optional solar | VERIFIED |
 | R15 | Commercial readiness | Operating limits stated for every variant | VERIFIED |
 
 ## 2. Decisions
@@ -43,6 +46,8 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 | D24 | Probe polarity | Bridge rectifier; clamp fits either way | Owner accepted | — |
 | D24/D25 | Probe depth | Sensing zone about 5–15 cm, tip at 15 cm (6 in) | Owner: 6 in | — |
 | D26 | Node enclosure (POC) | 3D-printed ASA, gasketed, riser socket, vent | Owner choice | S50 |
+| D25 | Bus burial | 6 in cover (US irrigation practice, ≤ 30 V) with a rise loop to each probe head | Owner: US irrigation-wire standard | S61 |
+| D27 | Receiver | Same box; indoor/outdoor; R-USB always on, or R-solar (LiFePO4 + panel, windowed listening); fixed Wi-Fi channel | Owner: box, indoor/outdoor, optional solar | S62 |
 | D12 | Enclosure | UV-stabilized polycarbonate, IP68 class, on a wooden stake, box bottom 0.3 m above grade | Owner: wood and plastic are rabbit-safe | S29 |
 | D13 | Riser | 1/2 in Schedule 40 PVC, 2 cables (35% fill), duct seal at the top | Rabbits | S35, S38 |
 | D18 | Firmware/HA | ESPHome + ESP-NOW Packet Transport; raw values sent, calibration in HA from `config/calibration.yaml` | Calibration in one place | S39 |
@@ -65,10 +70,10 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 
 ## 4. Open items
 
-1. Depth interpretation (5–15 cm vs centered at 6 in) — round 16.
-2. Bus cable depth (about 5 cm slit) — round 16.
-3. POC scope: both power variants or B first — round 16.
-4. Receiver placement: roof box or coax — round 16.
+1. Burial interpretation (depth vs cable type) — round 17.
+2. Fixed trailer Wi-Fi channel — round 17.
+3. Receiver solar storage (LiFePO4) — round 17.
+4. Design freeze v0.1 — round 17.
 - HA automation (zones, alerts, delivery): handled in the HA threads; see `06-ha-note.md`.
 5. Bus protocol and electrical design (power phase, timing, drops per run).
 6. Probe PCB, passives, potting and housing quotes.
@@ -108,12 +113,12 @@ Variant B, 600 trees, 30 SNODEs, 1 receiver. Probe line counts only the cited MC
 | Soil temperature | DS18B20 waterproof | $1.90 | S20 | 30 | $57.00 |
 | Cells | Energizer L91 AA (3 per node) | $2.29 | S21 | 90 | $206.10 |
 | Enclosure | Hammond 1554QA2GY | £40.42 | S29 | 30 | £1,212.60 |
-| Bus cable | 16/2 landscape wire, 500 ft | $140.00 | S41 | 5 | $700.00 |
+| Bus cable | 16/2 landscape wire, 500 ft (2,264 ft + 590 ft rise loops = 2,854 ft) | $140.00 | S41 | 6 | $840.00 |
 | Probe MCU | Puya PY32F002A | $0.0927 | S44 | 600 | $55.62 |
 | Probe assembly | JLCPCB setup + SMT + feeders (≈$0.09/probe) | $0.09 | S46 | 600 | $54.00 |
 | Bus master | ADI DS2482-100 (2 per node; 1k list price) | $1.18 | S58 | 60 | $70.80 |
-| **Total (cited)** | | | | | **$1,255.72 + £1,334.43** |
-| **Per tree (cited)** | | | | | **about $2.09 + £2.22** |
+| **Total (cited)** | | | | | **$1,395.72 + £1,334.43** |
+| **Per tree (cited)** | | | | | **about $2.33 + £2.22** |
 
 Variant A swap (per node): remove 3x L91 ($6.87), add a 10 F supercap (Eaton HV1030, $1.97 at 50, S59) + TPS61099 boost (price not yet cited) + panel (not yet selected).
 The POC node enclosure is 3D-printed (D26); the Hammond box stays as the bought reference.

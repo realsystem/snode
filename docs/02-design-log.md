@@ -46,9 +46,12 @@ Terms and IDs: see `CLAUDE.md`. Sources: see `docs/03-research-notes.md` (S-numb
 - HA automation is handled in separate threads; this repo keeps a hand-off note (`docs/06-ha-note.md`). Focus here: hardware.
 - Accuracy target: ±5% after site calibration, judged mainly on trends.
 - Probe polarity: bridge rectifier (polarity-free clamp) accepted.
-- Probe depth: 6 in (15 cm). Recorded as: bottom of the sensing zone at 15 cm (to confirm, round 16).
+- Probe depth: bottom of the sensing zone at 6 in (15 cm) (confirmed).
 - Node enclosure: 3D-printed in house for the POC.
 - POC tools on hand: µA meter, enclosed 3D printer, soldering station, chest freezer.
+- Bus cable burial: follow US irrigation-wire practice (interpreted as burial depth; round 17 confirms).
+- Both power variants (A solar, B battery) go through the POC.
+- Receiver: in a box in all cases; must support indoor and outdoor mounting, with optional solar power.
 - HA decides irrigation (probably OpenSprinkler). SNODEs only report.
 - Must work through winter (owner: "winter is most important").
 - Lowest cost. Custom PCB allowed after the POC. Existing ESP8266 boards and "Arduino" moisture sensors are for the POC only.
@@ -362,15 +365,27 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 - **Depth:** owner said 6 in. Design: electrode about 10 cm long, sensing zone about 5–15 cm, tip at 15 cm. To confirm in round 16.
 
 ### D25 Probe mechanics and install (draft)
-- Shape: a vertical blade with a clamp head on top. The head sits just below grade; the blade goes down to 15 cm.
-- Bus cable: laid in a shallow slit along the tree line at about 5 cm, so the head can clamp it without digging to blade depth (proposed; round 16).
-- Install: open the slit, lay the cable, push the probe in at the standard offset from the emitter, press the head onto the cable, close the head, backfill.
+- Shape: a vertical blade with a clamp head on top. Sensing zone about 5–15 cm; tip at 15 cm (6 in). The head sits just below grade.
+- **Bus cable depth: US practice for irrigation wiring at 30 V or less is at least 6 in of cover** (Paige installation spec, NEC Table 300.5, municipal irrigation codes). The bus runs at 3.3–5 V, so the 6 in rule applies.
+- **Rise loop at each tree:** the bus cable runs along the tree line at 6 in cover. At each tree, a short loop of the same cable (not cut) is brought up to the probe head and clamped. NEC Table 300.5 allows lesser depths where cables rise for terminations or splices (applying this to the probe head is my reading, not a legal opinion; check local code).
+- Extra cable: about 0.3 m per tree (up and back down) → about 180 m (590 ft) for 600 trees.
+- Install: trench to 6 in along the tree line, lay the cable, push the probe in at the standard offset from the emitter, lift a loop to the head, press and close the head, backfill.
 
 ### D26 Node enclosure, POC (3D-printed ASA)
 - ASA, walls ≥ 2.5 mm, gasketed lid (printed TPU gasket or an O-ring groove). Seal the print (layer lines) and run a soak test before field use.
 - Inside: 3x AA holder (variant B) or supercapacitor board (variant A); XIAO with its flexible antenna under the lid; DS2482 board.
 - Bottom: one socket for the 1/2 in PVC riser (solvent-weld or threaded adapter); one membrane vent.
 - Back: 2 screw tabs for the wooden stake; box bottom 0.3 m above grade.
+
+### D27 Receiver (draft)
+- Same 3D-printed ASA box as the SNODE; mounts indoor or outdoor (roof pole about 5 m). The antenna is inside the box or on a short rod on the lid.
+- **Radio constraint:** one ESP32 can run ESP-NOW and Wi-Fi together only on the same channel. In ESPHome, ESP-NOW uses the Wi-Fi network's channel when Wi-Fi is used. So the trailer router's 2.4 GHz channel must be **fixed**, and all SNODEs use that channel. Fallbacks: Ethernet, or a 2-chip receiver (ESP-NOW chip + Wi-Fi chip over UART).
+- **Power modes:**
+  - R-USB (indoor or outdoor): USB power from the trailer; always listening.
+  - R-solar (outdoor, optional): RTC-gated like a SNODE, listening only in windows around 05:00 and 17:00 (proposed 5 min each). XIAO with Wi-Fi active is under 75 mA, so 75 mA x 10 min/day ≈ 12.5 mAh/day; 25 mAh/day with 2x margin.
+    - That is more than a 10 F supercapacitor holds (about 4.7 mAh), so R-solar uses 1x LiFePO4 18650 + small panel + a charger with 0 °C cut-off (CLAUDE.md rule).
+    - 1200 mAh usable / 25 mAh per day ≈ 48 days without sun (UNVERIFIED).
+- **Windowed listening and cold starts:** a variant-A node that lost its clock has no time. It wakes hourly on the RTC countdown timer and sends "hello" until a window hears it and returns the time.
 
 ### D18 Firmware
 - ESPHome on both the nodes and the receiver (owner accepted).
@@ -393,10 +408,10 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 ## Receiver
 - The trailer is fiberglass, which passes 2.4 GHz with little loss (UNVERIFIED; check in the walk test). The receiver ESP32 can stay inside, with a short coax to the roof antenna.
 
-## Open questions (round 16)
-1. Depth: should the sensing zone be 5–15 cm (bottom at 6 in, as designed), or centered at 6 in (which would go below the 15 cm maximum)?
-2. Bus cable depth: OK to lay the bus cable in a shallow slit at about 5 cm along the tree line, so the clamp head sits just below grade?
-3. POC scope: build both power variants (A solar, B battery) in the POC, or B first and A later?
-4. Receiver: put the receiver itself in a small box on the trailer roof (USB power cable down, no RF cable loss), or keep it inside with a coax cable up to a roof antenna?
+## Open questions (round 17)
+1. Bus cable: I read "irrigation wire standard for US" as burial depth: 6 in cover with a rise loop to each probe head. Correct? Or did you mean switching the cable type to 18/2 irrigation wire?
+2. Trailer Wi-Fi: can the router's 2.4 GHz channel be fixed (needed for ESP-NOW and Wi-Fi on one receiver)? If not: Ethernet or a 2-chip receiver.
+3. Receiver solar option: accept a LiFePO4 18650 + cold-cut-off charger for it (a supercapacitor is too small for its listening windows)?
+4. Freeze design v0.1 and start the POC (Phase 0–1 first)? Or anything else to design first?
 
 HA side: see `docs/06-ha-note.md`. Spec: `docs/04-spec.md`. POC: `docs/05-poc-plan.md`.

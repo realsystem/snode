@@ -249,9 +249,26 @@ Answers:
 
 Result: bus master DS2482-100 x2 (D22), variant A parts (10 F supercap, TPS61099), probe mechanics (D25), 3D-printed node enclosure (D26). Depth interpretation to be confirmed.
 
-## Round 16 — open (asked 2026-11-24)
+## Round 16 — 2026-11-24
 
+Questions:
 1. Sensing zone 5–15 cm (bottom at 6 in), or centered at 6 in?
 2. Bus cable in a shallow slit at about 5 cm along the tree line?
 3. POC: both power variants, or B first?
 4. Receiver in a roof box (USB power down) or inside with coax to a roof antenna?
+
+Answers:
+1. "6 in bottom"
+2. "use irrigation wire standard for US"
+3. "both need POC"
+4. "box anyway, support indoor/outdoor with optional solar"
+
+Interpretation recorded: answer 2 = burial depth per US irrigation practice (6 in cover for ≤ 30 V), with a rise loop to each probe head. To confirm in round 17.
+Result: D25 updated, receiver design D27 (fixed Wi-Fi channel requirement, R-USB / R-solar), POC plan covers both variants and both receiver modes; forest cable +590 ft.
+
+## Round 17 — open (asked 2026-11-24)
+
+1. Burial interpretation: depth (6 in + rise loop) or cable type?
+2. Can the trailer router's 2.4 GHz channel be fixed?
+3. Receiver solar option with LiFePO4 18650 + cold-cut-off charger?
+4. Freeze design v0.1 and start the POC?

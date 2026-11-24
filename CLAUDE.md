@@ -44,7 +44,7 @@ is the only reliable memory.
 | **SNODE** | Soil node: powered only at report times by an RTC; two variants, solar only or battery only (design log D6) that reads the probes of a group of trees and reports to HA. Monitoring only. | VERIFIED |
 | **UNODE** | General monitoring node (ESP32-class, own battery and solar), designed in a separate project. | VERIFIED |
 | **cluster** | The set of trees wired to one SNODE. Default: 2 adjacent rows x 10 trees = 20 trees. | PROPOSED |
-| **receiver** | Always-powered ESP32 in the trailer that receives SNODE radio packets and passes them to HA. | PROPOSED |
+| **receiver** | ESP32 in an ASA box (indoor or outdoor) that receives SNODE packets and passes them to HA over Wi-Fi; USB-powered, or solar with windowed listening. | VERIFIED (concept) |
 | **zone** | An irrigation valve zone (OpenSprinkler: 8 zones now, +16 with an expander later). HA maps trees to zones. | VERIFIED (controller) |
 
 ## 3. IDs and naming
@@ -108,6 +108,8 @@ All calibration values (dry/wet raw counts per probe) live in one file:
 - Field installation needs no soldering and no bench prep: a spool of wire and the probes only.
   Connection cost per probe must be close to zero (built-in clamp); splice caps are a user option, not the design.
 - Box-to-ground riser: 1/2 in standard PVC conduit.
+- Bus cable burial: at least 6 in cover (US irrigation practice, ≤ 30 V), with a rise loop to each probe head.
+- The trailer Wi-Fi 2.4 GHz channel must be fixed; SNODEs and the receiver use that channel for ESP-NOW.
 - Firmware: ESPHome (nodes and receiver).
 - Every design must state its operating limits (temperature, days without sun,
   battery life, link distance, cable length), because the design may become a commercial product.

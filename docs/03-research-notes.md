@@ -114,6 +114,9 @@ be re-checked before purchase. S-numbers are referenced from `02-design-log.md`.
 | S59 | 10 F 2.7 V supercapacitors: Eaton HV1030-2R7106-R, $3.39 each / $1.97 at 50 (DigiKey, USD), 1000 h at 65 °C; Tecate TPL-10-10X30F, -40 to 85 °C. | https://www.digikey.com/en/products/detail/eaton-electronics-division/HV1030-2R7106-R/3878071 ; https://www.digikey.ca/en/products/detail/tecate-group/TPL-10-10X30F/9930253 |
 | S60 | TI TPS61099 boost: 0.7–5.5 V input, 1.8–5.5 V output, 1 µA quiescent current, true disconnect in shutdown, up to 300 mA from 3.3 V to 5 V. TI TPS61094: 60 nA quiescent boost with supercapacitor management. | https://www.ti.com/lit/gpn/TPS61099 ; https://www.ti.com/product/TPS61099/description |
 
+| S61 | US burial practice for irrigation wire: up to 30 V, minimum 6 in burial (Paige installation spec, citing NEC Table 300.5); municipal irrigation codes require 6 in for low-voltage wiring to zone valves. NEC Table 300.5 note: lesser depths are permitted where cables rise for terminations or splices. | https://www.paigewire.com/docs/paigewire/library/doc/AC.docx ; https://colleyville.com/home/showpublisheddocument/126/636039493188130000 ; https://broomfield.org/DocumentCenter/View/2545 |
+| S62 | ESP-NOW with Wi-Fi on one chip: both must use the same channel (Espressif forum). ESPHome `espnow`: the channel can't be set when Wi-Fi is used; ESP-NOW uses the Wi-Fi network's channel. XIAO ESP32C3 Wi-Fi active < 75 mA. | https://esp32.com/viewtopic.php?p=82304 ; https://esphome.io/components/espnow.html ; https://shop.pimoroni.com/en-eu/products/seeed-studio-xiao-esp32c3 |
+
 ## Radio path
 
 | # | Finding | Source |

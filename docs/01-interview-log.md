@@ -396,8 +396,22 @@ Answers:
 
 Result: node design v0.2 for the powered bus (D39), bus protocol v1 (`10-bus-protocol.md`, D40), `snode_bus` ESPHome component, node and receiver firmware updated. Found: ATtiny202 has one comparator; the probe needs two functions on it.
 
-## Round 26 — open (asked 2026-11-24)
+## Round 26 — 2026-11-24
 
+Questions:
 1. Probe step: which MCU path for the comparator question (ATtiny202 shared / PY32F002A / research a US part with 2 comparators)?
 2. Or the final receiver first?
+3. ESP32-CAM type and USB adapter.
+
+Answers:
+1. "can you check aliexpress for parts that we need?"
+2. (no answer)
+3. (no answer)
+
+Result: AliExpress check (D41, table in `05-poc-plan.md`). PY32F002A dev boards and chips are deliverable to the US from AliExpress; proposed for bench probes. Mixed bench list $119.92.
+
+## Round 27 — open (asked 2026-11-24)
+
+1. AliExpress delivery counts as "available in the US"? (decides PY32 vs ATtiny for bench probes)
+2. Next step: probe firmware (recommended) or final receiver?
 3. ESP32-CAM type and USB adapter.

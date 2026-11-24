@@ -60,6 +60,7 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 | D38 | O2 bus parameters | Mark = pack voltage, space ≈ 0.7 V lower, 9600 baud, +10 mA reply; energy unchanged (25 µAh/wake worst case) | Owner: OK if power estimate unchanged | S93, S94 |
 | D39 | Node design v0.2 | Powered-bus driver per row (Q_MK + diode, shunt, TLV7031), UART per bus, `snode_bus` component, install discovery | Owner chose this step | S93 |
 | D40 | Bus protocol v1 | `10-bus-protocol.md`: 9600 8N1, READ / DISCOVER / MEASURE, CRC-8 | Shared by node and probe | S79 |
+| D41 | AliExpress sourcing | PY32 dev boards, chips and DAPLink from AliExpress (US delivery); TI parts, RTC board, XIAO and node sensor from US distributors; mixed bench list $119.92 | Owner asked; genuine-part risk | S98–S103 |
 | D31 | Channel follow | Node saves the last good channel; on a missed acknowledgement it scans channels 1–11 | Works with routers that change channel | S74 |
 | D29 | RTC in ESPHome | Small external component for the RV-3028 | No built-in platform | S66 |
 | D12 | Enclosure | UV-stabilized polycarbonate, IP68 class, on a wooden stake, box bottom 0.3 m above grade | Owner: wood and plastic are rabbit-safe | S29 |
@@ -87,7 +88,7 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 1. Probe lead length final (40 cm draft; drip lateral position at next-visit check).
 2. First compile of the POC firmware on the owner's PC.
 3. Production probe MCU — after bench tests (D37).
-4. Probe MCU comparator count (ATtiny202 has one) — round 26.
+4. Probe MCU comparator count: PY32F002A via AliExpress US proposed (D41) — round 27.
 3. Probe lead + molded clamp price — POC.
 - HA automation (zones, alerts, delivery): handled in the HA threads; see `06-ha-note.md`.
 5. Bus protocol and electrical design (power phase, timing, drops per run).

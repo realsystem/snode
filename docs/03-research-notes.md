@@ -158,6 +158,13 @@ be re-checked before purchase. S-numbers are referenced from `02-design-log.md`.
 | S96 | M-Bus slave chips: TI TSS721A (EN1434-3, polarity independent, supply from the bus, -25 to 85 °C; $1.74 at LCSC); onsemi NCN5150 (slave transceiver, integrated 3.3 V LDO, up to 38,400 baud; -40 to 85 °C; £1.82 at DigiKey UK). | https://www.ti.com/product/TSS721A ; https://www.lcsc.com/product-detail/C34958.html ; https://www.onsemi.com/products/interfaces/wired-transceivers-modems/ncn5150 ; https://www.digikey.co.uk/en/products/detail/onsemi/NCN5150MNTWG/4499701 |
 | S97 | M-Bus masters: USB/TTL master modules about $25 (eBay); industrial level converters such as L-MBUS20 $370.11. M-Bus bus voltage: mark 36 V at the repeater, master signals by shifting 36 V to 24 V. | https://ebay.com/itm/273996943805 ; https://engenuity.com/?p=54966 ; https://m-bus.com/documentation-wired/04-physical-layer ; https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/7889471 |
 
+| S98 | AliExpress (US site): PY32F002A development board PY32F002AF15P EVT core board $2.97 (65 sold); another listing $2.30. PY32 Start Kit $13.33. Seen 2026-11-24. | https://www.aliexpress.us/item/3256807946504583.html ; https://www.aliexpress.com/item/1005008132669692.html ; https://www.aliexpress.com/w/wholesale-py32f002a.html |
+| S99 | AliExpress: 10 pcs PY32F002AF15P6TU $1.42 per lot (88 sold). Seen 2026-11-24. | https://de.aliexpress.com/item/1005008490607016.html |
+| S100 | AliExpress: CMSIS-DAP/DAPLink programmer $5.30 (QRX Store, 1,000+ sold). Seen 2026-11-24. | https://www.aliexpress.us/item/3256809123984995.html |
+| S101 | AliExpress: XIAO ESP32C3 $6.88 (1 pc); RV-3028-C7 chip $4.25; RAK12002 RV-3028 module $14.25. Seen 2026-11-24. | https://www.aliexpress.us/item/3256805195972424.html ; https://www.aliexpress.us/item/3256806640229668.html ; https://www.aliexpress.com/w/wholesale-rtc.html |
+| S102 | AliExpress: TPS22917LDBVR 20 pcs $19.29 per lot; TPS7A0233 only in mixed listings; TLV7031 not found. Seen 2026-11-24. | https://www.aliexpress.us/item/3256811908067138.html ; https://www.aliexpress.com/w/wholesale-sot23-5-chip-regulator.html |
+| S103 | AliExpress: 10 pcs waterproof DS18B20 probes $5.08 per lot. Seen 2026-11-24. | https://www.aliexpress.us/item/2251832641495548.html |
+
 ## Radio path
 
 | # | Finding | Source |

@@ -554,11 +554,16 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 - `10-bus-protocol.md`: 9600 8N1 half duplex; node frames `A5 CMD ADDR ARG CRC`; READ reply 15 bytes with raw, spread, chip temperature, timeouts, status; DISCOVER for install (binary search, collisions allowed); CRC-8 Maxim shared with the probe code.
 - Found during this step: the ATtiny202 has one analog comparator, while the probe needs one for the electrode and one for line receive (09-probe-design.md, open item). To settle before the probe PCB.
 
-## Open questions (round 26)
-1. Next step: (b) probe hardware layer + protocol v1 firmware. It needs a decision first: ATtiny202 with its single comparator shared in time (if its input mux allows), the PY32F002A (2 comparators, LCSC), or a US part with 2 comparators (I would research options)?
-2. Or (c) the final receiver?
+### D41 AliExpress sourcing check (owner request, round 26)
+- Table in `05-poc-plan.md`. AliExpress (US site) has PY32F002A dev boards ($2.30–2.97), PY32F002A chips ($1.42 per 10) and DAPLink programmers ($5.30). It isn't cheaper for the XIAO, TI chips or the RTC board, and genuine-part risk is higher there.
+- Effect on D37/D40: the PY32F002A (2 comparators) can be delivered to the US, so the bench probe can use it and the ATtiny202 single-comparator problem goes away. Proposed: bench probes on the PY32F002A; ATtiny202 kept only as a fallback.
+- Mixed bench list: $119.92 cited (US distributors for TI parts, RTC board, XIAO and node sensor; AliExpress for PY32 parts and the programmer).
+
+## Open questions (round 27)
+1. Does AliExpress delivery count as "available in the US" for you? If yes, bench probes use the PY32F002A (2 comparators) and the mixed list ($119.92); if no, the ATtiny202 path needs the comparator workaround or another US part.
+2. Next step after that: probe hardware layer + protocol v1 firmware (recommended), or the final receiver?
 3. ESP32-CAM type and USB adapter (open since round 21).
 
-Closed in round 25: node v0.2 for O2 (D39), protocol v1 (D40).
+Closed in round 26: AliExpress check done (D41).
 
 HA side: see `docs/06-ha-note.md`. Spec: `docs/04-spec.md`. POC: `docs/05-poc-plan.md`.

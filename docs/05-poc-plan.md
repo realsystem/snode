@@ -83,3 +83,32 @@ small MOSFETs and diodes, perfboard, and 16/2 wire from the field spool.
 **Total (cited lines): $125.06.**
 
 Alternative if the probe MCU stays PY32F002A (D37): PY32F003 Startkit $16.94 and PY32F002A chips $0.16 at 5+ are sold by LCSC (ships to the US from China; no US distributor stock found) (S86, S81).
+
+## AliExpress check (owner request, round 26; prices seen 2026-11-24, new-shopper promotions excluded)
+AliExpress ships to the US (aliexpress.us). Prices change often; treat them as a snapshot. Sources S98–S103.
+
+| Item | AliExpress price seen | US distributor price (above) | Use AliExpress? |
+|---|---|---|---|
+| PY32F002A dev board (PY32F002AF15P EVT core board) | $2.30–$2.97 each | not stocked in the US | **Yes**: the only US-deliverable PY32 dev board found besides LCSC |
+| PY32F002AF15P6TU chips, 10 pcs | $1.42 per 10 | not stocked in the US | **Yes** |
+| PY32 official Start Kit | $13.33 | LCSC $16.94 | Optional |
+| DAPLink (CMSIS-DAP) programmer | $5.30 | Raspberry Pi Debug Probe $13.20 | Yes (works with pyOCD per the PY32 toolchain, S82) |
+| XIAO ESP32C3 | $6.88 (1 pc) | Seeed $4.99 | No: Seeed is cheaper and genuine |
+| RV-3028-C7 chip / RAK12002 RTC module | $4.25 chip; $14.25 module | Mikroe RTC 8 Click $22.00 | Optional (the chip needs fine-pitch soldering; the RAK module uses a WisBlock connector) |
+| TPS22917LDBVR, 20 pcs | $19.29 per lot | TI $0.34 each | No |
+| TPS7A0233 | only in mixed multi-part listings, no clear price | DigiKey $1.00 | No |
+| TLV7031 | not found | DigiKey $0.75 | No |
+| DS18B20 waterproof, 10 pcs | $5.08 per 10 | Adafruit $9.95 each (genuine) | No for the node sensor (clone risk at -27 °C); OK for spare tests |
+
+Notes:
+- Counterfeit and re-marked chips are a known risk on marketplaces, especially analog parts and DS18B20 sensors. Buy TI parts and the node soil sensor from authorized US distributors.
+- **The AliExpress PY32 parts settle the comparator question (D37/D40) for the bench:** the PY32F002A has 2 comparators, and it can be delivered to the US.
+
+### Mixed bench list (recommended): US distributors + AliExpress for PY32 parts and the programmer
+Replace the ATtiny202 x10 ($4.60) and the Raspberry Pi Debug Probe ($13.20) with:
+| Item | Qty | Price | Source | Line total |
+|---|---|---|---|---|
+| PY32F002A dev board (EVT) | 2 | $2.97 | S98 | $5.94 |
+| PY32F002AF15P6TU, 10 pcs | 1 lot | $1.42 | S99 | $1.42 |
+| DAPLink programmer | 1 | $5.30 | S100 | $5.30 |
+**Mixed total: $125.06 − $17.80 + $12.66 = $119.92** (plus TSSOP-20 adapter boards, not priced).

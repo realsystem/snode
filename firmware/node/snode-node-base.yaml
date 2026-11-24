@@ -1,8 +1,9 @@
-# SNODE node firmware v0.1 (ESPHome), shared by every node. Design: docs/08-node-design.md
+# SNODE node firmware v0.2 (ESPHome), shared by every node. Design: docs/08-node-design.md
 # Board: Seeed XIAO ESP32C3. Power is switched by the RV-3028 RTC alarm; the node is unpowered between reports.
-# Each node file sets the substitutions below and includes this file (see snode_f_01.yaml).
-#   node_name, grove_code (F/B/S), node_num, receiver_mac, addr_soil, addr_a01..addr_a10, addr_b01..addr_b10
-# Status: written without compiling. UNVERIFIED until the first compile and bench tests T2/T3/T4.
+# Probes: powered bus O2, protocol v1 (docs/10-bus-protocol.md), one UART per row bus.
+# Each node file sets the substitutions below, the two snode_bus slot lists, and includes this file
+# (see snode_f_01.yaml).  Substitutions: node_name, grove_code (F/B/S), node_num, receiver_mac
+# Status: written without compiling. UNVERIFIED until the first compile and bench tests T2/T3/T4b.
 
 esphome:
   name: ${node_name}
@@ -18,12 +19,13 @@ esp32:
 
 logger:
   level: INFO          # USB serial; visible only when a laptop is connected
+  hardware_uart: USB_SERIAL_JTAG   # keeps both hardware UARTs free for the buses
 
 external_components:
   - source:
       type: local
       path: ../components
-    components: [rv3028]
+    components: [rv3028, snode_bus]
 
 i2c:
   sda: GPIO6           # XIAO D4
@@ -37,21 +39,23 @@ time:
     timezone: UTC      # node works in UTC; the receiver turns local report times into UTC
     update_interval: never
 
-ds248x:
-  - id: hub_a
-    type: ds2482-100
-    address: 0x18      # AD0 = 0, AD1 = 0: row A bus
-  - id: hub_b
-    type: ds2482-100
-    address: 0x19      # AD0 = 1, AD1 = 0: row B bus
+uart:                  # one UART per row bus, 9600 8N1 (docs/10-bus-protocol.md)
+  - id: uart_a
+    tx_pin: GPIO21       # XIAO D6 -> TX_A (mark/space driver)
+    rx_pin:
+      number: GPIO2      # XIAO D0 <- comparator A; strapping pin, held high at boot by the comparator
+      ignore_strapping_warning: true
+    baud_rate: 9600
+  - id: uart_b
+    tx_pin: GPIO20       # XIAO D7 -> TX_B
+    rx_pin:
+      number: GPIO8      # XIAO D8 <- comparator B; strapping pin, held high at boot by the comparator
+      ignore_strapping_warning: true
+    baud_rate: 9600
 
 one_wire:
-  - platform: ds248x
-    ds248x_id: hub_a
-    id: bus_a
-  - platform: ds248x
-    ds248x_id: hub_b
-    id: bus_b
+  - platform: gpio       # node DS18B20 only (one sensor, short cable)
+    pin: GPIO10          # XIAO D10, 4.7 kOhm pull-up to 3V3
 
 switch:
   - platform: gpio     # HOLD: keeps the load switch on after the alarm flag is cleared
@@ -61,11 +65,9 @@ switch:
     internal: true
 
 output:
-  - platform: gpio     # BUS_PWR: power phase for the probes (P-MOSFET, on when low)
-    id: bus_pwr
-    pin:
-      number: GPIO5    # XIAO D3
-      inverted: true
+  - platform: gpio     # BUS_EN: powers both row buses (probes measure at power-up)
+    id: bus_en
+    pin: GPIO5         # XIAO D3 -> N-FET -> P-FET Q_EN
 
 deep_sleep:            # fallback only: used if power was not cut after HOLD was released
   id: ds_fallback
@@ -151,129 +153,7 @@ sensor:
       - multiply: 2.4706 # (100k + 68k) / 68k
     update_interval: never
   - platform: dallas_temp  # node DS18B20 at probe depth (frozen flag, temperature correction)
-    id: soil_t
-    one_wire_id: bus_a
-    address: ${addr_soil}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_a01
-    one_wire_id: bus_a
-    address: ${addr_a01}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_a02
-    one_wire_id: bus_a
-    address: ${addr_a02}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_a03
-    one_wire_id: bus_a
-    address: ${addr_a03}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_a04
-    one_wire_id: bus_a
-    address: ${addr_a04}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_a05
-    one_wire_id: bus_a
-    address: ${addr_a05}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_a06
-    one_wire_id: bus_a
-    address: ${addr_a06}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_a07
-    one_wire_id: bus_a
-    address: ${addr_a07}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_a08
-    one_wire_id: bus_a
-    address: ${addr_a08}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_a09
-    one_wire_id: bus_a
-    address: ${addr_a09}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_a10
-    one_wire_id: bus_a
-    address: ${addr_a10}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_b01
-    one_wire_id: bus_b
-    address: ${addr_b01}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_b02
-    one_wire_id: bus_b
-    address: ${addr_b02}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_b03
-    one_wire_id: bus_b
-    address: ${addr_b03}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_b04
-    one_wire_id: bus_b
-    address: ${addr_b04}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_b05
-    one_wire_id: bus_b
-    address: ${addr_b05}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_b06
-    one_wire_id: bus_b
-    address: ${addr_b06}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_b07
-    one_wire_id: bus_b
-    address: ${addr_b07}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_b08
-    one_wire_id: bus_b
-    address: ${addr_b08}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_b09
-    one_wire_id: bus_b
-    address: ${addr_b09}
-    resolution: 12
-    update_interval: never
-  - platform: dallas_temp
-    id: p_b10
-    one_wire_id: bus_b
-    address: ${addr_b10}
+    id: soil_t             # only device on its bus, so no address needed
     resolution: 12
     update_interval: never
 
@@ -306,11 +186,25 @@ script:
             - script.wait: send_backlog
           else:
             - script.execute: store_backlog
-      - if:                       # install mode after a button wake: a report every 10 s for 2 min
+      - if:                       # install mode after a button wake
           condition:
             lambda: 'return id(wake_reason) == 2;'
           then:
-            - repeat:
+            - script.execute: discover        # list the probe serials found on each bus
+            - script.wait: discover
+            - script.execute:
+                id: build_install
+                bus: 0
+            - script.wait: build_install
+            - script.execute: send_follow
+            - script.wait: send_follow
+            - script.execute:
+                id: build_install
+                bus: 1
+            - script.wait: build_install
+            - script.execute: send_follow
+            - script.wait: send_follow
+            - repeat:                       # then a report every 10 s for 2 min
                 count: 12
                 then:
                   - delay: 10s
@@ -332,32 +226,46 @@ script:
   - id: measure
     mode: single
     then:
-      - output.turn_on: bus_pwr     # power phase: probes wake, measure and store (D22)
-      - delay: 300ms
-      - output.turn_off: bus_pwr
-      - component.update: soil_t
-      - component.update: p_a01
-      - component.update: p_a02
-      - component.update: p_a03
-      - component.update: p_a04
-      - component.update: p_a05
-      - component.update: p_a06
-      - component.update: p_a07
-      - component.update: p_a08
-      - component.update: p_a09
-      - component.update: p_a10
-      - component.update: p_b01
-      - component.update: p_b02
-      - component.update: p_b03
-      - component.update: p_b04
-      - component.update: p_b05
-      - component.update: p_b06
-      - component.update: p_b07
-      - component.update: p_b08
-      - component.update: p_b09
-      - component.update: p_b10
+      - output.turn_on: bus_en       # probes boot and measure at power-up (docs/09-probe-design.md)
+      - component.update: soil_t      # DS18B20 conversion runs in parallel (up to 750 ms)
+      - delay: 150ms
+      - lambda: 'id(bus_a).start_read(); id(bus_b).start_read();'
+      - wait_until:
+          condition:
+            lambda: 'return id(bus_a).done() && id(bus_b).done();'
+          timeout: 2s
+      - output.turn_off: bus_en
       - component.update: vbat
-      - delay: 1200ms              # DS18B20 12-bit conversion is up to 750 ms
+      - delay: 650ms                  # rest of the DS18B20 conversion time
+
+  - id: discover                    # install mode: find probe serials on both buses
+    mode: single
+    then:
+      - output.turn_on: bus_en
+      - delay: 150ms
+      - lambda: 'id(bus_a).start_discover(); id(bus_b).start_discover();'
+      - wait_until:
+          condition:
+            lambda: 'return id(bus_a).done() && id(bus_b).done();'
+          timeout: 60s
+      - output.turn_off: bus_en
+
+  - id: build_install                 # install packet: one per bus (docs/08-node-design.md, section 6)
+    mode: queued
+    parameters:
+      bus: int                        # 0 = row A, 1 = row B
+    then:
+      - lambda: |-
+          auto &f = (bus == 0) ? id(bus_a).found() : id(bus_b).found();
+          auto &p = id(pkt);
+          p.fill(0);
+          uint8_t n = f.size() > 10 ? 10 : (uint8_t) f.size();
+          p[0] = 0x02; p[1] = 1; p[2] = '${grove_code}'; p[3] = ${node_num};
+          p[4] = (bus == 0) ? 'A' : 'B';
+          p[5] = n | (f.size() > 10 ? 0x80 : 0);   // bit 7: more than 10 found
+          for (uint8_t i = 0; i < n; i++)
+            for (int k = 0; k < 4; k++) p[6 + 4 * i + k] = (f[i] >> (8 * k)) & 0xFF;
+          id(pkt_len) = 6 + 4 * n;
 
   - id: build_packet
     mode: single
@@ -386,12 +294,9 @@ script:
           float st = id(soil_t).state;
           int16_t sti = std::isnan(st) ? 0x7FFF : (int16_t) lroundf(st * 100.0f);
           p[14] = sti & 0xFF; p[15] = (sti >> 8) & 0xFF;
-          sensor::Sensor *list[20] = {&id(p_a01), &id(p_a02), &id(p_a03), &id(p_a04), &id(p_a05), &id(p_a06), &id(p_a07), &id(p_a08), &id(p_a09), &id(p_a10), &id(p_b01), &id(p_b02), &id(p_b03), &id(p_b04), &id(p_b05), &id(p_b06), &id(p_b07), &id(p_b08), &id(p_b09), &id(p_b10)};
           p[16] = 20;
           for (int i = 0; i < 20; i++) {
-            float x = list[i]->state;
-            // probes put the raw count in the DS18B20 register (1/16 steps): undo the scaling
-            int16_t r = std::isnan(x) ? 0x7FFF : (int16_t) lroundf(x * 16.0f);
+            int16_t r = (i < 10) ? id(bus_a).raw(i) : id(bus_b).raw(i - 10);   // 0x7FFF = missing
             p[17 + 2 * i] = r & 0xFF; p[18 + 2 * i] = (r >> 8) & 0xFF;
           }
           id(pkt_len) = 17 + 40;
@@ -414,7 +319,7 @@ script:
                 }
                 id(try_ch) = ch;
                 id(en).set_channel_from_action(ch);
-                id(pkt)[11] = ch;
+                if (id(pkt)[0] == 0x01) id(pkt)[11] = ch;   // report packets carry the channel
             - espnow.send:
                 address: ${receiver_mac}
                 data: !lambda 'return std::vector<uint8_t>(id(pkt).begin(), id(pkt).begin() + id(pkt_len));'

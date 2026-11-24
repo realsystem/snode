@@ -47,7 +47,7 @@ The 1-Wire plan (D22) has a power problem found in this round:
 | R_CHG | 1 MΩ 1% | CHG pin → E_SENSE | Electrode charge resistor |
 | E_SENSE | Electrode (PCB copper) | → COMP1+ | Sensing pad, front layer, under solder mask |
 | R_REF1, R_REF2 | 100 kΩ 1% each | VDD → REF → GND; REF → COMP1− | Ratiometric threshold 0.5 VDD |
-| R_LS1, R_LS2 | 100 kΩ / 47 kΩ | V_LINE+ → LINE → GND | Line sense (LINE pin: COMP2+ against a VDD divider for O2, or EXTI for O1) |
+| R_LS1, R_LS2 / R_LS3, R_LS4 | 100 kΩ / 100 kΩ, matched pairs | V_LINE+ → LINE+ → GND and VDD → LINE− → GND | O2 line receive: comparator LINE+ vs LINE− (line above held supply = mark). Same idea as "dynamic level recognition" in M-Bus slave chips |
 | Q1 | N-MOSFET (2N7002 class) | drain = V_LINE+ via R_SINK, source = GND, gate = SINK pin, 100 kΩ gate–GND | O1: R_SINK = 0 Ω (pull line low). O2: R_SINK ≈ 330 Ω (≈ 10 mA current step) |
 | TP1–TP4 | Test pads | VDD, GND, SWDIO, SWCLK | Programming before potting; pogo-pin jig |
 - Pin assignment on the ESSOP10 package: to set from the PY32F002A datasheet (comparator inputs are fixed pins).
@@ -91,6 +91,8 @@ Unchanged from D19 (estimate about $0.45–1.30 per probe; MCU $0.0927 at 500+) 
 - T6: calibration in site soil at 5 °C and 25 °C; chip temperature against the node DS18B20.
 
 ## 9. Open items
+- **ATtiny202 has one analog comparator** (S94), but the probe needs one for the electrode and one for line receive. Options: share it in time (electrode only at power-up, then switch the input mux to LINE, if the pins allow), use a part with two comparators (PY32F002A has 2), or a US-stocked part with more comparator inputs. Check the ATtiny202 AC input mux in the datasheet before the probe PCB.
+- Protocol: `10-bus-protocol.md` (v1).
 - Probe MCU for production (D37, round 24).
 - ESSOP10 pin assignment; internal temperature sensor calibration data (datasheet).
 - Electrode geometry and R_CHG tuned with T4a data.

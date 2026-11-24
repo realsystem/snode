@@ -63,13 +63,42 @@ globals:
   - id: have_reply
     type: bool
     initial_value: 'false'
+  - id: ev_kind          # 1 = report, 2 = install list
+    type: uint8_t
+    initial_value: '0'
+  - id: ev_bus
+    type: std::string
+  - id: ev_serials
+    type: std::string
 
 espnow:
   auto_add_peer: true
   on_receive:
     - lambda: |-
         id(have_reply) = false;
+        id(ev_kind) = 0;
+        if (size >= 6 && data[0] == 0x02 && data[1] == 1) {
+          // Install list: [0x02, ver, grove, num, bus 'A'/'B', count (bit 7 = more), serials (4 bytes each)]
+          uint8_t n = data[5] & 0x7F;
+          if (size < 6 + 4 * n) return;
+          char buf[24];
+          snprintf(buf, sizeof(buf), "snode_%c_%02u", (char) tolower(data[2]), data[3]);
+          id(ev_node) = buf;
+          id(ev_bus) = std::string(1, (char) data[4]);
+          std::string sl;
+          for (int i = 0; i < n; i++) {
+            uint32_t v = (uint32_t) data[6 + 4 * i] | ((uint32_t) data[7 + 4 * i] << 8) |
+                         ((uint32_t) data[8 + 4 * i] << 16) | ((uint32_t) data[9 + 4 * i] << 24);
+            snprintf(buf, sizeof(buf), "%s0x%08X", i ? "," : "", (unsigned) v);
+            sl += buf;
+          }
+          if (data[5] & 0x80) sl += ",more";
+          id(ev_serials) = sl;
+          id(ev_kind) = 2;
+          return;
+        }
         if (size < 17 || data[0] != 0x01 || data[1] != 1) return;
+        id(ev_kind) = 1;
         uint8_t n = data[16];
         if (size < 17 + 2 * n) return;
         id(rx_total) += 1;
@@ -111,17 +140,31 @@ espnow:
           - espnow.broadcast:
               data: !lambda 'return id(reply);'
               continue_on_error: true
-    - homeassistant.event:
-        event: esphome.snode_report
-        data:
-          node: !lambda 'return id(ev_node);'
-          seq: !lambda 'return id(ev_seq);'
-          flags: !lambda 'return id(ev_flags);'
-          channel: !lambda 'return id(ev_channel);'
-          battery_mv: !lambda 'return id(ev_battery);'
-          soil_temp: !lambda 'return id(ev_soil);'
-          raw: !lambda 'return id(ev_raw);'
-          rssi: !lambda 'return id(ev_rssi);'
+    - if:
+        condition:
+          lambda: 'return id(ev_kind) == 2;'
+        then:
+          - homeassistant.event:
+              event: esphome.snode_install
+              data:
+                node: !lambda 'return id(ev_node);'
+                bus: !lambda 'return id(ev_bus);'
+                serials: !lambda 'return id(ev_serials);'
+    - if:
+        condition:
+          lambda: 'return id(ev_kind) == 1;'
+        then:
+          - homeassistant.event:
+              event: esphome.snode_report
+              data:
+                node: !lambda 'return id(ev_node);'
+                seq: !lambda 'return id(ev_seq);'
+                flags: !lambda 'return id(ev_flags);'
+                channel: !lambda 'return id(ev_channel);'
+                battery_mv: !lambda 'return id(ev_battery);'
+                soil_temp: !lambda 'return id(ev_soil);'
+                raw: !lambda 'return id(ev_raw);'
+                rssi: !lambda 'return id(ev_rssi);'
 
 sensor:
   - platform: template

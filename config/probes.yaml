@@ -1,9 +1,8 @@
-# Slot -> tree ID and probe address for every SNODE. Used by HA (raw -> tree entities) and to fill node files.
-# Slots: A01-A10 = row A bus, B01-B10 = row B bus, in order of the report packet (docs/08-node-design.md).
-# Fill at install (install mode or USB boot log shows the addresses).
+# Slot -> tree ID and probe serial for every SNODE. Used by HA (raw -> tree entities) and to fill node files.
+# Slots: A01-A10 = row A bus, B01-B10 = row B bus, in order of the report packet (docs/08-node-design.md),
+# slot 1 = nearest the node. Serial = 32-bit probe serial from the label or the install event (esphome.snode_install).
 nodes:
   snode_f_01:
-    soil_sensor: "0x0000000000000028"   # node DS18B20
     slots:
-      A01: { tree: F01-01, address: "0x0000000000000028" }
+      A01: { tree: F01-01, serial: "0x00000000" }
       # ... A02-A10, B01-B10

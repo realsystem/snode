@@ -544,10 +544,21 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 - **Energy check (UNVERIFIED arithmetic):** worst case with all 20 probes awake for a 1 s bus session = 25 µAh per wake, against 26 µAh for node v0.1 (no 1.2 s conversion wait, no 40 mA power phase). Daily load with 2x margin ≈ 0.11 mAh/day. **The 0.24 mAh/day budget and the battery plan are unchanged.**
 - Probes sleep between frames (stop mode, wake on the LINE edge), so the real figure should be lower (T4b measures it).
 
-## Open questions (round 25)
-1. Next design step: (a) node revision for O2: bus driver schematic + ESPHome bus component (recommended: the bench node needs it before probes can be read); (b) probe hardware layer + O2 protocol for the ATtiny202; (c) final receiver?
-2. ESP32-CAM type and USB adapter (open since round 21).
+### D39 Node design v0.2 for the powered bus (owner chose this step, round 25)
+- `08-node-design.md` v0.2: DS2482s removed. Per row bus: P-FET Q_MK in parallel with a silicon diode (mark/space), N-FET driver from the UART TX, 22 Ω low-side shunt, TLV7031 comparator to the UART RX. One shared P-FET Q_EN switches both buses (BUS_EN). Node DS18B20 on its own GPIO.
+- Pin map v0.2 uses all non-strapping pins plus D0/D8 as UART RX inputs (held high at boot by the comparators while the bus is off). D9 stays free.
+- Firmware: new ESPHome external component `snode_bus` (one instance per bus, non-blocking READ and DISCOVER), node firmware v0.2, receiver forwards install lists as `esphome.snode_install`.
+- Energy per wake unchanged (about 25 µAh, D38).
 
-Closed in round 24: probe MCU noted, both kept (D37); O2 bus parameters accepted, power estimate unchanged (D38).
+### D40 Bus protocol v1
+- `10-bus-protocol.md`: 9600 8N1 half duplex; node frames `A5 CMD ADDR ARG CRC`; READ reply 15 bytes with raw, spread, chip temperature, timeouts, status; DISCOVER for install (binary search, collisions allowed); CRC-8 Maxim shared with the probe code.
+- Found during this step: the ATtiny202 has one analog comparator, while the probe needs one for the electrode and one for line receive (09-probe-design.md, open item). To settle before the probe PCB.
+
+## Open questions (round 26)
+1. Next step: (b) probe hardware layer + protocol v1 firmware. It needs a decision first: ATtiny202 with its single comparator shared in time (if its input mux allows), the PY32F002A (2 comparators, LCSC), or a US part with 2 comparators (I would research options)?
+2. Or (c) the final receiver?
+3. ESP32-CAM type and USB adapter (open since round 21).
+
+Closed in round 25: node v0.2 for O2 (D39), protocol v1 (D40).
 
 HA side: see `docs/06-ha-note.md`. Spec: `docs/04-spec.md`. POC: `docs/05-poc-plan.md`.

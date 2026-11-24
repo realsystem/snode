@@ -384,7 +384,20 @@ Answers:
 
 Result: both MCUs noted, decision after bench tests (D37). O2 bus parameters set; energy check shows no change (25 µAh/wake worst case vs 26 µAh; budget 0.24 mAh/day unchanged) (D38).
 
-## Round 25 — open (asked 2026-11-24)
+## Round 25 — 2026-11-24
 
+Questions:
 1. Next step: node revision for O2 (recommended), probe hardware layer + protocol, or final receiver?
 2. ESP32-CAM type and USB adapter.
+
+Answers:
+1. "a"
+2. (no answer)
+
+Result: node design v0.2 for the powered bus (D39), bus protocol v1 (`10-bus-protocol.md`, D40), `snode_bus` ESPHome component, node and receiver firmware updated. Found: ATtiny202 has one comparator; the probe needs two functions on it.
+
+## Round 26 — open (asked 2026-11-24)
+
+1. Probe step: which MCU path for the comparator question (ATtiny202 shared / PY32F002A / research a US part with 2 comparators)?
+2. Or the final receiver first?
+3. ESP32-CAM type and USB adapter.

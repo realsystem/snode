@@ -11,7 +11,7 @@ is the only reliable memory.
 
 - At the start of a session, read in order: this file, `docs/00-brief.md`,
   `docs/01-interview-log.md`, `docs/02-design-log.md`, `docs/03-research-notes.md`,
-  `docs/04-spec.md`, `docs/05-poc-plan.md`, `docs/07-poc-tests.md`, `docs/08-node-design.md`, `docs/09-probe-design.md`.
+  `docs/04-spec.md`, `docs/05-poc-plan.md`, `docs/07-poc-tests.md`, `docs/08-node-design.md`, `docs/09-probe-design.md`, `docs/10-bus-protocol.md`.
 - After every interview round or decision, update `docs/01-interview-log.md`
   (questions and answers) and `docs/02-design-log.md` (decisions, numbers,
   open questions). Add new sources to `docs/03-research-notes.md`. Keep
@@ -109,7 +109,7 @@ All calibration values (dry/wet raw counts per probe) live in one file:
 - Field installation needs no soldering and no bench prep: a spool of wire and the probes only.
   Connection cost per probe must be close to zero (built-in clamp); splice caps are a user option, not the design.
 - Box-to-ground riser: 1/2 in standard PVC conduit.
-- Bus cable: 16/2 landscape wire, buried with at least 6 in cover (US irrigation practice, ≤ 30 V). Each probe joins it by its own factory lead with a molded clamp, underground (design log D25, option C).
+- Bus cable: 16/2 landscape wire, buried with at least 6 in cover (US irrigation practice, ≤ 30 V). Each probe joins it by its own factory lead with a molded clamp, underground (design log D25, option C). Bus electrical: powered bus O2 at pack voltage (≤ 5.5 V), protocol `docs/10-bus-protocol.md`.
 - Radio path: direct Wi-Fi (N1) or an ESP-NOW receiver (N2), decided by the POC walk test. With N2, the receiver uplink is Wi-Fi with channel follow (default, any router), Ethernet, or Wi-Fi on a fixed channel; see design log D30/D31. Never assume a particular ISP, router or free LAN port.
 - Firmware: ESPHome (nodes and receiver).
 - Every design must state its operating limits (temperature, days without sun,
@@ -131,8 +131,9 @@ All calibration values (dry/wet raw counts per probe) live in one file:
 | `docs/07-poc-tests.md` | Short POC checklist per visit, incl. the next-visit site survey |
 | `docs/08-node-design.md` | Node design: block diagram, netlist, pin map, energy, packet format |
 | `docs/09-probe-design.md` | Probe design: bus options, netlist, measurement, PCB, tests |
+| `docs/10-bus-protocol.md` | Powered-bus protocol v1 (node ↔ probes) |
 | `docs/06-ha-note.md` | Hand-off note for the separate HA automation threads |
-| `firmware/` | ESPHome configs: POC tests, `node/`, `receiver/`, `components/rv3028/`, `probe/` (PY32 C). Never commit `secrets.yaml`. |
+| `firmware/` | ESPHome configs: POC tests, `node/`, `receiver/`, `components/rv3028/`, `components/snode_bus/`, `probe/` (C). Never commit `secrets.yaml`. |
 | `config/probes.yaml` | Slot → tree ID and probe address per node |
 | `config/calibration.yaml` | Per-probe calibration values (empty until POC) |
 | UNODE | Separate project. Link here when available. |

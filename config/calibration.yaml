@@ -1,0 +1,11 @@
+# Per-probe calibration, keyed by tree ID (see CLAUDE.md section 3).
+# raw_dry / raw_wet: ADC counts in air-dry and saturated soil of the same grove.
+# Filled in during the POC. Firmware must not hard-code these values.
+#
+# Example:
+# F03-17:
+#   raw_dry: 0
+#   raw_wet: 0
+#   calibrated: 2026-12-01
+#   method: "two-point, site soil, pot test"
+probes: {}

@@ -169,9 +169,25 @@ Answers:
 
 Conflict found: a 1/2 in riser can't hold 20 home-run cables (about 213% fill). Only a bus architecture fits. Splice caps cost about $2.88 each, so the cap count per tree drives cost. Proposed a 2-wire digital bus probe for the product (D17).
 
-## Round 11 — open (asked 2026-11-24)
+## Round 11 — 2026-11-24
 
+Questions:
 1. Accept the 2-wire digital bus probe for the product (analog for POC only)?
 2. Caps at about $2.88 each: acceptable, or look for cheaper?
 3. How many drive lanes per grove?
 4. Irrigation cable rated to -20 °C vs -27 °C design point: accept or look for colder-rated cable?
+
+Answers:
+1. "yes"
+2. "need to decrease this cost to a minimum, should be almost nothing, don't rely on standard irrigation wire caps, it maybe an option for a user but the design should be with something simple."
+3. "calculate it and provide different variants, user may choose depending on custom needs"
+4. "yes"
+
+Result: piercing clamp built into the probe (landscape-light style) on flat 16/2 landscape wire (D16); 1-Wire style bus as the candidate protocol (D17); drive-lane variants V0/V1/V2/V4 calculated; cable cost for the forest drops from $2,125 to $700.
+
+## Round 12 — open (asked 2026-11-24)
+
+1. Piercing clamp built into the probe as the standard connection (caps and retail connectors as options)?
+2. 16/2 flat landscape lighting wire as the bus cable?
+3. Which drive-lane variant for this site?
+4. Target cost per finished bus probe?

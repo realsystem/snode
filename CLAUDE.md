@@ -36,7 +36,7 @@ is the only reliable memory.
 | **row** | A straight line of trees at 1 m spacing inside one grove. Each grove is 10 rows x 20 trees (about 19 m x 18 m). | VERIFIED |
 | **tree** | One tree position on the grid. Each tree has one probe and one drip emitter. | VERIFIED |
 | **probe** | One soil-moisture sensor at one tree, at one depth (15 cm max), at a fixed offset from that tree's emitter. | VERIFIED |
-| **probe assembly** | A probe with its home-run cable soldered on and potted, built on the bench in standard lengths. | PROPOSED |
+| **bus** | The 2-wire cable along a row that powers and connects that row's probes to the SNODE. | VERIFIED (architecture) |
 | **drive lane** | A wider gap between clusters for vehicles; never inside a cluster. | PROPOSED |
 | **node** | A field device that reports to HA. Two types: SNODE and UNODE. | VERIFIED |
 | **SNODE** | Soil node: powered only at report times by an RTC; two variants, solar only or battery only (design log D6) that reads the probes of a group of trees and reports to HA. Monitoring only. | VERIFIED |
@@ -102,7 +102,8 @@ All calibration values (dry/wet raw counts per probe) live in one file:
 - Burrowing rodents are present. Field cables must allow optional conduit.
 - Rabbits are present: cables between the box and the ground must always be in a conduit riser.
 - Drive lanes must fit a full-size pickup (Toyota Tundra), about 3.5 m between tree rows; no cable may cross a drive lane.
-- Field installation needs no soldering and no bench prep: a spool of wire and direct-bury splice caps from a home-improvement store only.
+- Field installation needs no soldering and no bench prep: a spool of wire and the probes only.
+  Connection cost per probe must be close to zero (built-in clamp); splice caps are a user option, not the design.
 - Box-to-ground riser: 1/2 in standard PVC conduit.
 - Firmware: ESPHome (nodes and receiver).
 - Every design must state its operating limits (temperature, days without sun,

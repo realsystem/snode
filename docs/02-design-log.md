@@ -32,6 +32,10 @@ Terms and IDs: see `CLAUDE.md`. Sources: see `docs/03-research-notes.md` (S-numb
 - Installation: **no soldering, no bench prep.** The installer goes to the field with a spool and a bag of connectors bought at a home-improvement store.
 - Riser: 1/2 in standard PVC conduit.
 - Firmware: ESPHome is acceptable.
+- Product architecture: 2-wire digital bus probes (custom PCB). Analog v1.2 probes are for the POC only.
+- Connection cost must be close to zero. Standard irrigation caps may be a user option, but the design must use something simpler.
+- Drive lanes: provide calculated variants; the user chooses.
+- Cable rated to -20 °C is accepted for buried runs.
 - HA decides irrigation (probably OpenSprinkler). SNODEs only report.
 - Must work through winter (owner: "winter is most important").
 - Lowest cost. Custom PCB allowed after the POC. Existing ESP8266 boards and "Arduino" moisture sensors are for the POC only.
@@ -119,7 +123,9 @@ Each limit is set by the weakest part. All UNVERIFIED until tested; "rated" valu
 | Valid moisture | Only when soil is above 0.5 °C | Same | Capacitive measurement in frozen soil | S13 |
 | Snow depth | Box height − 0.1 m (0.2 m at the standard 0.3 m height; longer stake for snowy sites) | Same | Box and antenna must stay above snow | — |
 | Field splices | -40 to +105 °C operating; 18–10 AWG | Same | 3M DBR/Y-6 rating | S33 |
-| Field cable temperature | -20 to +75 °C | Same | Irrigation cable rating (below the -27 °C design point) | S36 |
+| Field cable temperature | Accepted as the -20 °C class for buried cable; landscape wire low limit not published | Same | Cable rating | S36, S41 |
+| Bus run length | About 10.5 m per row run by design; 20 m radius/weight is the reference limit for a simple 1-Wire master (bench test) | Same | Bus electrical limits | S42 |
+| Probe connection | Piercing clamp; corrosion life to be proven by soak test | Same | Contact corrosion | S40 |
 | Vehicle lanes | Wider gap needed (about 3.5 m for a full-size pickup); never in a cluster gap | Same | Vehicle width | S34 |
 | SNODEs per receiver | 30 tested by design (60 packets/day); higher counts need a test | Same | Receiver load | — |
 
@@ -150,20 +156,20 @@ Cable per probe = horizontal Manhattan distance + 0.65 m (0.15 m depth + 0.5 m s
 | 16/node | 15 | 3.45 m | $951.21 |
 | 20/node | 10 | 4.15 m | $927.92 |
 
-## Cost so far (cited parts only, variant B)
+## Cost so far (cited parts only, variant B, bus architecture)
 | Item | Unit | Per grove (10 SNODEs) | Forest (30 SNODEs) |
 |---|---|---|---|
 | XIAO ESP32C3 with antenna | £3.93 (Farnell UK, ex VAT) | £39.30 | £117.90 |
 | Hammond 1554QA2GY enclosure | £40.42 (RS UK, ex VAT) | £404.20 | £1,212.60 |
 | RV-3028-C7 RTC | $3.74 (DigiKey) | $37.40 | $112.20 |
-| CD74HC4067 mux breakout | $6.50 | $65.00 | $195.00 |
 | DS18B20 probe | $1.90 | $19.00 | $57.00 |
 | 3x L91 AA | $6.87 | $68.70 | $206.10 |
-| Probes | $1.70 | $340.00 | $1,020.00 |
-| 18/3 irrigation wire, 500 ft spools at $0.25/ft | — | 2,723 ft → 6 spools = $750.00 | 8,169 ft → 17 spools = $2,125.00 |
-| **Subtotal** | | **$1,280.10 + £443.50** | **$3,715.30 + £1,330.50** |
-Not yet priced: load switch, LDO, battery holder, riser conduit and fittings, duct seal, vent, wooden stake, potting, DBR/Y-6 (repairs only), receiver and roof antenna. Variant A swaps the L91 cells and holder for a supercapacitor, boost converter, charge limiter and panel.
-The mux breakout price is for prototyping; the bare chip is $1.05. The enclosure is now the biggest per-node item after cable; source a cheaper box.
+| 16/2 landscape wire, 500 ft at $140 | about 23 m (75 ft) per SNODE incl. 10% slack | 750 ft → 2 spools = $280.00 | 2,264 ft → 5 spools = $700.00 |
+| Probe connection (integrated clamp) | about $0 extra (UNVERIFIED) | $0 | $0 |
+| Bus probes (custom PCB) | not yet priced | — | — |
+| **Subtotal (without probes)** | | **$405.10 + £443.50** | **$1,075.30 + £1,330.50** |
+- Compared with the analog star: cable drops from $2,125 to $700 for the forest, and the mux ($6.50 per node) is gone. The probe cost moves into the custom probe PCB.
+- Not yet priced: bus probes, bus driver at the node, load switch, LDO, battery holder, riser conduit and fittings, duct seal, vent, wooden stake, receiver and roof antenna. The enclosure is now the largest priced item; source a cheaper box.
 
 ## Ecowitt WH51 comparison (for the test plan)
 - WH51: capacitive FDR, 1x AA, reports every 70 s to the GW3000, rated 100 m in open field. The related WH51L is rated -10 to 50 °C, so expect no comparison data in deep cold (UNVERIFIED for the WH51).
@@ -195,7 +201,18 @@ The mux breakout price is for prototyping; the bare chip is $1.05. The enclosure
 - A cluster pairs two rows across a 2 m **non-drive** gap. The SNODE stake and all its cables stay inside that gap.
 - Drive lanes are only ever between clusters. No cable crosses a lane, so no conduit is needed for vehicle loads.
 - Each probe goes on the side of its tree facing the cluster's internal gap, away from wheels.
-- Grove width: 18 m with no lanes; each 3.5 m lane adds 1.5 m. Tree count stays at 200. The number of lanes per grove is an owner question (round 10).
+- Grove width: 18 m with no lanes; each 3.5 m lane adds 1.5 m. Tree count stays at 200.
+
+#### Drive-lane variants (grove of 10 rows x 20 trees; the user chooses)
+Rows numbered 1–10; clusters are row pairs (1-2, 3-4, 5-6, 7-8, 9-10); lanes can only be between pairs (gaps 2|3, 4|5, 6|7, 8|9). Grove length (along rows) is 19 m in all variants. "Walk" = farthest distance from any tree row to a drivable line (a lane or the grove edge).
+| Variant | Lanes at gaps | Grove width | Area | Land use vs V0 | Max walk |
+|---|---|---|---|---|---|
+| V0 | none | 18.0 m | 342 m² | — | 8 m |
+| V1 | 6\|7 (or 4\|5) | 19.5 m | 370.5 m² | +8% | 4 m |
+| V2 | 4\|5 and 6\|7 | 21.0 m | 399 m² | +17% | 2 m |
+| V4 | all four | 24.0 m | 456 m² | +33% | 0 m (every row is next to a lane or the edge) |
+- Node and cable count are the same in all variants (10 SNODEs per grove), because buses never cross a lane.
+- 3 lanes is not listed: it gives the same 2 m max walk as V2 with more land.
 
 ### D12 Enclosure
 - UV-stabilized polycarbonate box, IP68 class. Reference part: Hammond 1554QA2GY, 140 x 140 x 90 mm, £40.42 (RS UK, single unit). A cheaper equivalent is to be sourced; it is the largest per-node item found so far.
@@ -211,7 +228,8 @@ The mux breakout price is for prototyping; the bare chip is $1.05. The enclosure
 |---|---|---|---|---|
 | Analog star (20 x 18/3 at 0.184 in + DS18B20) | 21 | ≈ 0.56 in² | ≈ 213% | **No** |
 | Digital bus, 2 row cables of 18/4 at 0.2 in | 2 | ≈ 0.063 in² | ≈ 24% | Yes |
-- **So a 1/2 in riser only works with a bus architecture (D17).** The analog star would need 1-1/2 in.
+| **Digital bus, 2 row cables of flat 16/2 landscape wire (0.155 x 0.296 in)** | 2 | ≈ 0.092 in² | ≈ 35% | **Yes (chosen)** |
+- **So a 1/2 in riser only works with a bus architecture (D17), which the owner accepted.**
 - Seal: duct-seal compound inside the terminal adapter at the top. The buried bottom end stays open for drainage.
 
 ### D14 Stake and snow
@@ -224,24 +242,22 @@ The mux breakout price is for prototyping; the bare chip is $1.05. The enclosure
 - Leave about 0.3 m of slack at each probe as a loop, for frost heave and to allow the probe to be pulled out for service.
 - Locate the drip line (surface or buried) before inserting a probe; keep the standard offset from the emitter.
 
-### D16 Probe cable and splices
-- Cable: 18 AWG direct-burial irrigation wire (Southwire Barogation family). It is rated -20 to 75 °C, which is above the -27 °C design minimum. Buried cable is unlikely to see air temperature (UNVERIFIED), but this is a stated limit.
-- Splices: 3M DBR/Y-6 direct-bury caps (18–10 AWG, -40 to 105 °C), about $2.88 each in packs of 100 (Zoro). Sold at retail as 2-packs.
-- **Owner rule: no soldering, no bench prep.** The probe must ship from the factory with an 18 AWG pigtail. The installer lays the spool and joins wires with caps. The node has tool-free terminals (lever or screw) for bare 18 AWG.
-- Cap count drives cost:
-| Architecture | Caps per tree | Caps for 600 trees | Cost at $2.88 |
-|---|---|---|---|
-| Analog star, pigtail spliced to a home run | 3 | 1,800 | $5,184 |
-| Digital bus, 4 wires (power, ground, 2 data), tap at each tree | 4 | 2,400 | $6,912 |
-| **Digital bus, 2 wires (power and data on one pair)** | **2** | **1,200** | **$3,456** |
-| Probe with a factory cable long enough to reach the node (cut to length at the node) | 0 | 0 | $0, but 20 cables in the riser (doesn't fit 1/2 in) |
-- Cheaper direct-bury caps should be priced; the caps cost more than the probe board.
+### D16 Bus cable and probe connection
+- **Bus cable: 16/2 low-voltage landscape lighting wire.** Flat 2-conductor, direct-burial rated, sold at home-improvement stores: 500 ft for $140 ($0.28/ft, Home Depot). Flat profile 0.155 x 0.296 in, 60 °C max (Carol 02309 data). Minimum temperature not published (UNVERIFIED; the owner accepts a -20 °C class rating for buried cable).
+- **Probe connection: piercing clamp built into the probe housing.** This is the method landscape-light fixtures use: pins pierce the insulation of the flat cable without cutting, stripping or splicing, so a branch can be made at any point on the run.
+  - Install: lay the cable along the row, press each probe's clamp onto it at its tree, insert the probe. No separate connector is bought, so the connection cost is the two pins inside the probe (cents; UNVERIFIED until the housing is designed).
+  - Known risk: reviews of retail piercing connectors report pin corrosion and breakage after about a year. Mitigations: grease-filled clamp cavity, stainless or tin-plated pins, and a bus that is **unpowered more than 99.9% of the time** (powered only for seconds at 05:00 and 17:00), which limits electrolysis (UNVERIFIED; long-term soak test required).
+- **User options (not required):** retail landscape piercing connectors (about $0.68 each, 22-pack for $14.98) or 3M DBR/Y-6 caps (about $2.88 each) with a probe that has a pigtail.
+- No soldering, no bench prep: spool + probes.
 
-### D17 Probe architecture for the product (proposed, owner to decide)
-- **Recommended for the product: a 2-wire digital bus.** Each probe has a small microcontroller that measures locally and talks on a shared pair that also carries power, like two-wire decoder irrigation systems. One 18/2 cable runs along each row; each probe's 2-wire pigtail is tapped on with 2 caps.
-- Fits the 1/2 in riser (2 cables). Needs about 1 m of cable per tree instead of about 4 m. Fewest caps of any field-wired option. The analog 6 m cable limit no longer applies. Works for any planting pattern, because the bus follows the rows.
-- Cost: a custom probe PCB (owner allows it after the POC). Bus electrical design (protocol, length, number of drops) is not yet researched: UNVERIFIED.
-- POC: keep the v1.2 analog probes with soldered wiring to learn about the sensor; the bus probe is the product step.
+### D17 Probe architecture for the product (owner accepted: 2-wire digital bus)
+- Each probe has a small microcontroller that measures locally and talks on the shared pair, which also carries power.
+- One 16/2 run along each row of the cluster; each node has 2 runs (one per row). Bus topology: linear along the row, never a star (1-Wire guidance says an unswitched star is not recommended).
+- Candidate protocol: 1-Wire style (data and ground on 2 wires, power from the data line). Reference: Maxim/ADI tutorial 148 defines network **radius** (wire distance to the farthest device) and **weight** (total wire). A simple master is quoted at about 20 m radius and 20 m weight on Cat5; an advanced master is quoted up to 500 m equivalent size.
+  - Per row run: node to row about 1.5 m + 9 m along the row ≈ 10.5 m radius and weight. That is within the simple-master figures, but on flat landscape wire rather than Cat5 (UNVERIFIED; bench test).
+  - A bonus: the DS18B20 soil temperature sensor is itself a 1-Wire device and can sit on the same bus.
+- Probe power: the probe needs a few mA for about a second to measure. Draw from the line during a "power phase", then talk. Protocol and electrical design to be researched next (UNVERIFIED).
+- POC: v1.2 analog probes with soldered wiring, to learn sensor behavior.
 
 ### D18 Firmware
 - ESPHome on both the nodes and the receiver (owner accepted).
@@ -252,8 +268,8 @@ The mux breakout price is for prototyping; the bare chip is $1.05. The enclosure
 ## Receiver
 - The trailer is fiberglass, which passes 2.4 GHz with little loss (UNVERIFIED; check in the walk test). The receiver ESP32 can stay inside, with a short coax to the roof antenna.
 
-## Open questions (round 11)
-1. Product architecture: accept the 2-wire digital bus probe (custom PCB) for the product, with analog v1.2 probes for the POC only? It is the only option that fits the 1/2 in riser with field-only wiring.
-2. Splice caps cost about $2.88 each, which is more than the probe board. Is that acceptable, or should I look for cheaper direct-bury caps?
-3. How many drive lanes per grove (each 3.5 m lane adds 1.5 m to the grove width)?
-4. The irrigation cable is rated down to -20 °C versus the -27 °C design point. Accept that for buried cable, or look for colder-rated cable?
+## Open questions (round 12)
+1. Standard connection = piercing clamp built into the probe (like landscape lights), with caps or retail connectors as user options. OK, given the corrosion risk to be proven in a soak test?
+2. Bus cable = 16/2 flat landscape lighting wire ($0.28/ft) instead of 18/x irrigation wire. OK?
+3. Which drive-lane variant for your site (V0, V1, V2, V4)?
+4. Target cost per bus probe (finished, with housing)? This sets the MCU and housing choice.

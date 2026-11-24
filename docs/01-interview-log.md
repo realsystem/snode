@@ -201,9 +201,25 @@ Answers:
 
 Result: cable comparison (16/2 $700 vs 18/2 $559 for the forest; 16/2 kept as standard because the clamp needs no prep). V1 recorded. Minimum bus probe estimated at about $0.45–1.30 (D19).
 
-## Round 13 — open (asked 2026-11-24)
+## Round 13 — 2026-11-24
 
+Questions:
 1. Confirm 16/2 landscape wire as standard?
 2. Expected commercial volume (decides housing method)?
 3. Next: POC shopping list and test plan, or finish the remaining design sections first?
 4. Probe temperature compensation: one DS18B20 per node, or a sensor in every probe?
+
+Answers:
+1. "yes, keep the other one as backup(user choice)"
+2. "3d print in house for POC and small batches is acceptable, after that we can order proper molded enclosures, find where and keep a note for future."
+3. "finish design first, ask questions, we don't need shopping list now, but need a clear design and POC"
+4. "explain"
+
+Result: D20 temperature compensation explained (T1/T2/T3; T2 recommended), D21 housing path (ASA 3D print now; Protolabs/RapidDirect molding later), HA alerts and irrigation interlock, `docs/04-spec.md` and `docs/05-poc-plan.md` written.
+
+## Round 14 — open (asked 2026-11-24)
+
+1. Temperature compensation: T2 (recommended), T1 or T3?
+2. Irrigation zones: count, and which trees/rows per zone?
+3. Alert delivery (app push, email) and quiet hours?
+4. Accuracy target ±5% after site calibration, judged on trends?

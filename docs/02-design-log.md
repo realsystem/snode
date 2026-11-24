@@ -38,6 +38,9 @@ Terms and IDs: see `CLAUDE.md`. Sources: see `docs/03-research-notes.md` (S-numb
 - Cable rated to -20 °C is accepted for buried runs.
 - Standard connection: piercing clamp built into the probe (accepted).
 - Drive-lane variant for this site: **V1** (one lane per grove).
+- Cable: 16/2 landscape wire is standard; 18/2 irrigation wire is a user option (backup).
+- Housings: 3D-printed in house for the POC and small batches; molded housings later (sources noted in D21).
+- Order of work: finish the design first, then the POC. No shopping list yet.
 - HA decides irrigation (probably OpenSprinkler). SNODEs only report.
 - Must work through winter (owner: "winter is most important").
 - Lowest cost. Custom PCB allowed after the POC. Existing ESP8266 boards and "Arduino" moisture sensors are for the POC only.
@@ -255,7 +258,7 @@ Rows numbered 1–10; clusters are row pairs (1-2, 3-4, 5-6, 7-8, 9-10); lanes c
 | Riser fill (2 cables, 1/2 in) | 35% | 22% |
 | Built-in piercing clamp | Works: made for flat cable, no prep | The outer jacket must be slit or stripped first, which breaks the "no prep" rule (UNVERIFIED for clamp designs that pierce through the jacket) |
 | Temperature | 60 °C max; low limit not published | -20 to 75 °C (Southwire family) |
-- **Decision: 16/2 landscape wire is the standard** (the clamp needs no prep). 18/2 irrigation wire saves about $141 (20%) for this forest; it is a user option with caps or a jacket-stripping step.
+- **Decision (owner confirmed): 16/2 landscape wire is the standard.** 18/2 irrigation wire is the backup user option (about 20% cheaper; needs caps or a jacket-stripping step).
 - **Bus cable: 16/2 low-voltage landscape lighting wire.** Flat 2-conductor, direct-burial rated, sold at home-improvement stores: 500 ft for $140 ($0.28/ft, Home Depot). Flat profile 0.155 x 0.296 in, 60 °C max (Carol 02309 data). Minimum temperature not published (UNVERIFIED; the owner accepts a -20 °C class rating for buried cable).
 - **Probe connection: piercing clamp built into the probe housing.** This is the method landscape-light fixtures use: pins pierce the insulation of the flat cable without cutting, stripping or splicing, so a branch can be made at any point on the run.
   - Install: lay the cable along the row, press each probe's clamp onto it at its tree, insert the probe. No separate connector is bought, so the connection cost is the two pins inside the probe (cents; UNVERIFIED until the housing is designed).
@@ -290,17 +293,52 @@ Concept: the probe blade is the PCB. Copper electrode traces on the blade are th
 - The MCU and assembly are cited; the PCB, passives, potting and housing need real quotes. The housing method depends on volume (round 13).
 - Risks to test: capacitance drift with temperature (compensate with the MCU or the node's DS18B20), the accuracy of RC timing compared with the v1.2 board, and bus power during measurement.
 
+### D20 Temperature compensation (explained; owner to choose)
+- **Why it matters:** a capacitive probe reads permittivity, not water directly, and permittivity changes with temperature even when water content doesn't.
+  - Free water: about 88 at 0 °C, about 80 at 20 °C (Campbell Scientific).
+  - Bound water: the opposite effect; warming releases water bound to soil particles, which raises permittivity. The net effect depends on the soil.
+  - In a 19-soil study, a 40 °C change caused up to ±0.028 m³/m³ apparent water-content change.
+  - The sensor electronics drift too.
+- **Effect here:** the 05:00 reading (cold) and the 17:00 reading (warm) at 15 cm see different soil temperatures, so uncorrected data shows a fake daily swing.
+| Option | How | Extra cost | Accuracy | Notes |
+|---|---|---|---|---|
+| T1 | One DS18B20 per SNODE (already in the design for the frozen flag) corrects all 20 probes | $0 | Assumes the same soil temperature across the 18 x 2 m cluster | Sun, shade and wet spots near emitters may differ (UNVERIFIED) |
+| **T2 (recommended)** | The probe MCU's **internal temperature sensor** (the PY32F002A has one on an ADC channel) corrects each probe; the node's DS18B20 is the reference used to remove each chip's offset | $0 | Per probe; the uncalibrated offset varies chip to chip, so calibrate against the DS18B20 | Also gives a per-probe frozen flag. The electronics end sits in the soil, so chip temperature ≈ soil temperature (UNVERIFIED) |
+| T3 | An NTC thermistor on each probe PCB | a few cents + 1 pin | Better than T2 | Only if the POC shows T2 is not good enough |
+- Correction coefficients are soil-specific and are measured in the POC (pot test at 2 temperatures). They are stored in `config/calibration.yaml`, never in firmware.
+
+### D21 Housing manufacturing path
+- **POC and small batches: in-house 3D printing.** ASA for anything exposed to sun (better UV resistance; PETG yellows and turns brittle outdoors); PETG is acceptable for fully buried parts (UNVERIFIED). Seal layer lines on printed parts.
+- **Later, molded housings (note for the future):**
+  - Protolabs: aluminum molds, mold cost from $1,495; runs from about 10 to 10,000+ parts; no minimum order.
+  - RapidDirect: low-volume injection molding, 100–10,000 parts; aluminum molds suit 100–5,000 parts, soft steel 5,000–25,000.
+  - Get quotes once the housing design is frozen after the POC.
+
 ### D18 Firmware
 - ESPHome on both the nodes and the receiver (owner accepted).
 - ESPHome has an ESP-NOW component and an ESP-NOW platform for its Packet Transport component, which sends sensor states from one node to another without a server. Nodes send their readings to the receiver; the receiver exposes them to HA through the native API.
 - Boot flow under RTC power gating: power on → read sensors → send → wait for the acknowledgement → set the next RTC alarm → clear the alarm (cuts power). RTC driver support in ESPHome for the RV-3028 is not confirmed; may need a custom component (UNVERIFIED).
 - Scale check needed: 30 nodes x 22 values = 660 entities through one receiver (UNVERIFIED).
+- **Nodes send raw values only** (raw counts, probe temperature, node soil temperature, battery voltage, RSSI). HA converts raw to % using `config/calibration.yaml`, so calibration lives in one place.
+- **HA alerts:**
+| Alert | Rule (proposed) |
+|---|---|
+| Dry | Zone median below the dry threshold for 2 readings in a row |
+| Wet | Zone median above the wet threshold for 2 readings in a row |
+| Frozen | Soil temperature ≤ 0.5 °C → moisture marked invalid; irrigation blocked for that zone |
+| Probe fault | No answer from a probe, or raw value outside the calibrated range, for 2 readings |
+| Node offline | No report for 25 h |
+| Battery / storage low | Variant B: pack voltage below the POC-derived threshold. Variant A: capacitor voltage at wake below threshold |
+| Weak radio | RSSI below the threshold set in the walk test, 3 readings in a row |
+- **Irrigation interlock:** HA must not open an OpenSprinkler zone when that zone is frozen or its data is older than 25 h.
 
 ## Receiver
 - The trailer is fiberglass, which passes 2.4 GHz with little loss (UNVERIFIED; check in the walk test). The receiver ESP32 can stay inside, with a short coax to the roof antenna.
 
-## Open questions (round 13)
-1. Cable: confirm 16/2 landscape wire as standard (18/2 irrigation wire is about 20% cheaper but its jacket must be stripped for the clamp)?
-2. Expected commercial volume (hundreds, thousands, tens of thousands of probes)? This decides a 3D-printed vs injection-molded housing.
-3. Next step: should I (a) write the POC shopping list and test plan now, or (b) finish the remaining design sections first (requirements, firmware/HA detail, final spec section)?
-4. Probe temperature compensation: use the node's one DS18B20 for the whole cluster (cheapest), or add a temperature sensor in every probe (more accurate)?
+## Open questions (round 14)
+1. Temperature compensation: T2 (the probe chip's built-in sensor, zero cost) as recommended, or T1/T3?
+2. Irrigation zones: how many OpenSprinkler valve zones, and which trees or rows does each one water? HA's dry/wet logic works per zone.
+3. Alerts: how should they reach you (HA mobile app push, email, both)? Any quiet hours?
+4. Accuracy target: OK to aim for ±5% moisture after site calibration (the WH51's rated accuracy), judged mainly on trends?
+
+See also `docs/04-spec.md` (spec summary) and `docs/05-poc-plan.md` (POC plan).

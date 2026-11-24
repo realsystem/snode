@@ -10,10 +10,12 @@ Chat history and attachments may not be available in a future session. This repo
 is the only reliable memory.
 
 - At the start of a session, read in order: this file, `docs/00-brief.md`,
-  `docs/01-interview-log.md`, `docs/02-design-log.md`, `docs/03-research-notes.md`.
+  `docs/01-interview-log.md`, `docs/02-design-log.md`, `docs/03-research-notes.md`,
+  `docs/04-spec.md`, `docs/05-poc-plan.md`.
 - After every interview round or decision, update `docs/01-interview-log.md`
   (questions and answers) and `docs/02-design-log.md` (decisions, numbers,
-  open questions). Add new sources to `docs/03-research-notes.md`.
+  open questions). Add new sources to `docs/03-research-notes.md`. Keep
+  `docs/04-spec.md` in step with the design log.
 - Commit with a short message that says what changed and why.
 
 ## 1. Site context (VERIFIED, from owner)
@@ -121,5 +123,7 @@ All calibration values (dry/wet raw counts per probe) live in one file:
 | `docs/01-interview-log.md` | Every question round and the owner's answers, dated |
 | `docs/02-design-log.md` | Current decisions, power budget, costs, open questions |
 | `docs/03-research-notes.md` | Findings with source links |
+| `docs/04-spec.md` | Spec-ready summary: requirements, decisions, open items, tests, BOM |
+| `docs/05-poc-plan.md` | POC phases, pass/fail criteria |
 | `config/calibration.yaml` | Per-probe calibration values (empty until POC) |
 | UNODE | Separate project. Link here when available. |

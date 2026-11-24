@@ -93,6 +93,11 @@ be re-checked before purchase. S-numbers are referenced from `02-design-log.md`.
 | S45 | WCH CH32V003J4M6 (SOP-8): $0.1238 at 500+ (LCSC). CH32V003 has an 8-channel 10-bit ADC, an op-amp and a comparator. | https://www.lcsc.com/product-detail/Microcontrollers-MCU-MPU-SOC_WCH-Jiangsu-Qin-Heng-CH32V003J4M6_C5346354.html ; https://static.chipdip.ru/lib/164/DOC045164018.pdf |
 | S46 | JLCPCB assembly: standard PCBA setup $25 single side; SMT $0.0016 per joint; extended-part feeder fee $1.50 per part type (updated 2025-12-19); prototype PCBs from $2 for 5. | https://jlcpcb.com/help/article/pcb-assembly-price ; https://jlcpcb.com/pcb-assembly ; https://techoverflow.net/2024/04/09/jlcpcb-pcba-assembly-price-overview/ ; https://lcsc.com/pcba |
 
+| S47 | Temperature effect on capacitance readings: water permittivity about 88 at 0 °C and about 80 at 20 °C (Campbell Scientific). Bound and free water act in opposite directions, so the net effect is soil-specific. Hydra Probe study, 19 soils: a 40 °C change gave up to ±0.028 m³/m³ apparent water content. | https://www.campbellsci.ca/faqs?v=1046 ; https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3444127/ ; https://agris.fao.org/search/ru/records/65df4349b766d82b1800f40d |
+| S48 | PY32F002A has an internal temperature sensor on an ADC channel (py32-hal driver). Internal MCU temperature sensors have chip-to-chip offset; uncalibrated, they suit detecting temperature changes (ST reference manual wording, same sensor type). | https://docs.rs/py32-hal/0.1.0/src/py32_hal/adc/v1.rs.html ; https://wenku.csdn.net/doc/6481717fd12cbe7ec369da90 |
+| S49 | Molding: Protolabs aluminum molds from $1,495, 10 to 10,000+ parts, no MOQ. RapidDirect low-volume molding 100–10,000 parts (aluminum 100–5,000; soft steel 5,000–25,000). | https://protolabs.com/injection-molding ; https://www.protolabs.com/en-gb/services/injection-moulding/on-demand-manufacturing/ ; https://www.rapiddirect.com/services/low-volume-injection-molding-service/ |
+| S50 | 3D-print materials outdoors: ASA has better UV resistance; PETG yellows and turns brittle in sun (vendor test write-ups). | https://qidi3d.com/blogs/print-lab/asa-vs-petg-filament-direct-sunlight ; https://qidi3d.com/ko/blogs/print-lab/asa-petg-sprinkler-brackets-outdoor |
+
 ## Radio path
 
 | # | Finding | Source |

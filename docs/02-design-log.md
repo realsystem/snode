@@ -598,6 +598,6 @@ Closed in round 27: AliExpress counts as US-available; bench probe MCU = PY32F00
 - Packet types 0x10–0x1F (node → receiver) and 0x90–0x9F (receiver → node) are reserved for UNODE; HA event `esphome.unode_report` reserved.
 - The POC receiver ignores packet types other than 0x01/0x02 (VERIFIED by code reading).
 - No shared hardware: the ESP32-C3 order is for SNODE only.
-- UNODE reuses SNODE's power terms: its pump node is solar only; its generator node is open (starter-battery monitoring while the generator is off).
+- UNODE reuses SNODE's power terms: its pump node is solar only, its generator node battery only (owner follow-up). UNODE reuses SNODE designs where they fit; SNODE work stays independent of UNODE.
 
 HA side: see `docs/06-ha-note.md`. Spec: `docs/04-spec.md`. POC: `docs/05-poc-plan.md`.

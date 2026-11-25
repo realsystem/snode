@@ -39,9 +39,11 @@ but must stay compatible. UNODE repo: https://github.com/realsystem/unode (its c
 - Both projects use the same words: **solar only** (variant A: panel + supercapacitor, no battery) and
   **battery only** (variant B: primary cells, no charging).
 - SNODE: both variants (D6).
-- UNODE: `unode_pump` = solar only (owner, round 29). `unode_gen` = open: it must still monitor the
-  generator's starter battery while the generator is off; battery only with timed wakes is under review
-  in the UNODE repo.
+- UNODE: `unode_pump` = solar only; `unode_gen` = battery only (owner, round 29). The UNODE generator node wakes
+  on its 5 V sense change and on a timer that also reads the generator's starter battery.
+- UNODE reuses SNODE designs where they fit (owner: minimize work for both projects): ESP32-C3, the variant B
+  pack, the variant A harvester, the receiver and the test methods. List: UNODE `docs/snode-compat.md`.
+  A SNODE change that UNODE reuses needs no UNODE sign-off, but the packet/event rules in §3-4 do.
 
 ## 6. Firmware
 - Both use ESPHome. External components here (e.g. `components/rv3028/`) may be reused by UNODE.

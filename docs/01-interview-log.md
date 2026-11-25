@@ -437,3 +437,13 @@ Follow-up, 2026-11-24: owner asked whether the XIAO is needed at all. Answer: th
 6. Can the owner solder SOT-23 parts onto adapters, or are ready modules needed?
 7. HA for the bench: home HA, the trailer HA over Starlink, or USB logs only until the next visit?
 8. 3xAA holder: on hand, or find and price one?
+
+## Round 29 — 2026-11-25 (UNODE compatibility)
+
+Context: in the UNODE thread the owner asked whether SNODE's two power ideas (solar only, battery only) fit UNODE.
+
+1. Owner: UNODE pump node uses the same solar-only idea. UNODE generator node must also monitor the starter battery while the generator is off (power choice open in the UNODE repo).
+2. Owner: nothing of SNODE's hardware is ordered for UNODE; the ESP32-C3 order is for SNODE only.
+3. Owner: SNODE and UNODE must be compatible; record it in both repos.
+
+Result: D45, `docs/11-unode-compat.md` (reserved UNODE packet types and event name, shared power terms, IDs).

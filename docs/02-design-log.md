@@ -593,4 +593,11 @@ Rule: if the PCB antenna meets the link margin at the farthest grove corner in T
 
 Closed in round 27: AliExpress counts as US-available; bench probe MCU = PY32F002A (D42); Amazon check (D43).
 
+### D45 UNODE compatibility (owner, round 29)
+- SNODE and UNODE stay separate projects but must stay compatible. Contract: `docs/11-unode-compat.md` (copy in the UNODE repo).
+- Packet types 0x10–0x1F (node → receiver) and 0x90–0x9F (receiver → node) are reserved for UNODE; HA event `esphome.unode_report` reserved.
+- The POC receiver ignores packet types other than 0x01/0x02 (VERIFIED by code reading).
+- No shared hardware: the ESP32-C3 order is for SNODE only.
+- UNODE reuses SNODE's power terms: its pump node is solar only; its generator node is open (starter-battery monitoring while the generator is off).
+
 HA side: see `docs/06-ha-note.md`. Spec: `docs/04-spec.md`. POC: `docs/05-poc-plan.md`.

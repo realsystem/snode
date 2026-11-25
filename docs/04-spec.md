@@ -62,6 +62,7 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 | D40 | Bus protocol v1 | `10-bus-protocol.md`: 9600 8N1, READ / DISCOVER / MEASURE, CRC-8 | Shared by node and probe | S79 |
 | D41 | AliExpress sourcing | PY32 dev boards, chips and DAPLink from AliExpress (US delivery); TI parts, RTC board, XIAO and node sensor from US distributors; mixed bench list $119.92 | Owner asked; genuine-part risk | S98–S103 |
 | D42 | Bench probe MCU | PY32F002A from AliExpress (owner: AliExpress counts as US-available); ATtiny202 fallback | 2 comparators | S98, S99 |
+| D45 | UNODE compatibility | Separate projects, compatible: UNODE packet types 0x10–0x1F / 0x90–0x9F and event `esphome.unode_report` reserved; shared power terms | Owner | — |
 | D43 | Amazon sourcing | L91 24-packs and 16/2 wire (pure copper only) cheaper on Amazon; XIAO 3-pack from seeedstudio.com ($13.99, US warehouse) | Owner asked | S104–S107 |
 | D31 | Channel follow | Node saves the last good channel; on a missed acknowledgement it scans channels 1–11 | Works with routers that change channel | S74 |
 | D29 | RTC in ESPHome | Small external component for the RV-3028 | No built-in platform | S66 |
@@ -101,7 +102,7 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 9. Variant A parts: panel, supercapacitor, boost converter, charge limiter: select and price.
 10. Receiver roof antenna and coax: select and price.
 11. RV-3028 support in ESPHome (may need a custom component).
-12. Sharing parts or firmware with UNODE.
+12. UNODE compatibility: contract in `11-unode-compat.md` (D45); receiver forwarding of UNODE packets not designed yet.
 
 ## 5. Test list
 

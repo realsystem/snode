@@ -11,7 +11,7 @@ is the only reliable memory.
 
 - At the start of a session, read in order: this file, `docs/00-brief.md`,
   `docs/01-interview-log.md`, `docs/02-design-log.md`, `docs/03-research-notes.md`,
-  `docs/04-spec.md`, `docs/05-poc-plan.md`, `docs/07-poc-tests.md`, `docs/08-node-design.md`, `docs/09-probe-design.md`, `docs/10-bus-protocol.md`.
+  `docs/04-spec.md`, `docs/05-poc-plan.md`, `docs/07-poc-tests.md`, `docs/08-node-design.md`, `docs/09-probe-design.md`, `docs/10-bus-protocol.md`, `docs/11-unode-compat.md`.
 - After every interview round or decision, update `docs/01-interview-log.md`
   (questions and answers) and `docs/02-design-log.md` (decisions, numbers,
   open questions). Add new sources to `docs/03-research-notes.md`. Keep
@@ -43,7 +43,7 @@ is the only reliable memory.
 | **drive lane** | A wider gap (about 3.5 m) between clusters for vehicles; never inside a cluster. | VERIFIED |
 | **node** | A field device that reports to HA. Two types: SNODE and UNODE. | VERIFIED |
 | **SNODE** | Soil node: powered only at report times by an RTC; two variants, solar only or battery only (design log D6) that reads the probes of a group of trees and reports to HA. Monitoring only. | VERIFIED |
-| **UNODE** | General monitoring node (ESP32-class, own battery and solar), designed in a separate project. | VERIFIED |
+| **UNODE** | General monitoring node (ESP-class) for equipment such as a generator and a solar well pump, designed in a separate repo (https://github.com/realsystem/unode). Kept compatible with SNODE: `docs/11-unode-compat.md`. | VERIFIED |
 | **cluster** | The set of trees wired to one SNODE. Default: 2 adjacent rows x 10 trees = 20 trees. | PROPOSED |
 | **receiver** | ESP32 in an ASA box (indoor or outdoor) that receives SNODE packets and passes them to HA over Wi-Fi or Ethernet; USB-powered, or solar with windowed listening. | VERIFIED (concept) |
 | **zone** | An irrigation valve zone (OpenSprinkler: 8 zones now, +16 with an expander later). HA maps trees to zones. | VERIFIED (controller) |
@@ -132,11 +132,12 @@ All calibration values (dry/wet raw counts per probe) live in one file:
 | `docs/08-node-design.md` | Node design: block diagram, netlist, pin map, energy, packet format |
 | `docs/09-probe-design.md` | Probe design: bus options, netlist, measurement, PCB, tests |
 | `docs/10-bus-protocol.md` | Powered-bus protocol v1 (node ↔ probes) |
+| `docs/11-unode-compat.md` | SNODE ↔ UNODE compatibility: packet types, event names, IDs, power terms |
 | `docs/06-ha-note.md` | Hand-off note for the separate HA automation threads |
 | `firmware/` | ESPHome configs: POC tests, `node/`, `receiver/`, `components/rv3028/`, `components/snode_bus/`, `probe/` (C). Never commit `secrets.yaml`. |
 | `config/probes.yaml` | Slot → tree ID and probe address per node |
 | `config/calibration.yaml` | Per-probe calibration values (empty until POC) |
-| UNODE | Separate project. Link here when available. |
+| UNODE | Separate repo: https://github.com/realsystem/unode (compatibility: `docs/11-unode-compat.md`) |
 
 ## 7. GitHub Free-plan limits
 This repo is public, so GitHub Actions minutes are free here. The account is on the GitHub Free plan and these limits still apply.

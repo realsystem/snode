@@ -448,3 +448,4 @@ Context: in the UNODE thread the owner asked whether SNODE's two power ideas (so
 
 Result: D45, `docs/11-unode-compat.md` (reserved UNODE packet types and event name, shared power terms, IDs).
 4. Owner (follow-up): UNODE generator node is battery only. Minimize work for both projects and reuse ideas and findings.
+5. Owner (follow-up): UNODE uses ESP-NOW to the SNODE receiver; LoRa later, after field tests of both projects. UNODE generator node wakes by ESP32-C3 deep sleep with GPIO level wake (UNODE option G1).

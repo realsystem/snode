@@ -10,7 +10,7 @@ but must stay compatible. UNODE repo: https://github.com/realsystem/unode (its c
 - Hardware is not shared: the owner's ESP32-C3 order is for SNODE only; UNODE uses its own boards.
 
 ## 2. Shared radio path
-- A UNODE may report over ESP-NOW to the SNODE receiver (N2), using the same channel follow (D31).
+- UNODE will report over ESP-NOW to the SNODE receiver (N2), using the same channel follow (D31) (owner, round 29). LoRa is deferred until both projects are field-tested. SNODE still does not depend on UNODE.
 - UNODE pump node is about 90 m from the trailer; SNODE's worst case is 105 m (R6). Whether it
   reaches is UNVERIFIED: use the T9/T12 walk-test method at the UNODE pump node.
 - The receiver has no UNODE handling yet. Forwarding UNODE packets to HA is future receiver work.

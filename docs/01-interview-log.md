@@ -447,3 +447,4 @@ Context: in the UNODE thread the owner asked whether SNODE's two power ideas (so
 3. Owner: SNODE and UNODE must be compatible; record it in both repos.
 
 Result: D45, `docs/11-unode-compat.md` (reserved UNODE packet types and event name, shared power terms, IDs).
+4. Owner (follow-up): UNODE generator node is battery only. Minimize work for both projects and reuse ideas and findings.

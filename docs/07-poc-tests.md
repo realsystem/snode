@@ -12,7 +12,7 @@ Record results in `01-interview-log.md` (dated) and update `02-design-log.md`.
 | 3 | Soil temperature at 6 in (any probe thermometer), morning and afternoon | °C and time | First real check of the frozen-soil threshold |
 | 4 | Early Wi-Fi check with `firmware/esp8266-walktest.yaml` on a power bank (or a phone Wi-Fi analyzer), 0.3 m above ground: continuous mode at the farthest corner of each grove, then cycle mode for 30 min at the worst spot | RSSI (dBm) and channel per spot; boot-to-HA time; cycle success rate | Early view of direct Wi-Fi (N1) before T9 |
 | 5 | Starlink app → router settings | Any 2.4 GHz channel setting? Split 2.4/5 GHz option? | Network setup (D30 E1/E3) |
-| 4b | Optional T12: ESP-NOW range test (`firmware/espnow-*.yaml`), same spots | ESP-NOW RSSI, loss, channel per spot |
+| 4b | Optional T12: ESP-NOW range test, same spots. Sender = ESP32-CAM (`firmware/espnow-tx-esp32cam.yaml`), not the ESP8266; receiver = ESP32-CAM on the trailer Wi-Fi. Start the sender a few minutes early (about 170 s to lock on the channel). 2 min per spot | ESP-NOW RSSI, packets lost, channel per spot (table in `docs/poc-espnow-bench.md`) |
 | 6 | At 3 trees: distance emitter–trunk; drip lateral on the surface or buried, and which side | cm; side | Probe lead length |
 
 Pass: items 1–6 recorded. No hardware is left on site.

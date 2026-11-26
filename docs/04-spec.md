@@ -62,6 +62,7 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 | D40 | Bus protocol v1 | `10-bus-protocol.md`: 9600 8N1, READ / DISCOVER / MEASURE, CRC-8 | Shared by node and probe | S79 |
 | D41 | AliExpress sourcing | PY32 dev boards, chips and DAPLink from AliExpress (US delivery); TI parts, RTC board, XIAO and node sensor from US distributors; mixed bench list $119.92 | Owner asked; genuine-part risk | S98–S103 |
 | D42 | Bench probe MCU | PY32F002A from AliExpress (owner: AliExpress counts as US-available); ATtiny202 fallback | 2 comparators | S98, S99 |
+| D46 | ESP-NOW desk test (T12) | 361 of 361 packets over 1 h at 1–3 m, RSSI −59 to −45 dBm; receiver restart costs 1 packet; ESP32 sender required; node must start from its last good channel | Owner's bench run, `poc-espnow-bench.md` | — |
 | D45 | UNODE compatibility | Separate projects, compatible: UNODE packet types 0x10–0x1F / 0x90–0x9F and event `esphome.unode_report` reserved; shared power terms | Owner | — |
 | D43 | Amazon sourcing | L91 24-packs and 16/2 wire (pure copper only) cheaper on Amazon; XIAO 3-pack from seeedstudio.com ($13.99, US warehouse) | Owner asked | S104–S107 |
 | D31 | Channel follow | Node saves the last good channel; on a missed acknowledgement it scans channels 1–11 | Works with routers that change channel | S74 |
@@ -102,6 +103,7 @@ Details and reasoning: `02-design-log.md` (D-numbers). Sources: `03-research-not
 9. Variant A parts: panel, supercapacitor, boost converter, charge limiter: select and price.
 10. Receiver roof antenna and coax: select and price.
 11. RV-3028 support in ESPHome (may need a custom component).
+13. ESP-NOW: walk test, router-channel-change test, scan time on the real node vs the 25 s watchdog (D46).
 12. UNODE compatibility: contract in `11-unode-compat.md` (D45); receiver forwarding of UNODE packets not designed yet.
 
 ## 5. Test list
@@ -120,7 +122,7 @@ Full plan with pass/fail criteria: `05-poc-plan.md`.
 | T8 | WH51 side-by-side | Trend agreement |
 | T9 | Field walk test from the farthest corner, direct Wi-Fi (N1) and ESP-NOW (N2) | Which radio path; RSSI margin at 0.3 m node antenna |
 | T10 | Field cluster run, at least 3 weeks | Delivery rate, alerts, battery trend |
-| T12 | Optional ESP-NOW range test: NodeMCU sender, ESP32-CAM receiver on farm Wi-Fi | ESP-NOW RSSI and loss per spot; channel follow (D31) |
+| T12 | Optional ESP-NOW range test: ESP32-CAM sender, ESP32-CAM receiver on farm Wi-Fi. Desk part done (D46); walk test and router-channel-change test open | ESP-NOW RSSI and loss per spot; channel follow (D31) |
 | T11 | Site survey (next visit): soil sample, trench test, early Wi-Fi RSSI, router check | Inputs for T1, T6, T9 and D30 |
 
 ## 6. BOM (cited parts only, prices seen 2026-11-24)

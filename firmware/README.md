@@ -3,11 +3,12 @@
 | File | Board | Test | Purpose |
 |---|---|---|---|
 | `esp8266-walktest.yaml` | NodeMCU (ESP8266) | T11, T1 | Direct Wi-Fi walk test (RSSI, channel, connect times, cycle success rate); A0 sensor drift logger |
-| `espnow-tx-esp8266.yaml` | NodeMCU (ESP8266) | T12 (optional) | ESP-NOW field sender: counter every 10 s, LED flash on acknowledgement, channel follow |
+| `espnow-tx-esp32cam.yaml` | ESP32-CAM | T12 (optional) | ESP-NOW field sender (use this one): counter every 10 s, LED flash on acknowledgement, channel follow |
+| `espnow-tx-esp8266.yaml` | NodeMCU (ESP8266) | — | Compiles, but its unicast packets got no acknowledgement from the ESP32 receiver (UNVERIFIED cause). Not for range tests |
 | `espnow-rx-esp32cam.yaml` | ESP32-CAM | T12 (optional) | ESP-NOW receiver on the farm Wi-Fi: counter, RSSI, sender channel → HA |
 | `secrets.example.yaml` | — | — | Template for `secrets.yaml` (never commit the real one) |
 
-Status: all three were written without compiling. UNVERIFIED until the first compile on the Windows PC.
+Status: `espnow-rx-esp32cam.yaml` and `espnow-tx-esp8266.yaml` compiled on the first try (ESPHome 2026.11.0); a one-hour desk run with an ESP32-CAM sender lost no packets (`docs/poc-espnow-bench.md`). `espnow-tx-esp32cam.yaml` and `esp8266-walktest.yaml` are not compiled yet: UNVERIFIED.
 Why this split: ESPHome supports ESP-NOW on ESP32 and ESP8266, but on the ESP8266 the received signal strength is always 0, so the receiver must be the ESP32-CAM.
 
 ## Windows PC setup (once)
@@ -47,11 +48,12 @@ When a board is on the farm Wi-Fi: HA > Settings > Devices & services > ESPHome 
 3. Pass mark (`docs/07-poc-tests.md`, T9): ≥ 98% delivered, median awake time < 2 s.
 
 ## T12 (optional): ESP-NOW range test (N2)
-1. Flash the receiver first and read "Receiver MAC" in HA (or the boot log). Put it in `receiver_mac` in `espnow-tx-esp8266.yaml`, then flash the sender.
+1. Flash the receiver first and read "Receiver MAC" in HA (or the boot log). Put it in `receiver_mac` in `espnow-tx-esp32cam.yaml`, then flash the sender (ESP32-CAM: hold IO0 to GND at power-up).
 2. Receiver: inside the trailer where a real receiver would sit, on USB power.
 3. Sender: on a power bank, 0.3 m above ground. The LED flashes about every 10 s while packets are acknowledged. 5 minutes per spot, same spots as T11. Note the time and spot.
 4. In HA: "Sender RSSI" per spot; loss from "Sender counter" vs "Packets received". "Sender channel" shows channel follow at work.
-5. Channel follow check: change the router's channel during the test, if the router allows it. The LED should stop for up to about 4 minutes, then flash again on the new channel.
+5. Channel follow check: change the router's channel during the test, if the router allows it (not done yet). The LED should stop for up to about 4 minutes, then flash again on the new channel.
+6. A sender that starts on the wrong channel needs about 170 s to lock (measured). Start it a few minutes before the first spot.
 
 ## T1: drift logger
 Walk-test firmware, continuous mode, old moisture sensor on A0 (NodeMCU A0 range 0–3.3 V), in a pot of site soil at constant moisture for 1 week.

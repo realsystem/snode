@@ -590,8 +590,18 @@ Rule: if the PCB antenna meets the link margin at the farthest grove corner in T
 6. Can the owner solder SOT-23 parts onto adapters, or are ready modules needed?
 7. HA for the bench: home HA, the trailer HA over Starlink, or USB logs only until the next visit?
 8. 3xAA holder: on hand, or find and price one?
+9. ESP-NOW (D46): when to run the home walk test and the router-channel-change test; scan time on the real node vs the 25 s watchdog.
 
 Closed in round 27: AliExpress counts as US-available; bench probe MCU = PY32F002A (D42); Amazon check (D43).
+
+### D46 ESP-NOW desk test, T12 desk part (owner, 2026-11-26)
+Full record: `docs/poc-espnow-bench.md`. Two ESP32-CAM boards (sender, receiver joined to the home router), 1–3 m apart.
+- **VERIFIED:** channel follow works against a receiver on the router's Wi-Fi (D30 E1/D31): 361 of 361 packets over 1 h, RSSI −59 to −45 dBm.
+- **VERIFIED:** a receiver restart costs 1 packet; the sender recovers by itself in about 22 s with no channel hop (a hop needs 2 no-acks in a row).
+- **VERIFIED:** a cold-started sender on the wrong channel needed about 170 s to lock (10 s x 2 sends x channels tried). **Decision:** the real node starts from its last good channel (D31, already the design). Whether a full scan fits the 25 s watchdog is UNVERIFIED (open item in `08-node-design.md`).
+- **VERIFIED:** an ESP8266 sender's unicast packets were never acknowledged (cause UNVERIFIED). **Decision:** range tests use an ESP32 sender (`firmware/espnow-tx-esp32cam.yaml`); the receiver is an ESP32 anyway (the ESP8266 cannot report RSSI). No effect on the node, which is an ESP32-C3.
+- **VERIFIED at 1–3 m, UNVERIFIED beyond:** a neighbour channel (sender on 3, receiver on 4) also works. It may not hold at range.
+- **Still open:** home walk test (RSSI, loss, channel per spot); channel follow when the router's channel changes (owner did not want to change the router); range beyond 3 m; effect of the case and antenna.
 
 ### D45 UNODE compatibility (owner, round 29)
 - SNODE and UNODE stay separate projects but must stay compatible. Contract: `docs/11-unode-compat.md` (copy in the UNODE repo).

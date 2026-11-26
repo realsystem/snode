@@ -438,6 +438,16 @@ Follow-up, 2026-11-24: owner asked whether the XIAO is needed at all. Answer: th
 7. HA for the bench: home HA, the trailer HA over Starlink, or USB logs only until the next visit?
 8. 3xAA holder: on hand, or find and price one?
 
+## Test report — 2026-11-26 (T12 desk part, from the owner)
+
+1. ESP32-CAM to ESP32-CAM ESP-NOW with channel follow works against a receiver joined to the router: 361 of 361 packets over 1 h at 1–3 m, RSSI −59 to −45 dBm (VERIFIED).
+2. A restarting receiver costs 1 packet; the sender recovers by itself in about 22 s with no channel hop (VERIFIED).
+3. A cold-started sender needs about 170 s to find the channel; the real node should start from its last good channel (UNVERIFIED for the real node).
+4. An ESP8266 sender's addressed packets were never acknowledged, so use an ESP32 sender for tests (cause UNVERIFIED). At short range a neighbour channel (3 vs 4) also works; this may not hold at range.
+5. Open: home walk test and router-channel-change test. Details: `docs/poc-espnow-bench.md` (PR 5).
+
+Result: D46; `firmware/espnow-tx-esp32cam.yaml` added; T11 item 4b and the firmware README now use the ESP32 sender.
+
 ## Round 29 — 2026-11-25 (UNODE compatibility)
 
 Context: in the UNODE thread the owner asked whether SNODE's two power ideas (solar only, battery only) fit UNODE.

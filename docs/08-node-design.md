@@ -137,5 +137,6 @@ Receiver → HA: event `esphome.snode_report` with node ID (e.g. `snode_f_01`), 
 - Done in v0.2: powered-bus driver, pin map, `snode_bus` ESPHome component, install-mode discovery.
 - Part numbers for Q1, Q3, D1–D3 and C1 (generic specs above); pick at bench-build time with cited datasheets.
 - ESPHome support used but not yet compiled: two UARTs on the ESP32-C3 with strapping-pin RX, the `snode_bus` and `rv3028` external components, `espnow` `wait_for_sent` and `set_channel_from_action`, globals with `std::array` restore.
+- Channel scan time on the real node: the desk test scanned at 10 s per send (about 170 s for 9 channels). The real node must start from its saved channel, and a full scan (3 tries + channels 1–11) must fit the 25 s watchdog or be split over several wakes. UNVERIFIED (D46, T3).
 - Node receive threshold vs idle probe current (all probes asleep vs awake) — T4b.
 - Wi-Fi OTA updates for nodes (now: USB only).

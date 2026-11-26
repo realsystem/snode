@@ -5,7 +5,8 @@
 # moves to the next channel (1..11) and keeps trying, so it finds the router's channel by itself.
 # No Wi-Fi block: this board talks ESP-NOW only, so its channel can be changed.
 # Power: USB power bank. Hold 0.3 m above the ground.
-# Status: written without compiling. UNVERIFIED until the first compile.
+# Status: compiles and runs (T12 desk part), but its unicast packets were never acknowledged by the ESP32 receiver
+# on any channel (cause UNVERIFIED). Use espnow-tx-esp32cam.yaml for range tests.
 
 substitutions:
   name: snode-espnow-tx

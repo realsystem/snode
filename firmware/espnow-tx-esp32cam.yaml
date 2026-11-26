@@ -1,0 +1,80 @@
+# SNODE POC T12: ESP-NOW range test, field sender on an ESP32-CAM (use this one, not the ESP8266 file)
+# Sends a packet counter every 10 s to the receiver (espnow-rx-esp32cam.yaml).
+# The red status LED (GPIO33) flashes when the receiver acknowledges a packet: you can see the link in the field.
+# Channel follow (design log D31): after 2 packets in a row without acknowledgement, the sender
+# moves to the next channel (1..11) and keeps trying, so it finds the router's channel by itself.
+# Cold start: a sender that starts on the wrong channel needs up to about 190 s to find the receiver
+# (10 s x 2 sends x channels tried). This is a test-file limit; the real node starts from its last good channel.
+# No Wi-Fi block: ESP-NOW can only change channel with Wi-Fi off.
+# Flashing: ESP32-CAM has no reset pin on the header; hold IO0 to GND at power-up.
+# Power: USB power bank. Hold 0.3 m above the ground.
+# Status: the owner's local ESP32-CAM port of espnow-tx-esp8266.yaml ran 1 h, 361 of 361 packets (T12 desk part,
+# docs/poc-espnow-bench.md). This committed file was rewritten from the ESP8266 file and is not compiled yet: UNVERIFIED.
+
+substitutions:
+  name: snode-espnow-tx
+  receiver_mac: "AA:BB:CC:DD:EE:FF"   # from the receiver's boot log (Wi-Fi STA MAC)
+  start_channel: "6"                  # any value 1..11; channel follow corrects it
+
+esphome:
+  name: ${name}
+
+esp32:
+  board: esp32cam
+  framework:
+    type: esp-idf
+
+logger:
+  level: INFO
+
+espnow:
+  id: en
+  channel: ${start_channel}
+  peers:
+    - ${receiver_mac}
+
+globals:
+  - id: tx_count
+    type: uint32_t
+    initial_value: '0'
+  - id: fail_count
+    type: uint8_t
+    initial_value: '0'
+  - id: cur_ch
+    type: uint8_t
+    initial_value: ${start_channel}
+
+output:
+  - platform: gpio
+    id: led
+    pin:
+      number: GPIO33    # ESP32-CAM red status LED, on when low
+      inverted: true
+
+interval:
+  - interval: 10s
+    then:
+      - lambda: id(tx_count) += 1;
+      - espnow.send:
+          address: ${receiver_mac}
+          data: !lambda |-
+            uint32_t c = id(tx_count);
+            return {(uint8_t) (c & 0xFF), (uint8_t) ((c >> 8) & 0xFF),
+                    (uint8_t) ((c >> 16) & 0xFF), (uint8_t) ((c >> 24) & 0xFF),
+                    id(cur_ch)};
+          continue_on_error: true
+          on_sent:
+            - lambda: id(fail_count) = 0;
+            - output.turn_on: led
+            - delay: 300ms
+            - output.turn_off: led
+          on_error:
+            - lambda: |-
+                id(fail_count) += 1;
+                ESP_LOGW("tx", "no ack on channel %u (%u in a row)", id(cur_ch), id(fail_count));
+                if (id(fail_count) >= 2) {
+                  id(fail_count) = 0;
+                  id(cur_ch) = (id(cur_ch) % 11) + 1;
+                  id(en).set_channel_from_action(id(cur_ch));
+                  ESP_LOGW("tx", "channel follow: now trying channel %u", id(cur_ch));
+                }

@@ -93,6 +93,23 @@ Reading:
 - At -93 dBm the link works at 20 m (spot 8, 14 of 14) but is mostly lost at 30 m (spot 9): the same RSSI, different result.
 - Channel-follow side effect: at that margin 2 no-acks in a row happen by chance. Each one moves the sender off its channel, and a full cycle costs 100 to 220 s of no data (spots 7 to 9). The sender's own log was not available on the power bank, so this is inferred (UNVERIFIED). Proposed: more no-acks before hopping, or retry the same channel first.
 - The sender stayed on channel 3 through spot 6 and was on 4 (the receiver's channel) after the hop at spot 7.
+## Sender v2: retry first, hop later, remember the channel (bench-tested, marginal link NOT retested)
+
+`firmware/espnow-tx-esp32cam.yaml` changed after the walk test: retry the same packet every 1 s, hop only after 6 failed tries
+in a row on one channel (was 2 no-acks), and store the last acknowledged channel in flash and use it at boot.
+The committed file compiles with the placeholder receiver address (VERIFIED). A retried packet keeps its counter,
+so loss must be computed from distinct counters.
+
+| Test | Result |
+|---|---|
+| Cold start from channel 6, receiver on 4 | Hopped 6 to 3 and was acknowledged on report 5, about 40 to 45 s (v1: about 170 s). VERIFIED |
+| Restart after a lock | `boot: starting on channel 3 (last good channel)`, report 1 acknowledged at once, no search. VERIFIED |
+| Marginal link, street 20 m and 30 m | **Not done.** The 30 m spot gave no packets for 11 minutes (out of range that day), so it could not compare the rules. The 20 m retest was not run. UNVERIFIED that v2 removes the 100 to 220 s outages |
+| Receiver coming back into range | First packet at -92 dBm on channel 4, then the sender held channel 5 (a neighbour of the receiver's 4) at -75 dBm. Sender log not available (power bank), hops inferred. UNVERIFIED |
+| Boot log after one power-up showed `POWERON_RESET` followed by `RTCWDT_RTC_RESET` | Cause not found; other boots showed one reset. May be a contact bounce on the 5 V plug. UNVERIFIED |
+
+Next test: the same marginal spots at the real site, with the sender logging.
+
 ## Findings for the design
 
 | Finding | Status |
@@ -110,7 +127,7 @@ Reading:
 | Item | Status |
 |---|---|
 | Walk test beyond 20 m: link is marginal at 30 m. Not repeated with sender logging | Partly done, UNVERIFIED beyond 20 m |
-| Hop rule: 2 no-acks in a row cost 100 to 220 s at a marginal link; test a larger no-ack count | UNVERIFIED |
+| Hop rule: v2 (6 tries, stored channel) is written and bench-tested; retest at a marginal link at the real site | UNVERIFIED |
 | Channel follow when the router's channel changes (receiver moves, sender must follow) | **Not done** (owner did not want to change the router). UNVERIFIED |
 | Sender cold-start time of about 170 s versus a remembered channel | Design change proposed, UNVERIFIED |
 | ESP8266 unicast no-ack cause | UNVERIFIED |

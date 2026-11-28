@@ -1,23 +1,34 @@
 # SNODE POC T12: ESP-NOW range test, field sender on an ESP32-CAM (use this one, not the ESP8266 file)
 # Sends a packet counter every 10 s to the receiver (espnow-rx-esp32cam.yaml).
-# The red status LED (GPIO33) flashes when the receiver acknowledges a packet: you can see the link in the field.
-# Channel follow (design log D31): after 2 packets in a row without acknowledgement, the sender
-# moves to the next channel (1..11) and keeps trying, so it finds the router's channel by itself.
-# Cold start: a sender that starts on the wrong channel needs up to about 190 s to find the receiver
-# (10 s x 2 sends x channels tried). This is a test-file limit; the real node starts from its last good channel.
+# The red status LED (GPIO33) flashes long when the receiver acknowledges a packet and short on each failed try.
+#
+# Channel follow v2 (design log D31, changed after the walk test in docs/poc-espnow-bench.md):
+# - Retry the same packet every 1 s until it is acknowledged or the next 10 s report starts.
+# - Hop to the next channel (1..11) only after ${tries_before_hop} failed tries in a row on one channel.
+#   v1 hopped after 2 no-acks in a row; at a marginal link (-93 dBm) that cost outages of 100 to 220 s.
+# - The last channel that gave an acknowledgement is stored in flash and used at boot (no full scan after a restart).
+# A retried packet keeps its counter, so a lost acknowledgement can make the receiver count one counter twice:
+# compute loss from distinct counters, not from "Packets received".
 # No Wi-Fi block: ESP-NOW can only change channel with Wi-Fi off.
 # Flashing: ESP32-CAM has no reset pin on the header; hold IO0 to GND at power-up.
 # Power: USB power bank. Hold 0.3 m above the ground.
-# Status: the owner's local ESP32-CAM port of espnow-tx-esp8266.yaml ran 1 h, 361 of 361 packets (T12 desk part,
-# docs/poc-espnow-bench.md). This committed file was rewritten from the ESP8266 file and is not compiled yet: UNVERIFIED.
+# Status: v2 logic is UNVERIFIED until the bench and walk retest (see docs/poc-espnow-bench.md).
 
 substitutions:
   name: snode-espnow-tx
   receiver_mac: "AA:BB:CC:DD:EE:FF"   # from the receiver's boot log (Wi-Fi STA MAC)
-  start_channel: "6"                  # any value 1..11; channel follow corrects it
+  start_channel: "6"                  # first boot only; later the last good channel is used
+  tries_before_hop: "6"               # failed tries (1 s apart) on one channel before moving to the next
 
 esphome:
   name: ${name}
+  on_boot:
+    priority: -100                    # after ESP-NOW is up
+    then:
+      - lambda: |-
+          id(cur_ch) = id(good_ch);
+          id(en).set_channel_from_action(id(cur_ch));
+          ESP_LOGI("tx", "boot: starting on channel %u (last good channel)", id(cur_ch));
 
 esp32:
   board: esp32cam
@@ -34,14 +45,24 @@ espnow:
     - ${receiver_mac}
 
 globals:
-  - id: tx_count
+  - id: tx_count           # counter in the packet: one per 10 s report
     type: uint32_t
     initial_value: '0'
-  - id: fail_count
+  - id: sec                # seconds inside the current 10 s report
+    type: uint8_t
+    initial_value: '0'
+  - id: acked              # current report acknowledged
+    type: bool
+    initial_value: 'false'
+  - id: fail_count         # failed tries in a row on this channel
     type: uint8_t
     initial_value: '0'
   - id: cur_ch
     type: uint8_t
+    initial_value: ${start_channel}
+  - id: good_ch            # last channel with an acknowledgement, kept in flash
+    type: uint8_t
+    restore_value: true
     initial_value: ${start_channel}
 
 output:
@@ -52,29 +73,46 @@ output:
       inverted: true
 
 interval:
-  - interval: 10s
+  - interval: 1s
     then:
-      - lambda: id(tx_count) += 1;
-      - espnow.send:
-          address: ${receiver_mac}
-          data: !lambda |-
-            uint32_t c = id(tx_count);
-            return {(uint8_t) (c & 0xFF), (uint8_t) ((c >> 8) & 0xFF),
-                    (uint8_t) ((c >> 16) & 0xFF), (uint8_t) ((c >> 24) & 0xFF),
-                    id(cur_ch)};
-          continue_on_error: true
-          on_sent:
-            - lambda: id(fail_count) = 0;
-            - output.turn_on: led
-            - delay: 300ms
-            - output.turn_off: led
-          on_error:
-            - lambda: |-
-                id(fail_count) += 1;
-                ESP_LOGW("tx", "no ack on channel %u (%u in a row)", id(cur_ch), id(fail_count));
-                if (id(fail_count) >= 2) {
-                  id(fail_count) = 0;
-                  id(cur_ch) = (id(cur_ch) % 11) + 1;
-                  id(en).set_channel_from_action(id(cur_ch));
-                  ESP_LOGW("tx", "channel follow: now trying channel %u", id(cur_ch));
-                }
+      - lambda: |-
+          if (id(sec) == 0) {                 // a new report starts
+            id(tx_count) += 1;
+            id(acked) = false;
+          }
+          id(sec) = (id(sec) + 1) % 10;
+      - if:
+          condition:
+            lambda: 'return !id(acked);'
+          then:
+            - espnow.send:
+                address: ${receiver_mac}
+                data: !lambda |-
+                  uint32_t c = id(tx_count);
+                  return {(uint8_t) (c & 0xFF), (uint8_t) ((c >> 8) & 0xFF),
+                          (uint8_t) ((c >> 16) & 0xFF), (uint8_t) ((c >> 24) & 0xFF),
+                          id(cur_ch)};
+                continue_on_error: true
+                on_sent:
+                  - lambda: |-
+                      id(acked) = true;
+                      id(fail_count) = 0;
+                      if (id(good_ch) != id(cur_ch)) id(good_ch) = id(cur_ch);
+                      ESP_LOGD("tx", "sent #%u on channel %u: acknowledged", (unsigned) id(tx_count), id(cur_ch));
+                  - output.turn_on: led
+                  - delay: 300ms
+                  - output.turn_off: led
+                on_error:
+                  - lambda: |-
+                      id(fail_count) += 1;
+                      ESP_LOGD("tx", "#%u channel %u: no ack (%u of ${tries_before_hop})",
+                               (unsigned) id(tx_count), id(cur_ch), id(fail_count));
+                      if (id(fail_count) >= ${tries_before_hop}) {
+                        id(fail_count) = 0;
+                        id(cur_ch) = (id(cur_ch) % 11) + 1;
+                        id(en).set_channel_from_action(id(cur_ch));
+                        ESP_LOGW("tx", "channel follow: now trying channel %u", id(cur_ch));
+                      }
+                  - output.turn_on: led
+                  - delay: 60ms
+                  - output.turn_off: led

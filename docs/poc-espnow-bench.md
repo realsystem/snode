@@ -4,7 +4,7 @@ Bench test of the shared ESP-NOW receiver design (design log D30, D31) on a Wind
 (AI-Thinker type) and a NodeMCU ESP8266. Home Assistant (HA) was used only for integration.
 Camera not used for this test. Labels: **VERIFIED** = measured or seen in this test, **UNVERIFIED** = not measured or only inferred.
 
-Status: desk part done. The walk test and the router-channel-change test are **not done** (see Open items).
+Status: desk part and home walk test done. The router-channel-change test is **not done** (see Open items).
 
 ## Setup
 
@@ -68,12 +68,37 @@ During the search the receiver also heard some packets the sender counted as no-
 ack not received). Two of these (counter 2 in run 1, counter 5 in run 2) fell on channels two or more away from the receiver
 and are unexplained (UNVERIFIED).
 
+## Home walk test (VERIFIED, measured; receiver left in place beside the PC)
+
+Sender on a USB power bank, 2 minutes per spot (4 minutes for the last two), receiver logged over the API.
+Packets lost = sends expected minus counters received. Height 0.3 m except spot 2.
+
+| Spot | Description, distance, height | RSSI median (min / max), dBm | Lost in window | Channel |
+|---|---|---|---|---|
+| 1 | same room, 1 m | -69 (-73 / -54) | 0 of 13 | 3 |
+| 2 | same room, 3 m, about 1.3 m high | -64 (-65 / -62) | 0 of 13 | 3 |
+| 3 | next room, 10 m | -70 (-72 / -69) | 0 of 13 | 3 |
+| 4 | downstairs, 10 m | -68 (-72 / -67) | 0 of 13 | 3 |
+| 5 | outside near the house, 15 m | -79.5 (-82 / -77) | 0 of 14 | 3 |
+| 6 | backyard on the ground, 20 m | -80 (-81 / -80) | 0 of 13 | 3 |
+| 7 | street near parked cars, 30 m, first try | -92 (1 packet) | about 11 of 12 | 4 (sender was searching) |
+| 8 | street near parked cars, 20 m | -93 (-94 / -89) | 0 of 14 after a 106 s outage | 4 |
+| 9 | street near parked cars, 30 m, second try | -93 (-95 / -91) | about 22 of 25 in 245 s | 4 |
+
+Walls and floors between the spots and the receiver were not counted (UNVERIFIED).
+
+Reading:
+- Reliable up to about 20 m through walls, a floor and a yard (spots 3 to 6). The link edge is around -93 dBm.
+- RSSI did not follow distance at short range (1 m read weaker than 3 m or 10 m). Antenna orientation, power bank and cable position matter more than distance there. Not isolated (UNVERIFIED).
+- At -93 dBm the link works at 20 m (spot 8, 14 of 14) but is mostly lost at 30 m (spot 9): the same RSSI, different result.
+- Channel-follow side effect: at that margin 2 no-acks in a row happen by chance. Each one moves the sender off its channel, and a full cycle costs 100 to 220 s of no data (spots 7 to 9). The sender's own log was not available on the power bank, so this is inferred (UNVERIFIED). Proposed: more no-acks before hopping, or retry the same channel first.
+- The sender stayed on channel 3 through spot 6 and was on 4 (the receiver's channel) after the hop at spot 7.
 ## Findings for the design
 
 | Finding | Status |
 |---|---|
 | ESP32 to ESP32 unicast ESP-NOW with channel follow works against a receiver that is on the router's Wi-Fi (D30 E1) | VERIFIED on the bench |
-| At 1 to 3 m, neighbour channels overlap: the sender locked on channel 3 while the receiver was on 4. At longer range this may not hold: the walk test must show it | VERIFIED at 1 to 3 m, UNVERIFIED beyond |
+| Neighbour channels overlap: the sender locked on channel 3 while the receiver was on 4, up to 20 m (walk test). On a marginal link it later moved to channel 4 | VERIFIED up to 20 m |
 | ESP8266 as sender: addressed (unicast) sends were never acknowledged on any channel; broadcast from the ESP8266 was received. Cause not found (ESPHome ESP8266 peer or channel handling, the receiver being Wi-Fi associated, or ESP8266 to ESP32 interop) | UNVERIFIED cause. Use an ESP32 sender for ESP-NOW range tests |
 | ESP32 receiver reports sender RSSI; the ESP8266 cannot (receive RSSI is always 0), so the receiver must be an ESP32 | VERIFIED in the ESPHome source behaviour seen |
 | In the ESP32 receiver, unicast arrives in `on_receive`, broadcast only in `on_broadcast` | VERIFIED |
@@ -84,15 +109,10 @@ and are unexplained (UNVERIFIED).
 
 | Item | Status |
 |---|---|
-| Home walk test (sender on a power bank 0.3 m above ground at several spots, 2 minutes each: RSSI, loss, channel) | **Not done.** Table below to be filled |
+| Walk test beyond 20 m: link is marginal at 30 m. Not repeated with sender logging | Partly done, UNVERIFIED beyond 20 m |
+| Hop rule: 2 no-acks in a row cost 100 to 220 s at a marginal link; test a larger no-ack count | UNVERIFIED |
 | Channel follow when the router's channel changes (receiver moves, sender must follow) | **Not done** (owner did not want to change the router). UNVERIFIED |
 | Sender cold-start time of about 170 s versus a remembered channel | Design change proposed, UNVERIFIED |
 | ESP8266 unicast no-ack cause | UNVERIFIED |
 | Power-bank sender: a power-on brownout line was seen once when 5 V was reconnected; no supply problem seen otherwise | UNVERIFIED |
-| Range beyond 3 m, other receiver positions, effect of the case and antenna | UNVERIFIED |
-
-## Walk test (to fill at the next test)
-
-| Spot (description, distance) | RSSI (dBm) | Packets lost in 2 min | Channel |
-|---|---|---|---|
-| | | | |
+| Field range: receiver position, case, antenna, ground-level sender in an orchard (home range is not farm range) | UNVERIFIED |
